@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manager's Forecast Calculator v1.2</title>
+<title>Manager's Forecast Calculator v1.3</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -29,6 +29,70 @@ html.dark .hint{background:#374151;border-color:#4b5563}
 html.dark .hint-ic{background:#4b5563}
 html.dark .qbar-track{background:#374151}
 html.dark .minput{background:#1f2937;border-color:#4b5563;color:#f9fafb}
+
+/* ── QUARTER-END MODE ── */
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-3px)}30%{transform:translateX(3px)}45%{transform:translateX(-2px)}60%{transform:translateX(2px)}75%{transform:translateX(-1px)}}
+@keyframes pulse-red{0%,100%{opacity:1}50%{opacity:.6}}
+@keyframes ticker-scroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+@keyframes border-flash{0%,100%{border-color:#dc2626}50%{border-color:#ff6b6b}}
+@keyframes bg-pulse{0%,100%{background:#1a0505}50%{background:#2d0a0a}}
+html.qe body{background:#1a0505}
+html.qe .wrap .hero,html.qe .wrap .card{border-color:#7f1d1d}
+html.qe .att-bar{background:#7f1d1d}
+html.qe .fc-amount{animation:shake 2s infinite}
+html.qe .fc-amount.danger{animation:shake .6s infinite,pulse-red 1s infinite}
+html.qe .btn-primary{background:#dc2626;border-color:#dc2626;animation:pulse-red 1.5s infinite}
+html.qe .btn-primary:hover{background:#b91c1c}
+html.qe .qbar-track{background:#7f1d1d}
+html.qe .hero-tag{color:#ef4444}
+.qe-ticker{display:none;overflow:hidden;background:#dc2626;color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;padding:5px 0;white-space:nowrap;margin-bottom:1rem;border-radius:var(--rm)}
+html.qe .qe-ticker{display:block}
+.qe-ticker-inner{display:inline-block;animation:ticker-scroll 18s linear infinite;padding-left:100%}
+.qe-panic{display:none;background:#7f1d1d;border:1px solid #dc2626;border-radius:var(--rm);padding:.75rem 1rem;margin-bottom:1rem;font-size:13px;font-weight:600;color:#fca5a5;line-height:1.5}
+html.qe .qe-panic{display:block}
+.qe-label{display:none}
+html.qe .qe-label{display:inline}
+html.qe .normal-label{display:none}
+.qe-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;padding:5px 10px;border-radius:20px;border:var(--bdr);background:var(--bg);font-size:12px;font-weight:600;color:var(--tx2);transition:all .15s;user-select:none}
+.qe-toggle:hover{background:var(--bg2)}
+html.qe .qe-toggle{background:#dc2626;border-color:#dc2626;color:#fff;animation:pulse-red 2s infinite}
+.qe-track{width:28px;height:16px;border-radius:8px;background:#d1d5db;position:relative;transition:background .2s;flex-shrink:0}
+.qe-thumb{width:12px;height:12px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .2s}
+html.qe .qe-track{background:#dc2626}
+html.qe .qe-thumb{transform:translateX(12px)}
+@keyframes flame-rise{
+  0%{transform:scaleY(1) scaleX(1) translateY(0);opacity:.9}
+  25%{transform:scaleY(.85) scaleX(1.08) translateY(4px);opacity:1}
+  50%{transform:scaleY(1.1) scaleX(.92) translateY(-6px);opacity:.85}
+  75%{transform:scaleY(.9) scaleX(1.05) translateY(2px);opacity:.95}
+  100%{transform:scaleY(1) scaleX(1) translateY(0);opacity:.9}
+}
+@keyframes flame-flicker{
+  0%,100%{opacity:1;transform:scaleX(1)}
+  33%{opacity:.7;transform:scaleX(.85)}
+  66%{opacity:.9;transform:scaleX(1.1)}
+}
+.flame-col{
+  position:absolute;
+  bottom:0;
+  border-radius:50% 50% 20% 20% / 60% 60% 40% 40%;
+  background:linear-gradient(to top,#fff700 0%,#ff8c00 30%,#ff3300 60%,#cc0000 80%,transparent 100%);
+  transform-origin:bottom center;
+  animation:flame-rise 1.8s ease-in-out infinite;
+  opacity:.9;
+}
+.flame-inner{
+  position:absolute;
+  bottom:0;
+  left:20%;
+  width:60%;
+  height:70%;
+  border-radius:50% 50% 20% 20% / 60% 60% 40% 40%;
+  background:linear-gradient(to top,#ffffff 0%,#ffee00 25%,#ffaa00 60%,transparent 100%);
+  transform-origin:bottom center;
+  animation:flame-flicker 0.8s ease-in-out infinite;
+  opacity:.8;
+}
 body{font-family:var(--font);background:var(--bg2);color:var(--tx);min-height:100vh;padding:1.5rem 1rem}
 input{font-family:var(--font);color:var(--tx);background:var(--bg);border:0.5px solid #d1d5db;border-radius:var(--rm);padding:6px 10px}
 input:focus{outline:2px solid var(--blue);outline-offset:1px}
@@ -249,6 +313,9 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
     </button>
   </div>
 
+  <div class="qe-ticker"><div class="qe-ticker-inner" id="qe-ticker-text"></div></div>
+  <div class="qe-panic" id="qe-panic"></div>
+
   <!-- HERO -->
   <div class="hero">
     <div class="hero-hdr">
@@ -290,22 +357,22 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
       <div class="col-hdr">Expected bookings</div>
     </div>
     <div class="irow irow-3 subrow">
-      <div class="ilbl">Commit pipeline <span class="pill pc">commit</span></div>
+      <div class="ilbl"><span class="normal-label">Commit pipeline</span><span class="qe-label">MUST CLOSE pipeline</span> <span class="pill pc">commit</span></div>
       <div class="ifield"><span class="iprefix">$</span><input class="imoney" type="text" id="pipe_commit" value="600,000"></div>
       <div style="text-align:right;padding-top:1px"><span id="exp_commit" class="exp-val ev-c">—</span></div>
     </div>
     <div class="irow irow-3 subrow">
-      <div class="ilbl">Probable pipeline <span class="pill pp">probable</span></div>
+      <div class="ilbl"><span class="normal-label">Probable pipeline</span><span class="qe-label">PROBABLY pipeline</span> <span class="pill pp">probable</span></div>
       <div class="ifield"><span class="iprefix">$</span><input class="imoney" type="text" id="pipe_prob" value="450,000"></div>
       <div style="text-align:right;padding-top:1px"><span id="exp_prob" class="exp-val ev-p">—</span></div>
     </div>
     <div class="irow irow-3 subrow">
-      <div class="ilbl">Upside pipeline <span class="pill pu">upside</span></div>
+      <div class="ilbl"><span class="normal-label">Upside pipeline</span><span class="qe-label">HAIL MARY pipeline</span> <span class="pill pu">upside</span></div>
       <div class="ifield"><span class="iprefix">$</span><input class="imoney" type="text" id="pipe_up" value="280,000"></div>
       <div style="text-align:right;padding-top:1px"><span id="exp_up" class="exp-val ev-u">—</span></div>
     </div>
     <div class="irow irow-3 subrow">
-      <div class="ilbl">Pipeline deals <span class="pill pg">pipeline</span></div>
+      <div class="ilbl"><span class="normal-label">Pipeline deals</span><span class="qe-label">CALL EVERYONE deals</span> <span class="pill pg">pipeline</span></div>
       <div class="ifield"><span class="iprefix">$</span><input class="imoney" type="text" id="pipe_pipe" value="900,000"></div>
       <div style="text-align:right;padding-top:1px"><span id="exp_pipe" class="exp-val ev-g">—</span></div>
     </div>
@@ -392,9 +459,21 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
     <button class="btn" onclick="exportXlsx()">Download Excel</button>
     <button class="btn" onclick="printPdf()">Download PDF</button>
     <span id="save-msg"></span>
-    <span class="ver">v1.2</span>
+    <span class="ver">v1.3</span>
+    <button class="qe-toggle" onclick="toggleQE()" id="qe-btn" aria-label="Toggle quarter-end mode">
+      <div class="qe-track"><div class="qe-thumb"></div></div>
+      <span id="qe-lbl">Q-End Mode</span>
+    </button>
   </div>
 </div>
+
+<!-- Bumper -->
+<div style="text-align:center;padding:2rem 1rem 5rem;font-size:12px;color:#9ca3af;font-family:var(--font)">
+  made reluctantly for Remote by shouting at <a href="https://claude.ai" target="_blank" style="color:#9ca3af;text-decoration:underline;text-underline-offset:3px">claude.ai</a>
+</div>
+
+<!-- Flame container — only visible in QE mode -->
+<div id="flame-canvas" style="display:none;position:fixed;bottom:0;left:0;width:100%;height:180px;pointer-events:none;z-index:9999;overflow:hidden"></div>
 
 <!-- PDF (hidden until print) -->
 <div id="pdf-view"><div class="pdf" id="pdf-content"></div></div>
@@ -460,7 +539,7 @@ function renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up)
     const rows=c.rows.map(r=>`<div class="bk-row${r.cnc?' bk-cnc':''}"><span>${r.l}</span><span class="bv">${r.v}</span></div>`).join('');
     return `<div class="fc-card">
       <div class="fc-tier"><span class="fc-dot" style="background:${c.dot}"></span><span style="color:${c.color}">${c.tier}</span></div>
-      <div class="fc-amount" style="color:${ac}">${fmt(c.fc)}</div>
+      <div class="fc-amount${c.fc<quota?' danger':''}" style="color:${ac}">${fmt(c.fc)}</div>
       <div class="fc-meta"><span style="font-size:21px;font-weight:600;color:${ac}">${ap}%</span><span style="font-size:12px;color:var(--tx2)">${c.fc>=quota?'on track':'gap: '+fmt(quota-c.fc)}</span></div>
       <div class="att-bar"><div class="att-fill" style="width:${cl(ap,0,100)}%;background:${c.dot}"></div></div>
       <div class="bkdn">${rows}</div>
@@ -548,6 +627,90 @@ function toggleDark(){
 function initTheme(){
   const saved=localStorage.getItem('theme');
   if(saved==='dark'){document.documentElement.classList.add('dark');$('theme-lbl').textContent='Light mode';}
+}
+
+const QE_MESSAGES=[
+  "Have you tried just… calling them? RIGHT NOW?",
+  "Every deal that slips is a conversation you didn't have.",
+  "The quarter ends when YOU say it ends. (It doesn't. It ends Friday.)",
+  "Discounts are a feeling. Urgency is a strategy.",
+  "Your CRM hygiene is not going to save you. Your pipeline will.",
+  "Legal turnaround is 24 hours. You have 3 days. Make it work.",
+  "If they haven't signed, they haven't said yes.",
+  "Executive sponsor engaged? No? Why not?",
+  "What's the blocker? Name it. Kill it.",
+  "Multi-thread or die. Single-threaded deals slip.",
+  "The mutual action plan exists for a reason. Use it.",
+  "Your forecast is a promise. Treat it like one.",
+  "Comfortable? Good. Now push harder.",
+  "Close date slipped again? That's a discovery problem.",
+  "If you wouldn't bet your bonus on it, it's not commit.",
+];
+
+const QE_TICKER=[
+  "CLOSE EVERYTHING  ·  CALL EVERYONE  ·  NO SLIPPAGE  ·  ",
+  "CHAMPION ENGAGED?  ·  LEGAL UNBLOCKED?  ·  SIGNED = CLOSED  ·  ",
+  "PIPELINE IS NOT REVENUE  ·  ACTIVITY ≠ PROGRESS  ·  DIAL FASTER  ·  ",
+];
+
+let qeInterval=null,qeMsgIdx=0;
+
+function toggleQE(){
+  const isQE=document.documentElement.classList.toggle('qe');
+  localStorage.setItem('qe',isQE?'on':'off');
+  $('qe-lbl').textContent=isQE?'Escape Mode':'Q-End Mode';
+  if(isQE){
+    const ticker=QE_TICKER[Math.floor(Math.random()*QE_TICKER.length)];
+    $('qe-ticker-text').textContent=ticker.repeat(4);
+    showQEPanic();
+    qeInterval=setInterval(showQEPanic,7000);
+    startFlames();
+  } else {
+    clearInterval(qeInterval);qeInterval=null;
+    $('qe-panic').textContent='';
+    stopFlames();
+  }
+  calc();
+}
+
+function startFlames(){
+  const container=$('flame-canvas');
+  container.style.display='block';
+  container.innerHTML='';
+  const count=Math.ceil(window.innerWidth/22);
+  for(let i=0;i<count;i++){
+    const col=document.createElement('div');
+    col.className='flame-col';
+    col.style.left=(i/count*100)+'%';
+    const delay=-(Math.random()*3).toFixed(2)+'s';
+    const dur=(1.2+Math.random()*1.4).toFixed(2)+'s';
+    const h=Math.round(60+Math.random()*100);
+    const w=Math.round(14+Math.random()*18);
+    col.style.cssText+=`;animation-delay:${delay};animation-duration:${dur};height:${h}px;width:${w}px;margin-left:${-(w/2)}px`;
+    // inner flicker
+    const inner=document.createElement('div');
+    inner.className='flame-inner';
+    inner.style.animationDelay=(-(Math.random()*2).toFixed(2))+'s';
+    inner.style.animationDuration=(0.6+Math.random()*0.8).toFixed(2)+'s';
+    col.appendChild(inner);
+    container.appendChild(col);
+  }
+}
+
+function stopFlames(){
+  const container=$('flame-canvas');
+  container.style.display='none';
+  container.innerHTML='';
+}
+
+function showQEPanic(){
+  const msg=QE_MESSAGES[qeMsgIdx%QE_MESSAGES.length];
+  qeMsgIdx++;
+  $('qe-panic').innerHTML=`<span style="color:#fca5a5;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:3px">Quarter-end reality check</span>${msg}`;
+}
+
+function initQE(){
+  if(localStorage.getItem('qe')==='on') toggleQE();
 }
 
 function copyUrl(){
@@ -652,7 +815,7 @@ function printPdf(){
       </div>
     </div>
     <div class="pdf-ftr">
-      <div class="pdf-ftr-l">Manager's Forecast Calculator v1.2<span class="pdot"></span>Remote</div>
+      <div class="pdf-ftr-l">Manager's Forecast Calculator v1.3<span class="pdot"></span>Remote</div>
       <div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div>
     </div>`;
   window.print();
@@ -664,7 +827,7 @@ function exportXlsx(){
   const wb=XLSX.utils.book_new();
   const mf=(ws,c)=>{if(ws[c])ws[c].z='$#,##0'};
   const pf=(ws,c)=>{if(ws[c])ws[c].z='0%'};
-  const sum=[[`${nm}${team?' — '+team:''} · ${qtr} · v1.2`],[''],
+  const sum=[[`${nm}${team?' — '+team:''} · ${qtr} · v1.3`],[''],
     ['Quota','',s.quota],['Closed QTD','',s.closed],[''],
     ['Pipeline','Open $','Conv Rate','Expected Bookings'],
     ['Commit',s.pc,s.rc,s.bk_c],['Probable',s.pp,s.rp,s.bk_p],
@@ -688,7 +851,7 @@ function exportXlsx(){
   const ws2=XLSX.utils.aoa_to_sheet(md);
   ws2['!cols']=[{wch:20},{wch:13},{wch:13},{wch:13},{wch:13},{wch:14},{wch:13}];
   XLSX.utils.book_append_sheet(wb,ws2,'Monthly Breakdown');
-  XLSX.writeFile(wb,`${nm.replace(/\s+/g,'_')}_${qtr.replace(/\s+/g,'_')}_Forecast_v1.2.xlsx`);
+  XLSX.writeFile(wb,`${nm.replace(/\s+/g,'_')}_${qtr.replace(/\s+/g,'_')}_Forecast_v1.3.xlsx`);
 }
 
 // Event wiring
@@ -696,6 +859,7 @@ $('r_cnc').addEventListener('input',function(){$('r_cnc_out').textContent=this.v
 ['r_commit','r_prob','r_up','r_pipe'].forEach(id=>$(id).addEventListener('input',function(){$(id+'_out').textContent=this.value+'%';calc();}));
 document.querySelectorAll('input[type=text]:not(.minput)').forEach(el=>el.addEventListener('input',calc));
 initTheme();
+initQE();
 loadFromUrl();
 calc();
 </script>
