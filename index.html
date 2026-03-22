@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forecast Calculator v2.3</title>
+<title>Forecast Calculator v2.4</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -49,7 +49,6 @@ html.dark .import-drawer{background:#111827;border-top-color:#374151}
 html.dark .import-zone-inner:hover{background:#111827!important}
 html.dark #import-card .import-zone-inner:hover{background:#111827}
 html.dark .settings-section{background:var(--bg);border-color:#374151}
-html.dark .settings-section-hdr{border-color:#374151}
 html.dark .settings-row{border-color:#374151}
 html.dark .settings-input{background:#1f2937;border-color:#4b5563;color:#f9fafb}
 html.dark .settings-about-item{border-color:#374151}
@@ -147,6 +146,12 @@ html.dark .nav-divider{background:#374151}
 .hero-hdr input::placeholder{color:var(--tx2)}
 .hero-sep{color:#d1d5db;font-size:16px}
 .hero-tag{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--tx2);white-space:nowrap}
+.qmode-toggle{display:inline-flex;border:var(--bdr);border-radius:20px;overflow:hidden;flex-shrink:0;margin-left:auto}
+.qmode-btn{font-family:var(--font);font-size:11px;font-weight:600;padding:3px 10px;border:none;background:transparent;color:var(--tx2);cursor:pointer;transition:background .12s,color .12s;white-space:nowrap}
+.qmode-btn.active{background:var(--blue);color:#fff}
+.qmode-btn:not(.active):hover{background:var(--bg2)}
+html.dark .qmode-toggle{border-color:#374151}
+html.dark .qmode-btn:not(.active):hover{background:#1f2937}
 .fc-cards{display:grid;grid-template-columns:repeat(3,1fr)}
 .fc-card{padding:1.25rem 1.5rem;border-right:var(--bdr)}
 .fc-card:last-child{border-right:none}
@@ -612,6 +617,10 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
       <input id="mgr_team" placeholder="Team / region" style="width:130px">
       <span class="hero-sep">·</span>
       <input id="quarter_lbl" placeholder="Q1 FY26" style="width:65px">
+      <div class="qmode-toggle" style="margin-left:auto">
+        <button class="qmode-btn active" id="qmode-current" onclick="setQMode('current')">This quarter</button>
+        <button class="qmode-btn" id="qmode-next" onclick="setQMode('next')">Next quarter</button>
+      </div>
     </div>
     <div class="fc-cards" id="fc-cards"></div>
     <div class="qbar" id="qbar"></div>
@@ -732,7 +741,7 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
     <button class="btn" onclick="exportXlsx()">Download Excel</button>
     <button class="btn" onclick="printPdf()">Download PDF</button>
     <span id="save-msg" style="font-size:12px;color:var(--green)"></span>
-    <span class="ver">v2.3</span>
+    <span class="ver">v2.4</span>
     <button class="qe-toggle" onclick="toggleQE()" id="qe-btn">
       <div class="qe-track"><div class="qe-thumb"></div></div>
       <span id="qe-lbl">Q-End Mode</span>
@@ -867,13 +876,33 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
     </div>
 
     <div class="settings-section">
-      <div class="settings-section-hdr">Salesforce integration</div>
+      <div class="settings-section-hdr">Salesforce &amp; fiscal year</div>
       <div class="settings-row">
         <div class="settings-lbl">Pipeline report URL</div>
-        <div class="settings-sub">Direct link to your SFDC pipeline report &mdash; surfaces as a quick-access chip in the import drawer so you can open and export the report without leaving the tool.</div>
+        <div class="settings-sub">Direct link to your SFDC pipeline report &mdash; surfaces as a quick-access chip in the import drawer.</div>
         <input class="settings-input" type="url" id="settings-sfdc-url" placeholder="https://remote-com.lightning.force.com/lightning/r/Report/...">
-        <div class="settings-save-row">
-          <button class="btn btn-primary" onclick="saveSettings()" style="font-size:12px">Save URL</button>
+      </div>
+      <div class="settings-row">
+        <div class="settings-lbl">Fiscal year start month</div>
+        <div class="settings-sub">The first month of your fiscal year. Drives Q1&ndash;Q4 labels and the quarter auto-populate. Set once, works every year.</div>
+        <select class="settings-input" id="settings-fy-start" style="margin-top:.625rem">
+          <option value="1">January (FY = calendar year)</option>
+          <option value="2">February</option>
+          <option value="3">March</option>
+          <option value="4">April</option>
+          <option value="5">May</option>
+          <option value="6">June</option>
+          <option value="7">July</option>
+          <option value="8">August</option>
+          <option value="9">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+        </select>
+      </div>
+      <div class="settings-row" style="background:var(--bg2);border-top:var(--bdr)">
+        <div class="settings-save-row" style="margin-top:0">
+          <button class="btn btn-primary" onclick="saveSettings()" style="font-size:12px">Save</button>
           <span class="settings-saved-msg" id="settings-saved-msg">&#10003;&nbsp;Saved</span>
         </div>
       </div>
@@ -895,7 +924,7 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
       <div class="settings-about-grid">
         <div class="settings-about-item">
           <div class="settings-about-lbl">Version</div>
-          <div class="settings-about-val">v2.3</div>
+          <div class="settings-about-val">v2.4</div>
         </div>
         <div class="settings-about-item">
           <div class="settings-about-lbl">Product</div>
@@ -916,7 +945,19 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
       <div class="settings-section-hdr">Version history</div>
       <div class="changelog-entry">
         <div class="changelog-ver">
-          <span class="changelog-ver-badge current">v2.3</span>
+          <span class="changelog-ver-badge current">v2.4</span>
+          <span class="changelog-ver-date">Mar 2026</span>
+        </div>
+        <ul class="changelog-items">
+          <li><strong>This / Next quarter toggle</strong> &mdash; switch between current and next quarter; all month logic, past-flags, and selling days update accordingly</li>
+          <li><strong>Fiscal year start setting</strong> &mdash; set your FY start month once; Q1&ndash;Q4 labels and quarter derivation stay correct every year automatically</li>
+          <li><strong>Auto-populated quarter label</strong> &mdash; hero header quarter field pre-fills from FY setting and mode; still manually overridable</li>
+          <li><strong>PDF past-month fix</strong> &mdash; locked past-month values now print correctly</li>
+        </ul>
+      </div>
+      <div class="changelog-entry">
+        <div class="changelog-ver">
+          <span class="changelog-ver-badge current">v2.4</span>
           <span class="changelog-ver-date">Mar 2026</span>
         </div>
         <ul class="changelog-items">
@@ -1667,34 +1708,131 @@ function getWeekNumber(d){
   return Math.ceil(((d-jan1)/86400000+jan1.getDay()+1)/7);
 }
 
+// ── FY-AWARE QUARTER ENGINE ──
+// Returns FY start month (1-based) from settings, defaults to 1 (January)
+function getFYStartMonth(){
+  return parseInt(getSettings().fyStart||'1')||1;
+}
+
+// Given today's date and FY start month, return the fiscal quarter info
+// for either 'current' or 'next' mode.
+// Returns: { qNum (1-4), fyYear, qStartMonth (0-based), qEndDate, isFuture }
+function getFiscalQuarterInfo(mode){
+  const now=new Date();
+  const fyStart=getFYStartMonth()-1; // 0-based
+  const calMonth=now.getMonth(); // 0-based
+
+  // How many months into the FY are we?
+  const monthsIntoFY=(calMonth-fyStart+12)%12;
+  const currentQNum=Math.floor(monthsIntoFY/3)+1; // 1-4
+
+  // FY year: if we haven't yet reached FY start, we're in the previous FY
+  // e.g. FY starts Feb, it's Jan 2027 → still FY26
+  const fyYear=calMonth>=fyStart?now.getFullYear():now.getFullYear()-1;
+
+  let qNum=currentQNum;
+  let qFyYear=fyYear;
+  if(mode==='next'){
+    qNum=currentQNum===4?1:currentQNum+1;
+    if(qNum===1)qFyYear=fyYear+1;
+  }
+
+  // Calendar month (0-based) of this fiscal quarter's start
+  const qStartMonth=(fyStart+(qNum-1)*3)%12;
+  // Year of the quarter start (handle year wrap)
+  const qStartYear=qStartMonth<fyStart?qFyYear+1:qFyYear;
+  // Quarter end = 3 months after start, last day
+  const qEndMonth=(qStartMonth+3)%12;
+  const qEndYear=qEndMonth<=qStartMonth?qStartYear+1:qStartYear;
+  const qEndDate=new Date(qEndYear,qEndMonth,0); // last day of end month
+
+  return{qNum,fyYear:qFyYear,qStartMonth,qStartYear,qEndDate,isFuture:mode==='next'};
+}
+
+function getFYLabel(info){
+  return `Q${info.qNum} FY${String(info.fyYear).slice(2)}`;
+}
+
 function getCurrentQuarterEnd(d){
-  const m=d.getMonth(); // 0-based
-  const y=d.getFullYear();
-  if(m<3)  return new Date(y,2,31);  // Q1 ends Mar 31
-  if(m<6)  return new Date(y,5,30);  // Q2 ends Jun 30
-  if(m<9)  return new Date(y,8,30);  // Q3 ends Sep 30
-  return new Date(y,11,31);           // Q4 ends Dec 31
+  return getFiscalQuarterInfo('current').qEndDate;
+}
+
+// Quarter mode state
+let qMode='current'; // 'current' | 'next'
+
+// Field IDs that are saved/restored per quarter mode
+const QMODE_FIELDS=['quota','closed','pipe_commit','pipe_prob','pipe_up','pipe_pipe',
+  'r_commit','r_prob','r_up','r_pipe','r_cnc','cnc_opps','cnc_asp','quarter_lbl',
+  ...['m1','m2','m3'].flatMap(m=>['closed','commit','prob','up'].map(k=>m+'_'+k))];
+
+function saveQModeState(mode){
+  const state={};
+  QMODE_FIELDS.forEach(id=>{const el=$(id);if(el)state[id]=el.value;});
+  try{localStorage.setItem('qmode_state_'+mode,JSON.stringify(state));}catch{}
+}
+
+function restoreQModeState(mode){
+  try{
+    const saved=localStorage.getItem('qmode_state_'+mode);
+    if(!saved)return false;
+    const state=JSON.parse(saved);
+    QMODE_FIELDS.forEach(id=>{const el=$(id);if(el&&state[id]!==undefined)el.value=state[id];});
+    return true;
+  }catch{return false;}
+}
+
+function setQMode(mode){
+  // Save current mode's state before switching
+  saveQModeState(qMode);
+  qMode=mode;
+  $('qmode-current').classList.toggle('active',mode==='current');
+  $('qmode-next').classList.toggle('active',mode==='next');
+  // Reset past-month unlocks when switching modes
+  pastUnlocked=[false,false,false];
+  // Restore saved state for the new mode, or set defaults
+  const restored=restoreQModeState(mode);
+  if(!restored){
+    // First time in this mode — auto-populate quarter label, clear pipeline fields
+    const info=getFiscalQuarterInfo(mode);
+    const lbl=$('quarter_lbl');
+    if(lbl){lbl.value=getFYLabel(info);lbl._manuallyEdited=false;}
+    // In next-quarter mode, zero out closed QTD and monthly closed (nothing closed yet)
+    if(mode==='next'){
+      ['closed','m1_closed','m2_closed','m3_closed'].forEach(id=>{const el=$(id);if(el)el.value='';});
+    }
+  }
+  renderQStatusBar();
+  calc();
 }
 
 function renderQStatusBar(){
   const bar=$('qstatus-bar');
   if(!bar)return;
   const now=new Date();
-  const qEnd=getCurrentQuarterEnd(now);
-  const days=sellDaysRemaining(now,qEnd);
+  const info=getFiscalQuarterInfo(qMode);
   const weekNum=getWeekNumber(now);
   const dateStr=now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-  const qLabel=now.getMonth()<3?'Q1':now.getMonth()<6?'Q2':now.getMonth()<9?'Q3':'Q4';
-  const fy=now.getMonth()<3?now.getFullYear():now.getFullYear(); // FY same for simplicity
-  const daysClass=days<=5?'critical':days<=15?'urgent':'';
+  const daysClass=d=>d<=5?'critical':d<=15?'urgent':'';
+  let pillHtml;
+  if(info.isFuture){
+    // For next quarter show total selling days, not days remaining
+    const qStartDate=new Date(info.qStartYear,info.qStartMonth,1);
+    // count from start of that quarter (not from today)
+    const prevDay=new Date(qStartDate);prevDay.setDate(prevDay.getDate()-1);
+    const totalDays=sellDaysRemaining(prevDay,info.qEndDate);
+    pillHtml=`<div class="qstatus-days-pill"><span class="qstatus-days">${totalDays}</span><span>selling days in ${getFYLabel(info)}</span></div>`;
+  } else {
+    const days=sellDaysRemaining(now,info.qEndDate);
+    pillHtml=`<div class="qstatus-days-pill"><span class="qstatus-days ${daysClass(days)}">${days}</span><span>selling days left</span></div>`;
+  }
   bar.innerHTML=`
     <div class="qstatus-item"><span class="qstatus-val">${dateStr}</span></div>
     <span class="qstatus-divider">&middot;</span>
     <div class="qstatus-item">Week <span class="qstatus-val">${weekNum}</span></div>
     <span class="qstatus-divider">&middot;</span>
-    <div class="qstatus-item">${qLabel} FY${String(now.getFullYear()).slice(2)}</div>
+    <div class="qstatus-item">${getFYLabel(getFiscalQuarterInfo('current'))}</div>
     <div class="qstatus-spacer"></div>
-    <div class="qstatus-days-pill"><span class="qstatus-days ${daysClass}">${days}</span><span>selling days left</span></div>`;
+    ${pillHtml}`;
 }
 
 // ══════════════════════════════════════════════════════
@@ -1707,13 +1845,19 @@ function getSettings(){
   catch{return{};}
 }
 function saveSettings(){
-  const url=$('settings-sfdc-url').value.trim()||DEFAULT_SFDC_URL;
+  const url=($('settings-sfdc-url')||{}).value||'';
+  const fyEl=$('settings-fy-start');
   const s=getSettings();
-  s.sfdcUrl=url;
+  s.sfdcUrl=url.trim()||DEFAULT_SFDC_URL;
+  if(fyEl)s.fyStart=fyEl.value;
   localStorage.setItem('app_settings',JSON.stringify(s));
-  // Update the chip link
   const link=$('sfdc-report-link');
-  if(link)link.href=url;
+  if(link)link.href=s.sfdcUrl;
+  // Re-derive quarter label with new FY start
+  const info=getFiscalQuarterInfo(qMode);
+  const lbl=$('quarter_lbl');
+  if(lbl&&!lbl._manuallyEdited)lbl.value=getFYLabel(info);
+  renderQStatusBar();
   const msg=$('settings-saved-msg');
   if(msg){msg.style.display='inline';setTimeout(()=>msg.style.display='none',2500);}
 }
@@ -1721,12 +1865,16 @@ function loadSettingsPage(){
   const s=getSettings();
   const urlEl=$('settings-sfdc-url');
   if(urlEl)urlEl.value=s.sfdcUrl||DEFAULT_SFDC_URL;
+  const fyEl=$('settings-fy-start');
+  if(fyEl)fyEl.value=s.fyStart||'1';
 }
 function resetSettings(){
   if(!confirm('Reset all column mappings and settings? This cannot be undone.'))return;
   localStorage.removeItem('sfdc_col_map');
   localStorage.removeItem('sfdc_cat_map');
   localStorage.removeItem('app_settings');
+  localStorage.removeItem('qmode_state_current');
+  localStorage.removeItem('qmode_state_next');
   const link=$('sfdc-report-link');
   if(link)link.href=DEFAULT_SFDC_URL;
   showSaveMsg('Settings reset');
@@ -1735,6 +1883,13 @@ function initSettings(){
   const s=getSettings();
   const link=$('sfdc-report-link');
   if(link)link.href=s.sfdcUrl||DEFAULT_SFDC_URL;
+  // Auto-populate quarter label on first load (if blank)
+  const lbl=$('quarter_lbl');
+  if(lbl&&!lbl.value){
+    lbl.value=getFYLabel(getFiscalQuarterInfo('current'));
+  }
+  // Track manual edits so we don't overwrite user's custom label
+  if(lbl)lbl.addEventListener('input',()=>{lbl._manuallyEdited=true;});
 }
 
 // ══════════════════════════════════════════════════════
@@ -1768,6 +1923,8 @@ function calc(){
   renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up);
   renderMonthly(fc_commit,fc_prob,fc_up,quota);
   S={quota,closed,pc,pp,pu,pp2,rc,rp,ru,rpp,rcnc,bk_c,bk_p,bk_u,bk_pp,opps,asp,cnc_pipe,cnc_rev,fc_commit,fc_prob,fc_up,fc_full};
+  // Persist current mode state so switching preserves values
+  saveQModeState(qMode);
 }
 
 function renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up){
@@ -1817,14 +1974,14 @@ function getQuarterMonthLabels(){
 
 function getPastMonthFlags(){
   // Returns [m1IsPast, m2IsPast, m3IsPast]
-  // A month is "past" if it has fully ended (current date is past last day of that month)
+  // In "next quarter" mode nothing is past — it's all future planning
+  if(qMode==='next')return[false,false,false];
   const now=new Date();
-  const curMonth=now.getMonth(); // 0-based
-  const qStart=Math.floor(curMonth/3)*3; // first month of this quarter, 0-based
-  const y=now.getFullYear();
+  const info=getFiscalQuarterInfo('current');
   return [0,1,2].map(offset=>{
-    const monthIdx=qStart+offset;
-    const lastDay=new Date(y,monthIdx+1,0); // last day of that month
+    const mIdx=(info.qStartMonth+offset)%12;
+    const yr=mIdx<info.qStartMonth?info.qStartYear+1:info.qStartYear;
+    const lastDay=new Date(yr,mIdx+1,0);
     return now>lastDay;
   });
 }
@@ -1949,7 +2106,6 @@ function printPdf(){
   const dateStr=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   const ms=['m1','m2','m3'],mLbls=['Month 1','Month 2','Month 3'];
   const cats=[{key:'commit',label:'Commit forecast',qfc:s.fc_commit,color:'#1a56db'},{key:'prob',label:'Probable forecast',qfc:s.fc_prob,color:'#0d7c3d'},{key:'up',label:'Upside forecast',qfc:s.fc_up,color:'#b45309'}];
-  const pctStr=(f,q)=>q>0?Math.round(f/q*100)+'%':'—';
   const varStr=(t,q)=>{const d=t-q;if(Math.abs(d)<1)return'—';return(d>0?'+':'')+fmt(d);};
   const cv=ms.map(m=>getMv(m,'closed')),ct=cv.reduce((a,b)=>a+b,0);
   const q=s.quota>0,wC=q?cl(s.closed/s.quota*100,0,100):0;
@@ -1997,7 +2153,7 @@ function printPdf(){
         <tbody><tr><td>Closed</td>${cv.map(v=>`<td>${v>0?fmt(v):'—'}</td>`).join('')}<td>${fmt(ct)}</td><td>${varStr(ct,s.closed)}</td><td style="color:#9ca3af">${fmt(s.closed)}</td></tr>${mRows}</tbody></table>
       </div>
     </div>
-    <div class="pdf-ftr"><div class="pdf-ftr-l">Manager's Forecast Calculator v2.3<span class="pdot"></span>Remote</div><div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div></div>`;
+    <div class="pdf-ftr"><div class="pdf-ftr-l">Manager's Forecast Calculator v2.4<span class="pdot"></span>Remote</div><div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div></div>`;
   window.print();
 }
 
@@ -2031,7 +2187,7 @@ function exportXlsx(){
   const ws2=XLSX.utils.aoa_to_sheet(md);
   ws2['!cols']=[{wch:20},{wch:13},{wch:13},{wch:13},{wch:13},{wch:14},{wch:13}];
   XLSX.utils.book_append_sheet(wb,ws2,'Monthly Breakdown');
-  XLSX.writeFile(wb,`${nm.replace(/\s+/g,'_')}_${qtr.replace(/\s+/g,'_')}_Forecast_v2.3.xlsx`);
+  XLSX.writeFile(wb,`${nm.replace(/\s+/g,'_')}_${qtr.replace(/\s+/g,'_')}_Forecast_v2.4.xlsx`);
 }
 
 // ══════════════════════════════════════════════════════
@@ -2043,7 +2199,15 @@ document.querySelectorAll('input[type=text]:not(.minput)').forEach(el=>el.addEve
 initTheme();
 initQE();
 initSettings();
-loadFromUrl();
+loadFromUrl(); // URL params take precedence over saved state
+// If no URL params were loaded, restore saved state for current mode
+if(![...new URLSearchParams(location.search).keys()].length){
+  restoreQModeState(qMode);
+}
+// Sync slider display values after any state restore
+['r_commit','r_prob','r_up','r_pipe','r_cnc'].forEach(id=>{
+  const el=$(id);if(el)$(id+'_out').textContent=el.value+'%';
+});
 restoreImportMeta();
 renderQStatusBar();
 calc();
