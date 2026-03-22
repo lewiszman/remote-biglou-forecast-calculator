@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manager's Forecast Calculator v1.3</title>
+<title>Forecast Calculator v2.3</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -16,10 +16,12 @@
   --tx:#111827;--tx2:#6b7280;
   --bdr:0.5px solid #e5e7eb;
   --rm:8px;--rl:12px;
-  --font:system-ui,-apple-system,'Segoe UI',sans-serif
+  --font:system-ui,-apple-system,'Segoe UI',sans-serif;
+  --sidebar-w:220px;
+  --topbar-h:52px;
 }
 html.dark{--bg:#1f2937;--bg2:#111827;--tx:#f9fafb;--tx2:#9ca3af;--bdr:0.5px solid #374151}
-html.dark input{border-color:#4b5563;background:#1f2937}
+html.dark input,html.dark select{border-color:#4b5563;background:#1f2937;color:#f9fafb}
 html.dark .att-bar,html.dark .lin-bar{background:#374151}
 html.dark .ev-c,html.dark .pc{background:#1e3a5f;color:#93c5fd}
 html.dark .ev-p,html.dark .pp{background:#14342a;color:#6ee7b7}
@@ -28,14 +30,48 @@ html.dark .ev-g,html.dark .pg{background:#374151;color:#9ca3af}
 html.dark .hint{background:#374151;border-color:#4b5563}
 html.dark .hint-ic{background:#4b5563}
 html.dark .qbar-track{background:#374151}
+html.dark .sidebar{background:var(--bg);border-right:var(--bdr)}
+html.dark .topbar{background:var(--bg);border-bottom:var(--bdr)}
+html.dark .nav-item:hover{background:var(--bg2)}
+html.dark .nav-item.active{background:#1e3a5f;color:#93c5fd}
+html.dark .rep-category-card{background:var(--bg)}
+html.dark .rep-tip-box-blue{background:#1e3a5f;border-color:#1d4ed8}
+html.dark .rep-tip-box-amber{background:#451a03;border-color:#92400e}
+html.dark .rep-rollup{border-color:#1a56db}
+html.dark .rep-rollup-hdr{background:#1e3a5f;border-color:#1a56db}
+html.dark .rrc-mgr{background:#1e3a5f}
 html.dark .minput{background:#1f2937;border-color:#4b5563;color:#f9fafb}
+/* import chip/drawer/settings dark */
+html.dark .import-chip{background:var(--bg2);border-color:#374151}
+html.dark .import-chip:hover{background:#1e3a5f;border-color:var(--blue);color:#93c5fd}
+html.dark .import-chip.has-data{background:#1e3a5f;border-color:#3b82f6;color:#93c5fd}
+html.dark .import-drawer{background:#111827;border-top-color:#374151}
+html.dark .import-zone-inner:hover{background:#111827!important}
+html.dark #import-card .import-zone-inner:hover{background:#111827}
+html.dark .settings-section{background:var(--bg);border-color:#374151}
+html.dark .settings-section-hdr{border-color:#374151}
+html.dark .settings-row{border-color:#374151}
+html.dark .settings-input{background:#1f2937;border-color:#4b5563;color:#f9fafb}
+html.dark .settings-about-item{border-color:#374151}
+html.dark .settings-section-hdr{background:var(--bg2)}
+html.dark .wizard-modal{background:#1f2937}
+html.dark .wizard-hdr{border-color:#374151}
+html.dark .wizard-body{border-color:#374151}
+html.dark .wiz-map-row{border-color:#374151}
+html.dark .wiz-map-row:hover{background:#111827}
+html.dark .preview-row:hover{background:#111827}
+html.dark .preview-tbl th{background:#111827;border-color:#374151}
+html.dark .preview-tbl td{border-color:#374151}
+html.dark .import-badge{background:#1e3a5f;border-color:#3b82f6;color:#93c5fd}
+html.dark .modal-overlay{background:rgba(0,0,0,.6)}
+html.dark .wiz-step-indicator span.active{background:var(--blue)}
+html.dark .wiz-step-indicator span{background:#374151}
 
-/* ── QUARTER-END MODE ── */
+/* ── QE MODE ── */
 @keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-3px)}30%{transform:translateX(3px)}45%{transform:translateX(-2px)}60%{transform:translateX(2px)}75%{transform:translateX(-1px)}}
 @keyframes pulse-red{0%,100%{opacity:1}50%{opacity:.6}}
 @keyframes ticker-scroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 @keyframes border-flash{0%,100%{border-color:#dc2626}50%{border-color:#ff6b6b}}
-@keyframes bg-pulse{0%,100%{background:#1a0505}50%{background:#2d0a0a}}
 html.qe body{background:#1a0505}
 html.qe .wrap .hero,html.qe .wrap .card{border-color:#7f1d1d}
 html.qe .att-bar{background:#7f1d1d}
@@ -60,45 +96,49 @@ html.qe .qe-toggle{background:#dc2626;border-color:#dc2626;color:#fff;animation:
 .qe-thumb{width:12px;height:12px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .2s}
 html.qe .qe-track{background:#dc2626}
 html.qe .qe-thumb{transform:translateX(12px)}
-@keyframes flame-rise{
-  0%{transform:scaleY(1) scaleX(1) translateY(0);opacity:.9}
-  25%{transform:scaleY(.85) scaleX(1.08) translateY(4px);opacity:1}
-  50%{transform:scaleY(1.1) scaleX(.92) translateY(-6px);opacity:.85}
-  75%{transform:scaleY(.9) scaleX(1.05) translateY(2px);opacity:.95}
-  100%{transform:scaleY(1) scaleX(1) translateY(0);opacity:.9}
-}
-@keyframes flame-flicker{
-  0%,100%{opacity:1;transform:scaleX(1)}
-  33%{opacity:.7;transform:scaleX(.85)}
-  66%{opacity:.9;transform:scaleX(1.1)}
-}
-.flame-col{
-  position:absolute;
-  bottom:0;
-  border-radius:50% 50% 20% 20% / 60% 60% 40% 40%;
-  background:linear-gradient(to top,#fff700 0%,#ff8c00 30%,#ff3300 60%,#cc0000 80%,transparent 100%);
-  transform-origin:bottom center;
-  animation:flame-rise 1.8s ease-in-out infinite;
-  opacity:.9;
-}
-.flame-inner{
-  position:absolute;
-  bottom:0;
-  left:20%;
-  width:60%;
-  height:70%;
-  border-radius:50% 50% 20% 20% / 60% 60% 40% 40%;
-  background:linear-gradient(to top,#ffffff 0%,#ffee00 25%,#ffaa00 60%,transparent 100%);
-  transform-origin:bottom center;
-  animation:flame-flicker 0.8s ease-in-out infinite;
-  opacity:.8;
-}
-body{font-family:var(--font);background:var(--bg2);color:var(--tx);min-height:100vh;padding:1.5rem 1rem}
+@keyframes flame-rise{0%{transform:scaleY(1) scaleX(1) translateY(0);opacity:.9}25%{transform:scaleY(.85) scaleX(1.08) translateY(4px);opacity:1}50%{transform:scaleY(1.1) scaleX(.92) translateY(-6px);opacity:.85}75%{transform:scaleY(.9) scaleX(1.05) translateY(2px);opacity:.95}100%{transform:scaleY(1) scaleX(1) translateY(0);opacity:.9}}
+@keyframes flame-flicker{0%,100%{opacity:1;transform:scaleX(1)}33%{opacity:.7;transform:scaleX(.85)}66%{opacity:.9;transform:scaleX(1.1)}}
+.flame-col{position:absolute;bottom:0;border-radius:50% 50% 20% 20% / 60% 60% 40% 40%;background:linear-gradient(to top,#fff700 0%,#ff8c00 30%,#ff3300 60%,#cc0000 80%,transparent 100%);transform-origin:bottom center;animation:flame-rise 1.8s ease-in-out infinite;opacity:.9}
+.flame-inner{position:absolute;bottom:0;left:20%;width:60%;height:70%;border-radius:50% 50% 20% 20% / 60% 60% 40% 40%;background:linear-gradient(to top,#ffffff 0%,#ffee00 25%,#ffaa00 60%,transparent 100%);transform-origin:bottom center;animation:flame-flicker 0.8s ease-in-out infinite;opacity:.8}
+
 input{font-family:var(--font);color:var(--tx);background:var(--bg);border:0.5px solid #d1d5db;border-radius:var(--rm);padding:6px 10px}
 input:focus{outline:2px solid var(--blue);outline-offset:1px}
 input[type=range]{background:transparent;border:none;padding:0;cursor:pointer}
+select{font-family:var(--font);color:var(--tx);background:var(--bg);border:0.5px solid #d1d5db;border-radius:var(--rm);padding:6px 10px;cursor:pointer}
+select:focus{outline:2px solid var(--blue);outline-offset:1px}
 .wrap{max-width:940px;margin:0 auto}
-.app-ver{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);margin-bottom:1rem}
+
+/* ── APP SHELL ── */
+body{font-family:var(--font);background:var(--bg2);color:var(--tx);min-height:100vh;display:flex;flex-direction:column}
+
+/* ── TOP BAR ── */
+.topbar{height:var(--topbar-h);background:var(--bg);border-bottom:var(--bdr);display:flex;align-items:center;gap:12px;padding:0 1.25rem;position:fixed;top:0;left:0;right:0;z-index:200}
+.topbar-hamburger{width:32px;height:32px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer;border-radius:var(--rm);border:var(--bdr);background:var(--bg);transition:background .15s;flex-shrink:0}
+.topbar-hamburger:hover{background:var(--bg2)}
+.hb-line{width:14px;height:1.5px;background:var(--tx2);border-radius:2px}
+.topbar-brand{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx2)}
+.topbar-module{font-size:13px;font-weight:600;color:var(--tx)}
+.topbar-sep{color:var(--tx2);font-size:14px}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:var(--topbar-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--bg);border-right:var(--bdr);z-index:150;transform:translateX(-100%);transition:transform .22s cubic-bezier(.4,0,.2,1);overflow-y:auto;padding:1rem 0 2rem}
+.sidebar.open{transform:translateX(0)}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:140;opacity:0;pointer-events:none;transition:opacity .2s}
+.sidebar-overlay.visible{opacity:1;pointer-events:all}
+.nav-section-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);padding:.5rem 1.25rem .35rem;margin-top:.5rem}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.6rem 1.25rem;cursor:pointer;font-size:13px;font-weight:500;color:var(--tx2);transition:background .12s,color .12s;user-select:none}
+.nav-item:hover{background:var(--bg2);color:var(--tx)}
+.nav-item.active{color:var(--blue);font-weight:600;background:#eff6ff}
+html.dark .nav-item.active{background:#1e3a5f}
+.nav-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.nav-divider{height:1px;background:#e5e7eb;margin:.75rem 1.25rem}
+html.dark .nav-divider{background:#374151}
+
+/* ── MAIN CONTENT ── */
+.app-body{margin-top:var(--topbar-h);flex:1;padding:1.5rem 1rem}
+.view{display:none}
+.view.active{display:block}
 
 /* ── HERO ── */
 .hero{border-radius:var(--rl);border:var(--bdr);background:var(--bg);overflow:hidden;margin-bottom:1.5rem}
@@ -139,17 +179,24 @@ input[type=range]{background:transparent;border:none;padding:0;cursor:pointer}
 .irow-2{grid-template-columns:1fr auto}
 .irow-3{grid-template-columns:1fr auto auto}
 .subrow{padding-left:1.75rem;background:var(--bg2)}
+.totals-row{padding-left:1.75rem;background:var(--bg);border-top:1px solid #e5e7eb}
+.totals-val{font-size:13px;font-weight:700;color:var(--tx);min-width:90px;text-align:right;display:inline-block}
+.totals-exp{color:var(--blue)}
+html.dark .totals-row{border-top-color:#374151}
 .subhdr{background:var(--bg2);grid-template-columns:1fr auto auto;padding:7px 1.25rem;align-items:center}
 .ilbl{font-size:14px;color:var(--tx);padding-top:1px}
 .col-hdr{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);min-width:110px;text-align:right;white-space:nowrap}
 .imoney{width:115px;font-size:14px;text-align:right}
 .iprefix{font-size:13px;color:var(--tx2)}
 .ifield{display:flex;align-items:center;gap:6px;padding-top:1px}
+.imported-field{background:#eff6ff!important;border-color:#93c5fd!important}
+html.dark .imported-field{background:#1e3a5f!important;border-color:#3b82f6!important}
 
 /* ── HINT CHIP ── */
-.hint{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--tx2);background:var(--bg2);border:var(--bdr);border-radius:20px;padding:2px 8px;margin-top:4px;line-height:1.4}
+.hint{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--tx2);background:var(--bg2);border:var(--bdr);border-radius:20px;padding:2px 8px;margin-top:4px;line-height:1.4;text-decoration:none}
 .hint-ic{width:12px;height:12px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--tx2);flex-shrink:0}
-@media(prefers-color-scheme:dark){.hint{background:#1f2937}.hint-ic{background:#374151}}
+.hint:hover{background:#eff6ff;border-color:var(--blue);color:var(--blue)}
+.import-drop-hints .hint{margin-top:0;cursor:pointer;font-family:var(--font)}
 
 /* ── PILLS ── */
 .pill{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px}
@@ -167,88 +214,219 @@ input[type=range]{background:transparent;border:none;padding:0;cursor:pointer}
 .cright{display:flex;align-items:center;gap:8px}
 .cright input[type=range]{width:100px}
 .cval{font-size:13px;font-weight:600;min-width:32px;text-align:right;color:var(--tx)}
-.crow-sub{font-size:12px;color:var(--tx2);margin-top:1px}
 
-/* ── C&C SECTION ── */
+/* ── C&C ── */
 .cnc-inputs{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:1.25rem;border-bottom:var(--bdr)}
 .cnc-fld label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);display:block;margin-bottom:6px}
 .cnc-fld .frow{display:flex;align-items:center;gap:6px}
-.cnc-fld input{font-size:15px;flex:1;min-width:0}
-.cnc-hint{padding:.6rem 1.25rem;border-bottom:var(--bdr);background:var(--bg2)}
-.cnc-rate-row{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.25rem;border-bottom:var(--bdr);flex-wrap:wrap;gap:6px}
-.cnc-chain{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:6px;padding:.875rem 1.25rem;border-bottom:var(--bdr)}
-.cs{text-align:center}
-.cs-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:4px}
-.cs-val{font-size:17px;font-weight:600;color:var(--tx)}
-.cs-sub{font-size:11px;color:var(--tx2);margin-top:2px}
-.ca{font-size:16px;color:var(--tx2);text-align:center}
-.cnc-out{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:1rem 1.25rem}
-.cnc-res{background:var(--bg2);border-radius:var(--rm);padding:.875rem 1rem}
-.cnc-res .cr-l{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:4px}
-.cnc-res .cr-v{font-size:21px;font-weight:600}
-.cnc-res .cr-s{font-size:12px;color:var(--tx2);margin-top:3px}
-.cnc-note{padding:.7rem 1.25rem;font-size:12px;color:var(--tx2);background:var(--bg2);border-top:var(--bdr)}
+.cnc-chain{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:center;gap:8px;padding:.875rem 1.25rem;border-bottom:var(--bdr);font-size:13px}
+.ca{font-size:18px;color:var(--tx2);text-align:center}
+.cc{text-align:center}
+.cc-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);margin-bottom:3px}
+.cc-val{font-size:14px;font-weight:700;color:var(--tx)}
+.cc-rate{font-size:12px;color:var(--tx2);font-weight:600}
+.cnc-out{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:1rem 1.25rem}
+.cnc-res{background:var(--bg2);border:var(--bdr);border-radius:var(--rm);padding:.75rem 1rem}
+.cr-l{font-size:12px;color:var(--tx2);margin-bottom:4px}
+.cr-v{font-size:18px;font-weight:700}
+.cr-s{font-size:11px;color:var(--tx2);margin-top:2px}
+.cnc-note{padding:.75rem 1.25rem;font-size:12px;color:var(--tx2);border-top:var(--bdr);background:var(--bg2)}
 
 /* ── MONTHLY TABLE ── */
-table.mt{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
-table.mt th{font-size:11px;font-weight:600;color:var(--tx2);padding:7px 10px;text-align:right;border-bottom:var(--bdr);letter-spacing:.04em;text-transform:uppercase}
-table.mt th:first-child{text-align:left;width:145px}
-table.mt td{padding:7px 10px;text-align:right;border-bottom:var(--bdr);vertical-align:middle}
-table.mt td:first-child{text-align:left;color:var(--tx2);font-size:12px}
-table.mt tr:last-child td{border-bottom:none}
-table.mt .tr-lin td{background:var(--bg2)}
-.minput{width:88px;font-size:13px;text-align:right;padding:3px 6px}
-.lin-val{font-size:12px;font-weight:600}
-.lin-bar{height:3px;border-radius:2px;background:#e5e7eb;margin-top:3px;overflow:hidden}
+.mt{width:100%;border-collapse:collapse;font-size:13px}
+.mt th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);padding:8px 10px;border-bottom:var(--bdr);text-align:right;white-space:nowrap}
+.mt th:first-child{text-align:left}
+.mt td{padding:8px 10px;border-bottom:var(--bdr);text-align:right;vertical-align:middle}
+.mt td:first-child{text-align:left}
+.mt tr:last-child td{border-bottom:none}
+.tr-lin td{background:var(--bg2)}
+.minput{width:90px;font-size:13px;text-align:right;padding:5px 8px}
+.past-month-cell{background:var(--bg2)!important}
+.past-input{background:var(--bg2)!important;color:var(--tx2)!important;border-color:transparent!important}
+.past-month-val{font-size:13px;font-weight:600;color:var(--tx2)}
+.past-unlock-btn{background:none;border:none;cursor:pointer;font-size:11px;margin-left:5px;opacity:.4;vertical-align:middle;padding:0;color:var(--tx2);font-family:var(--font)}
+.past-unlock-btn:hover{opacity:1;color:var(--blue)}
+.past-unlocked{background:#fffbeb!important;border-color:#fde68a!important}
+html.dark .past-input{background:#111827!important;border-color:transparent!important}
+html.dark .past-month-cell{background:#111827!important}
+html.dark .past-unlocked{background:#3d2b0a!important;border-color:#92400e!important}
+.lin-val{font-size:11px;color:var(--tx2);margin-bottom:2px;text-align:right}
+.lin-bar{height:3px;border-radius:2px;background:#e5e7eb;overflow:hidden}
 .lin-fill{height:100%;border-radius:2px;transition:width .3s}
-.var-pos{color:var(--green);font-weight:600;font-size:12px}
-.var-neg{color:var(--red);font-weight:600;font-size:12px}
-.var-zero{color:var(--tx2);font-size:12px}
-.warn-strip{display:flex;align-items:center;gap:8px;padding:.55rem 1rem;background:#fef2f2;border-bottom:var(--bdr);font-size:12px;color:var(--red)}
-.warn-ic{width:14px;height:14px;border-radius:50%;background:var(--red);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.over-badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:1px 5px;border-radius:10px;background:#fef2f2;color:var(--red);margin-left:5px;vertical-align:middle}
+.var-pos{color:var(--green);font-weight:600}.var-neg{color:var(--red);font-weight:600}.var-zero{color:var(--tx2)}
+.over-badge{background:#fee2e2;color:var(--red);font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:4px}
+.warn-strip{background:#fef3c7;border:1px solid #fde68a;border-radius:var(--rm);padding:.5rem .875rem;font-size:12px;color:#92400e;display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.warn-ic{font-weight:700;font-size:13px}
 
 /* ── ACTIONS ── */
-.actions{display:flex;gap:8px;margin-top:1.25rem;align-items:center;flex-wrap:wrap}
-.btn{padding:8px 16px;font-size:13px;font-weight:600;border-radius:var(--rm);cursor:pointer;border:var(--bdr);background:var(--bg);color:var(--tx);transition:background .15s;white-space:nowrap}
+.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:1.25rem 0 .5rem;padding-bottom:.5rem}
+.btn{font-family:var(--font);font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;border:var(--bdr);background:var(--bg);color:var(--tx);cursor:pointer;transition:background .12s,border-color .12s;white-space:nowrap}
 .btn:hover{background:var(--bg2)}
-.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
-.btn-primary:hover{background:var(--blue-dk)}
-#save-msg{font-size:12px;color:var(--tx2);display:none}
+.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-dk);border-color:var(--blue-dk)}
+.btn-outline-blue{border-color:var(--blue);color:var(--blue)}
+.btn-outline-blue:hover{background:#eff6ff}
 .ver{font-size:11px;color:var(--tx2);margin-left:auto}
-.theme-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;padding:5px 10px;border-radius:20px;border:var(--bdr);background:var(--bg);font-size:12px;font-weight:600;color:var(--tx2);transition:background .15s;user-select:none}
-.theme-toggle:hover{background:var(--bg2)}
-.toggle-track{width:28px;height:16px;border-radius:8px;background:#d1d5db;position:relative;transition:background .2s;flex-shrink:0}
-.toggle-thumb{width:12px;height:12px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .2s}
-html.dark .toggle-track{background:var(--blue)}
-html.dark .toggle-thumb{transform:translateX(12px)}
 
-/* ── RESPONSIVE ── */
-@media(max-width:640px){
-  .fc-cards{grid-template-columns:1fr}
-  .fc-card{border-right:none;border-bottom:var(--bdr)}
-  .fc-card:last-child{border-bottom:none}
-  .irow-3{grid-template-columns:1fr auto}
-  .irow-3 .exp-val{display:none}
-  .subhdr{grid-template-columns:1fr auto}
-  .subhdr .col-hdr:last-child{display:none}
-  .cnc-inputs{grid-template-columns:1fr}
-  .cnc-chain{grid-template-columns:1fr auto 1fr}
-  .cnc-chain .ca:last-of-type,.cnc-chain .cs:last-of-type{display:none}
-  .cnc-out{grid-template-columns:1fr}
-  .qbar{gap:.75rem}
-  body{padding:1rem .75rem}
-  .imoney{width:100px}
-}
-@media(max-width:480px){
-  .fc-amount{font-size:22px}
-  .hero-hdr{gap:6px}
-}
+/* ── QUARTER STATUS BAR ── */
+.qstatus-bar{display:flex;align-items:center;gap:.75rem;background:var(--bg);border:var(--bdr);border-radius:var(--rl);padding:.5rem 1.25rem;margin-bottom:1rem;font-size:12px;color:var(--tx2)}
+.qstatus-item{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.qstatus-val{font-weight:700;color:var(--tx)}
+.qstatus-divider{color:#e5e7eb;font-size:14px}
+.qstatus-spacer{flex:1}
+.qstatus-days-pill{display:flex;align-items:center;gap:5px;background:var(--bg2);border:var(--bdr);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;white-space:nowrap}
+.qstatus-days{font-weight:700;color:var(--green)}
+.qstatus-days.urgent{color:var(--amber)}
+.qstatus-days.critical{color:var(--red)}
+html.dark .qstatus-bar{background:var(--bg)}
+html.dark .qstatus-days-pill{background:var(--bg2);border-color:#374151}
+
+/* ── BOTTOM IMPORT ZONE ── */
+.import-zone-inner{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;cursor:pointer;transition:background .15s;flex-wrap:wrap}
+.import-zone-inner:hover{background:var(--bg2)}
+.import-zone-hints{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
+.import-status-row{display:flex}
+html.dark #import-card{background:var(--bg)}
+html.dark .import-zone-inner:hover{background:#111827}
+
+/* ── IMPORT ZONE ── */
+.import-zone{border:1.5px dashed #d1d5db;border-radius:var(--rl);background:var(--bg);padding:2rem 1.5rem;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;position:relative}
+.import-zone:hover,.import-zone.drag-over{border-color:var(--blue);background:#f8fbff}
+.import-icon{font-size:28px;margin-bottom:.75rem;display:block}
+.import-title{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:.25rem}
+.import-sub{font-size:12px;color:var(--tx2);margin-bottom:.875rem}
+.import-actions{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+#file-input{display:none}
+.import-badge{display:inline-flex;align-items:center;gap:5px;background:#eff6ff;border:1px solid #bfdbfe;color:var(--blue);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.import-badge-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.import-status-row{width:100%;margin-top:.5rem;display:flex;align-items:center;gap:8px}
+.settings-page{max-width:620px}
+.settings-page-hdr{margin-bottom:1.75rem}
+.settings-page-hdr h2{font-size:20px;font-weight:700;color:var(--tx);margin-bottom:.375rem}
+.settings-page-hdr p{font-size:13px;color:var(--tx2);line-height:1.6}
+.settings-section{background:var(--bg);border:var(--bdr);border-radius:var(--rl);overflow:hidden;margin-bottom:1rem}
+.settings-section-hdr{padding:.75rem 1.25rem;border-bottom:var(--bdr);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);background:var(--bg2)}
+.settings-row{padding:1.125rem 1.25rem;border-bottom:var(--bdr)}
+.settings-row:last-child{border-bottom:none}
+.settings-lbl{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:4px}
+.settings-sub{font-size:12px;color:var(--tx2);line-height:1.55}
+.settings-input{font-family:var(--font);font-size:13px;color:var(--tx);background:var(--bg);border:var(--bdr);border-radius:var(--rm);padding:8px 11px;width:100%;margin-top:.625rem}
+.settings-input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.settings-save-row{display:flex;align-items:center;gap:8px;margin-top:.75rem}
+.settings-saved-msg{font-size:12px;color:var(--green);display:none;font-weight:600}
+.settings-about-grid{display:grid;grid-template-columns:1fr 1fr}
+.settings-about-item{padding:1rem 1.25rem;border-right:var(--bdr);border-bottom:var(--bdr)}
+.settings-about-item:nth-child(even){border-right:none}
+.settings-about-item:nth-last-child(-n+2){border-bottom:none}
+.settings-about-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx2);margin-bottom:4px}
+.settings-about-val{font-size:12px;color:var(--tx);line-height:1.5}
+
+/* ── WIZARD MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.hidden{display:none}
+.wizard-modal{background:var(--bg);border-radius:var(--rl);width:100%;max-width:620px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.wizard-hdr{padding:1.25rem 1.5rem;border-bottom:var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.wizard-title{font-size:16px;font-weight:700;color:var(--tx)}
+.wizard-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--tx2);line-height:1;padding:2px;border-radius:4px}
+.wizard-close:hover{color:var(--tx)}
+.wizard-body{flex:1;overflow-y:auto;padding:1.25rem 1.5rem}
+.wizard-footer{padding:1rem 1.5rem;border-top:var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0}
+.wiz-step-indicator{display:flex;align-items:center;gap:4px}
+.wiz-step-indicator span{width:8px;height:8px;border-radius:50%;background:#e5e7eb;transition:background .2s}
+.wiz-step-indicator span.active{background:var(--blue)}
+.wiz-step-desc{font-size:12px;color:var(--tx2)}
+
+/* step 1 — file info */
+.wiz-file-info{background:var(--bg2);border:var(--bdr);border-radius:var(--rm);padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px}
+.wiz-file-icon{font-size:24px;flex-shrink:0}
+.wiz-file-name{font-size:13px;font-weight:600;color:var(--tx)}
+.wiz-file-meta{font-size:12px;color:var(--tx2)}
+
+/* step 2 — mapping */
+.wiz-map-section{margin-bottom:1.25rem}
+.wiz-map-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2);margin-bottom:.625rem;padding-bottom:.375rem;border-bottom:var(--bdr)}
+.wiz-map-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center;padding:.5rem 0;border-bottom:var(--bdr)}
+.wiz-map-row:last-child{border-bottom:none}
+.wiz-map-row:hover{background:var(--bg2);margin:0 -.5rem;padding:.5rem;border-radius:var(--rm)}
+.wiz-field-name{font-size:13px;font-weight:600;color:var(--tx)}
+.wiz-field-desc{font-size:11px;color:var(--tx2);margin-top:1px}
+.wiz-field-req{font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.04em}
+.wiz-map-select{width:100%;font-size:13px}
+.wiz-val-section{margin-bottom:1.25rem}
+.wiz-val-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center;padding:.5rem 0;border-bottom:var(--bdr)}
+.wiz-val-row:last-child{border-bottom:none}
+.wiz-val-label{font-size:13px;color:var(--tx)}
+.wiz-val-sub{font-size:11px;color:var(--tx2)}
+
+/* step 3 — preview */
+.preview-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
+.preview-stat{background:var(--bg2);border:var(--bdr);border-radius:var(--rm);padding:.875rem 1rem;text-align:center}
+.preview-stat-val{font-size:20px;font-weight:700;color:var(--tx);margin-bottom:2px}
+.preview-stat-lbl{font-size:11px;color:var(--tx2)}
+.preview-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:1rem}
+.preview-tbl th{background:var(--bg2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);padding:6px 10px;text-align:right;border-bottom:1px solid #e5e7eb;position:sticky;top:0}
+.preview-tbl th:first-child{text-align:left}
+.preview-tbl td{padding:6px 10px;border-bottom:1px solid #f3f4f6;text-align:right;vertical-align:middle}
+.preview-tbl td:first-child{text-align:left;font-weight:500;color:var(--tx)}
+.preview-row:hover{background:var(--bg2)}
+.preview-tbl-wrap{max-height:220px;overflow-y:auto;border:var(--bdr);border-radius:var(--rm)}
+.wiz-warn{background:#fef3c7;border:1px solid #fde68a;border-radius:var(--rm);padding:.75rem 1rem;font-size:12px;color:#92400e;margin-bottom:1rem}
+.wiz-success{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--rm);padding:.75rem 1rem;font-size:12px;color:#166534;margin-bottom:1rem}
+
+/* ── REP VIEW ── */
+.rep-intro{background:var(--bg);border:var(--bdr);border-radius:var(--rl);padding:1.5rem;margin-bottom:1.5rem}
+.rep-intro h2{font-size:18px;font-weight:700;color:var(--tx);margin-bottom:.5rem}
+.rep-intro p{font-size:14px;color:var(--tx2);line-height:1.6}
+.rep-categories{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.rep-category-card{background:var(--bg);border:var(--bdr);border-radius:var(--rl);overflow:hidden}
+.rep-cat-header{padding:.875rem 1.25rem;border-bottom:var(--bdr);display:flex;align-items:center;gap:10px}
+.rep-cat-accent{width:4px;height:28px;border-radius:2px;flex-shrink:0}
+.rep-cat-title{font-size:14px;font-weight:700;color:var(--tx)}
+.rep-cat-body{padding:1rem 1.25rem}
+.rep-cat-what{font-size:13px;color:var(--tx);line-height:1.55;margin-bottom:.75rem}
+.rep-cat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2);margin-bottom:.35rem;margin-top:.75rem}
+.rep-cat-examples{font-size:12px;color:var(--tx2);line-height:1.5}
+.rep-tip-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--rm);padding:.75rem 1rem;margin-top:.75rem}
+html.dark .rep-tip-box{background:#052e16;border-color:#166534}
+.rep-tip-box-blue{background:#eff6ff;border-color:#bfdbfe}
+.rep-tip-box-amber{background:#fffbeb;border-color:#fde68a}
+.rep-tip-box-gray{background:var(--bg2);border:var(--bdr)}
+.rep-tip-icon{font-size:11px;font-weight:700;margin-bottom:3px;color:var(--tx2)}
+.rep-tip-text{font-size:12px;line-height:1.5;color:var(--tx2)}
+.rep-rollup{background:var(--bg);border:2px solid var(--blue);border-radius:var(--rl);overflow:hidden;margin-bottom:1.5rem}
+.rep-rollup-hdr{background:#eff6ff;padding:1rem 1.5rem;border-bottom:2px solid var(--blue);display:flex;align-items:center;gap:8px}
+.rep-rollup-title{font-size:13px;font-weight:700;color:var(--blue)}
+.rep-rollup-body{padding:1.25rem 1.5rem}
+.rep-rollup-chain{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:.875rem}
+.rrc{background:var(--bg2);border:var(--bdr);border-radius:var(--rm);padding:.6rem .875rem;text-align:center;min-width:100px}
+.rrc-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx2);margin-bottom:3px}
+.rrc-val{font-size:13px;font-weight:700;color:var(--tx)}
+.rrc-arrow{font-size:16px;color:var(--tx2)}
+.rrc-mgr{background:#eff6ff;border-color:#bfdbfe}
+.rrc-mgr .rrc-val{color:var(--blue)}
+.rrc-adj{background:#fef9ec;border-color:#fde68a}
+.rrc-adj-val{color:#92400e}
+.rrc-ae-total{background:#f0fdf4;border-color:#bbf7d0}
+.rrc-ae-total .rrc-val{color:#0d7c3d}
+.rollup-section-lbl{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin-bottom:.5rem;padding-left:2px}
+.rollup-section-lbl-mgr{color:var(--blue)}
+html.dark .rrc-adj{background:#3d2b0a;border-color:#92400e}
+html.dark .rrc-adj-val{color:#fcd34d}
+html.dark .rrc-ae-total{background:#052e16;border-color:#166534}
+html.dark .rrc-ae-total .rrc-val{color:#6ee7b7}
+.rep-rollup-note{font-size:12px;color:var(--tx2);line-height:1.55}
+.rep-coaching{background:var(--bg);border:var(--bdr);border-radius:var(--rl);overflow:hidden;margin-bottom:1.5rem}
+.rep-coaching-hdr{padding:.875rem 1.25rem;border-bottom:var(--bdr);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2)}
+.rep-coaching-item{display:flex;gap:1rem;padding:1rem 1.25rem;border-bottom:var(--bdr)}
+.rep-coaching-item:last-child{border-bottom:none}
+.rep-coaching-num{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.rep-coaching-title{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:3px}
+.rep-coaching-desc{font-size:12px;color:var(--tx2);line-height:1.55}
 
 /* ── PDF PRINT ── */
 @media print{
   body{margin:0;padding:0;background:#fff}
-  .wrap{display:none}
+  .topbar,.sidebar,.sidebar-overlay,.app-body{display:none}
   #pdf-view{display:block!important}
   @page{size:letter;margin:0}
 }
@@ -301,20 +479,117 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
 .pdf-ftr{background:#f9fafb;border-top:1px solid #e5e7eb;padding:10px 28px;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto}
 .pdf-ftr-l,.pdf-ftr-r{font-size:7pt;color:#9ca3af}
 .pdot{display:inline-block;width:3px;height:3px;border-radius:50%;background:#E85D3A;margin:0 5px;vertical-align:middle}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .fc-cards{grid-template-columns:1fr}
+  .fc-card{border-right:none;border-bottom:var(--bdr)}
+  .fc-card:last-child{border-bottom:none}
+  .irow-3{grid-template-columns:1fr auto}
+  .subhdr .col-hdr:last-child{display:none}
+  .cnc-inputs{grid-template-columns:1fr}
+  .cnc-chain{grid-template-columns:1fr auto 1fr}
+  .cnc-chain .ca:last-of-type,.cnc-chain .cs:last-of-type{display:none}
+  .cnc-out{grid-template-columns:1fr}
+  .qbar{gap:.75rem}
+  .imoney{width:100px}
+  .preview-summary{grid-template-columns:1fr 1fr}
+  .wiz-map-row,.wiz-val-row{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .fc-amount{font-size:22px}
+  .hero-hdr{gap:6px}
+  .preview-summary{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="app-ver" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-    <span>Manager's Forecast Calculator</span>
-    <button class="theme-toggle" onclick="toggleDark()" id="theme-btn" aria-label="Toggle dark mode">
-      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <button class="topbar-hamburger" onclick="toggleSidebar()" aria-label="Toggle navigation">
+    <div class="hb-line"></div><div class="hb-line"></div><div class="hb-line"></div>
+  </button>
+  <span class="topbar-brand">Remote</span>
+  <span class="topbar-sep">·</span>
+  <span class="topbar-module" id="topbar-module-label">Manager View</span>
+  <div class="topbar-right">
+    <button class="theme-toggle btn" onclick="toggleDark()" style="font-size:11px;padding:4px 10px">
       <span id="theme-lbl">Dark mode</span>
     </button>
   </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<nav class="sidebar" id="sidebar">
+  <div class="nav-section-lbl">Views</div>
+  <div class="nav-item active" id="nav-manager" onclick="switchView('manager')">
+    <div class="nav-dot" style="background:#1a56db"></div>Manager View
+  </div>
+  <div class="nav-item" id="nav-rep" onclick="switchView('rep')">
+    <div class="nav-dot" style="background:#E85D3A"></div>Rep View
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-lbl">Actions</div>
+  <div class="nav-item" onclick="closeSidebar();copyUrl()">
+    <div class="nav-dot" style="background:#9ca3af"></div>Save &amp; share URL
+  </div>
+  <div class="nav-item" onclick="closeSidebar();exportXlsx()">
+    <div class="nav-dot" style="background:#9ca3af"></div>Download Excel
+  </div>
+  <div class="nav-item" onclick="closeSidebar();printPdf()">
+    <div class="nav-dot" style="background:#9ca3af"></div>Download PDF
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-lbl">Data</div>
+  <div class="nav-item" onclick="closeSidebar();scrollToImport()">
+    <div class="nav-dot" id="nav-import-dot" style="background:#d1d5db"></div><span id="nav-import-lbl">Import pipeline</span>
+  </div>
+  <div class="nav-item" onclick="closeSidebar();openMappingConfig()">
+    <div class="nav-dot" style="background:#9ca3af"></div>Column mapping
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-lbl">Config</div>
+  <div class="nav-item" id="nav-settings" onclick="switchView('settings')">
+    <div class="nav-dot" style="background:#9ca3af"></div>Settings
+  </div>
+</nav>
+
+<!-- WIZARD MODAL -->
+<div class="modal-overlay hidden" id="wizard-overlay">
+  <div class="wizard-modal">
+    <div class="wizard-hdr">
+      <div>
+        <div class="wizard-title" id="wizard-title">Import Data</div>
+        <div style="font-size:12px;color:var(--tx2);margin-top:2px" id="wizard-subtitle"></div>
+      </div>
+      <button class="wizard-close" onclick="closeWizard()">&#x2715;</button>
+    </div>
+    <div class="wizard-body" id="wizard-body"></div>
+    <div class="wizard-footer">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="wiz-step-indicator" id="wiz-steps"></div>
+        <span class="wiz-step-desc" id="wiz-step-desc"></span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" id="wiz-back-btn" onclick="wizBack()" style="display:none">Back</button>
+        <button class="btn btn-primary" id="wiz-next-btn" onclick="wizNext()">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN BODY -->
+<div class="app-body">
+<div id="view-manager" class="view active">
+<div class="wrap">
 
   <div class="qe-ticker"><div class="qe-ticker-inner" id="qe-ticker-text"></div></div>
   <div class="qe-panic" id="qe-panic"></div>
+
+  <!-- DATE / QUARTER STATUS BAR -->
+  <div class="qstatus-bar" id="qstatus-bar"></div>
 
   <!-- HERO -->
   <div class="hero">
@@ -343,7 +618,7 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
     </div>
     <div class="irow irow-2">
       <div>
-        <div class="ilbl">Closed QTD</div>
+        <div class="ilbl">Closed QTD <span id="closed-import-lbl" style="display:none" class="import-badge" style="font-size:10px;padding:2px 7px;margin-left:6px"><span class="import-badge-dot"></span>imported</span></div>
         <span class="hint"><span class="hint-ic">i</span>Already booked this quarter</span>
       </div>
       <div class="ifield"><span class="iprefix">$</span><input class="imoney" type="text" id="closed" value="320,000"></div>
@@ -376,74 +651,38 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
       <div class="ifield"><span class="iprefix">$</span><input class="imoney" type="text" id="pipe_pipe" value="900,000"></div>
       <div style="text-align:right;padding-top:1px"><span id="exp_pipe" class="exp-val ev-g">—</span></div>
     </div>
+    <div class="irow irow-3 totals-row">
+      <div class="ilbl">Total open pipeline</div>
+      <div class="ifield" style="justify-content:flex-end"><span id="total_pipeline" class="totals-val">—</span></div>
+      <div style="text-align:right;padding-top:1px"><span id="total_exp_bookings" class="totals-val totals-exp">—</span></div>
+    </div>
   </div>
 
   <!-- CONVERSION RATES -->
   <div class="sec-hd">Conversion rate assumptions</div>
   <div class="card">
-    <div class="crow">
-      <div class="ilbl">Commit <span class="pill pc">commit</span></div>
-      <div class="cright"><input type="range" id="r_commit" min="50" max="100" value="80" step="1"><span class="cval" id="r_commit_out">80%</span></div>
-    </div>
-    <div class="crow">
-      <div class="ilbl">Probable <span class="pill pp">probable</span></div>
-      <div class="cright"><input type="range" id="r_prob" min="30" max="95" value="75" step="1"><span class="cval" id="r_prob_out">75%</span></div>
-    </div>
-    <div class="crow">
-      <div class="ilbl">Upside <span class="pill pu">upside</span></div>
-      <div class="cright"><input type="range" id="r_up" min="10" max="80" value="50" step="1"><span class="cval" id="r_up_out">50%</span></div>
-    </div>
-    <div class="crow">
-      <div class="ilbl">Pipeline <span class="pill pg">pipeline</span></div>
-      <div class="cright"><input type="range" id="r_pipe" min="5" max="50" value="25" step="1"><span class="cval" id="r_pipe_out">25%</span></div>
-    </div>
-    <div class="crow">
-      <div>
-        <div class="ilbl">Create &amp; close rate</div>
-        <div class="crow-sub">Applied to qualified pipeline in C&amp;C section below</div>
-      </div>
-      <div class="cright"><input type="range" id="r_cnc" min="1" max="40" value="10" step="1"><span class="cval" id="r_cnc_out">10%</span></div>
-    </div>
+    <div class="crow"><div class="ilbl">Commit <span class="pill pc">commit</span></div><div class="cright"><input type="range" id="r_commit" min="50" max="100" value="80" step="1"><span class="cval" id="r_commit_out">80%</span></div></div>
+    <div class="crow"><div class="ilbl">Probable <span class="pill pp">probable</span></div><div class="cright"><input type="range" id="r_prob" min="30" max="95" value="75" step="1"><span class="cval" id="r_prob_out">75%</span></div></div>
+    <div class="crow"><div class="ilbl">Upside <span class="pill pu">upside</span></div><div class="cright"><input type="range" id="r_up" min="10" max="80" value="50" step="1"><span class="cval" id="r_up_out">50%</span></div></div>
+    <div class="crow"><div class="ilbl">Pipeline <span class="pill pg">pipeline</span></div><div class="cright"><input type="range" id="r_pipe" min="5" max="50" value="25" step="1"><span class="cval" id="r_pipe_out">25%</span></div></div>
+    <div class="crow"><div><div class="ilbl">Create &amp; close</div><div style="font-size:11px;color:var(--tx2);margin-top:2px">Used in C&amp;C section below</div></div><div class="cright"><input type="range" id="r_cnc" min="5" max="50" value="10" step="1"><span class="cval" id="r_cnc_out">10%</span></div></div>
   </div>
 
   <!-- C&C -->
-  <div class="sec-hd">Create &amp; close — what-if</div>
+  <div class="sec-hd">Create &amp; close what-if</div>
   <div class="card">
     <div class="cnc-inputs">
-      <div class="cnc-fld">
-        <label>Qualified opps created (count)</label>
-        <div class="frow"><input type="text" id="cnc_opps" value="25"></div>
-      </div>
-      <div class="cnc-fld">
-        <label>Average selling price (ASP)</label>
-        <div class="frow"><span class="iprefix">$</span><input type="text" id="cnc_asp" value="18,000"></div>
-      </div>
-    </div>
-    <div class="cnc-hint">
-      <span class="hint" style="white-space:normal;line-height:1.5"><span class="hint-ic">i</span>How many qualified opps do you expect to generate from all channels for the remainder of the quarter? Use historical data to estimate.</span>
-    </div>
-    <div class="cnc-rate-row">
-      <span style="font-size:13px;color:var(--tx2)">C&amp;C conversion rate: <strong id="cnc_rate_display" style="color:var(--tx)">10%</strong></span>
-      <span style="font-size:12px;color:var(--tx2)">Set in conversion rate assumptions above</span>
+      <div class="cnc-fld"><label>Qualified opps to create</label><div class="frow"><input type="text" id="cnc_opps" value="5" style="width:80px;font-size:16px"></div></div>
+      <div class="cnc-fld"><label>Average selling price (ASP)</label><div class="frow"><span class="iprefix">$</span><input type="text" id="cnc_asp" value="15,000" style="width:110px;font-size:16px"></div></div>
     </div>
     <div class="cnc-chain">
-      <div class="cs">
-        <div class="cs-lbl">Qualified opps</div>
-        <div class="cs-val" id="chain_opps">25</div>
-        <div class="cs-sub">deals created</div>
-      </div>
+      <div class="cc"><div class="cc-lbl">Opps</div><div class="cc-val" id="chain_opps">5</div></div>
       <div class="ca">×</div>
-      <div class="cs">
-        <div class="cs-lbl">ASP</div>
-        <div class="cs-val" id="chain_asp">$18,000</div>
-        <div class="cs-sub">per deal</div>
-      </div>
+      <div class="cc"><div class="cc-lbl">ASP</div><div class="cc-val" id="chain_asp">$15,000</div></div>
       <div class="ca">=</div>
-      <div class="cs">
-        <div class="cs-lbl">Qualified pipeline created</div>
-        <div class="cs-val" id="chain_pipe" style="color:var(--blue)">—</div>
-        <div class="cs-sub">total pipeline</div>
-      </div>
+      <div class="cc"><div class="cc-lbl">Pipeline</div><div class="cc-val" id="chain_pipe">$75,000</div></div>
+      <div class="ca">×</div>
+      <div class="cc"><div class="cc-lbl">C&amp;C rate</div><div class="cc-rate" id="cnc_rate_display">10%</div></div>
     </div>
     <div class="cnc-out" id="cnc-out"></div>
     <div class="cnc-note" id="cnc-note"></div>
@@ -453,35 +692,242 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
   <div class="sec-hd">Monthly breakdown</div>
   <div class="card"><div style="overflow-x:auto"><div id="monthly-section" style="min-width:600px"></div></div></div>
 
+  <!-- IMPORT ZONE (at bottom, non-obtrusive) -->
+  <div class="sec-hd">Pipeline data import</div>
+  <div class="card" id="import-card">
+    <div class="import-zone-inner" id="import-drop-zone"
+         ondragleave="importDragLeave(event)" ondrop="importDrop(event)"
+         onclick="triggerFileInput()">
+      <span style="font-size:18px">📂</span>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--tx)" id="import-drop-title">Drop CSV or click to browse</div>
+        <div style="font-size:11px;color:var(--tx2);margin-top:2px">Salesforce pipeline report (.csv) — populates all pipeline fields automatically</div>
+      </div>
+      <div class="import-zone-hints">
+        <a id="sfdc-report-link" href="https://remote-com.lightning.force.com/lightning/r/Report/00OSh000002mFV3MAM/view" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="hint" style="text-decoration:none"><span class="hint-ic">&#8599;</span>Open SFDC report</a>
+        <button class="btn btn-primary" onclick="event.stopPropagation();triggerFileInput()" style="font-size:11px;padding:4px 12px">Choose file</button>
+      </div>
+    </div>
+    <div class="import-status-row" id="import-status-row" style="display:none;padding:.625rem 1.25rem;border-top:var(--bdr);align-items:center;gap:8px">
+      <span class="import-badge"><span class="import-badge-dot"></span><span id="import-badge-text"></span></span>
+      <button id="clear-import-btn" onclick="clearImport()" style="background:none;border:none;cursor:pointer;color:var(--tx2);font-size:11px;font-weight:600;padding:0;margin-left:4px">&#x2715; clear</button>
+    </div>
+    <input type="file" id="file-input" accept=".csv" onchange="handleFileSelect(this.files[0])">
+  </div>
+
   <!-- ACTIONS -->
   <div class="actions">
     <button class="btn btn-primary" onclick="copyUrl()">Save &amp; share URL</button>
     <button class="btn" onclick="exportXlsx()">Download Excel</button>
     <button class="btn" onclick="printPdf()">Download PDF</button>
-    <span id="save-msg"></span>
-    <span class="ver">v1.3</span>
-    <button class="qe-toggle" onclick="toggleQE()" id="qe-btn" aria-label="Toggle quarter-end mode">
+    <span id="save-msg" style="font-size:12px;color:var(--green)"></span>
+    <span class="ver">v2.3</span>
+    <button class="qe-toggle" onclick="toggleQE()" id="qe-btn">
       <div class="qe-track"><div class="qe-thumb"></div></div>
       <span id="qe-lbl">Q-End Mode</span>
     </button>
   </div>
-</div>
 
-<!-- Bumper -->
-<div style="text-align:center;padding:2rem 1rem 5rem;font-size:12px;color:#9ca3af;font-family:var(--font)">
-  made reluctantly for Remote by shouting at <a href="https://claude.ai" target="_blank" style="color:#9ca3af;text-decoration:underline;text-underline-offset:3px">claude.ai</a>
-</div>
+  <div style="text-align:center;padding:1rem 1rem 3rem;font-size:12px;color:#9ca3af">
+    made reluctantly for Remote by shouting at <a href="https://claude.ai" target="_blank" style="color:#9ca3af;text-decoration:underline;text-underline-offset:3px">claude.ai</a>
+  </div>
 
-<!-- Flame container — only visible in QE mode -->
+</div>
+</div><!-- /view-manager -->
+
+<!-- REP VIEW -->
+<div id="view-rep" class="view">
+<div class="wrap">
+  <div class="rep-intro">
+    <h2>Understanding your forecast categories</h2>
+    <p>Your forecast category tells your manager — and the business — how confident you are that a deal will close this quarter. Accuracy matters more than optimism. Here's what each category actually means, what belongs in each one, and how to use them well.</p>
+  </div>
+  <div class="rep-rollup">
+    <div class="rep-rollup-hdr"><span style="font-size:16px">🔗</span><span class="rep-rollup-title">How your number rolls up to your manager's forecast</span></div>
+    <div class="rep-rollup-body">
+
+      <div class="rollup-section-lbl">What you submit</div>
+      <div class="rep-rollup-chain">
+        <div class="rrc"><div class="rrc-lbl">Closed QTD</div><div class="rrc-val">Booked</div></div>
+        <div class="rrc-arrow">→</div>
+        <div class="rrc"><div class="rrc-lbl">+ Commit</div><div class="rrc-val">&times; 80%</div></div>
+        <div class="rrc-arrow">→</div>
+        <div class="rrc"><div class="rrc-lbl">+ Probable</div><div class="rrc-val">&times; 75%</div></div>
+        <div class="rrc-arrow">→</div>
+        <div class="rrc"><div class="rrc-lbl">+ Upside</div><div class="rrc-val">&times; 50%</div></div>
+        <div class="rrc-arrow">→</div>
+        <div class="rrc rrc-adj"><div class="rrc-lbl">Your adjustment</div><div class="rrc-val rrc-adj-val">&plusmn; your call</div></div>
+        <div class="rrc-arrow">→</div>
+        <div class="rrc rrc-ae-total"><div class="rrc-lbl">AE submitted total</div><div class="rrc-val">Your commit FC</div></div>
+      </div>
+
+      <div class="rollup-section-lbl rollup-section-lbl-mgr">What your manager sees</div>
+      <div class="rep-rollup-chain">
+        <div class="rrc rrc-ae-total"><div class="rrc-lbl">Your submitted total</div><div class="rrc-val">From above</div></div>
+        <div class="rrc-arrow">→</div>
+        <div class="rrc" style="opacity:.5"><div class="rrc-lbl">Other reps</div><div class="rrc-val">Same flow</div></div>
+        <div class="rrc-arrow">→</div>
+        <div class="rrc rrc-adj"><div class="rrc-lbl">Manager adjustment</div><div class="rrc-val rrc-adj-val">Market read</div></div>
+        <div class="rrc-arrow">→</div>
+        <div class="rrc rrc-mgr"><div class="rrc-lbl">Manager&rsquo;s forecast</div><div class="rrc-val">Committed up</div></div>
+      </div>
+
+      <p class="rep-rollup-note">Accuracy at every step compounds. Your pipeline categorization drives your submitted total, which flows directly into the team number. The manager&rsquo;s adjustment is tightest when your submissions are consistent and trustworthy &mdash; sandbagging and inflation both widen it.</p>
+    </div>
+  </div>
+
+  <div class="sec-hd">Forecast categories explained</div>
+  <div class="rep-categories">
+
+    <div class="rep-category-card">
+      <div class="rep-cat-header"><div class="rep-cat-accent" style="background:#1a56db"></div><div class="rep-cat-title">Commit <span class="pill pc">commit</span></div></div>
+      <div class="rep-cat-body">
+        <p class="rep-cat-what">Your personal guarantee. You&rsquo;re telling your manager: <em>&ldquo;This deal closes this quarter, full stop.&rdquo;</em> Commit is a promise &mdash; not a hope, not a stretch.</p>
+        <div class="rep-cat-label">What belongs here</div>
+        <p class="rep-cat-examples">Legal review underway or complete. Decision maker engaged and has verbally confirmed intent. Next steps are agreed and on the calendar. Only an act of God stops this deal.</p>
+        <div class="rep-cat-label">What doesn&rsquo;t belong</div>
+        <p class="rep-cat-examples">Deals waiting on a champion to get internal buy-in. Legal hasn&rsquo;t started. Anything you&rsquo;d feel nervous saying out loud in a forecast call.</p>
+        <div class="rep-tip-box rep-tip-box-blue"><div class="rep-tip-icon">&#128161; Coaching tip</div><div class="rep-tip-text">If you wouldn&rsquo;t bet your own commission on it, it&rsquo;s not Commit. A broken commit is a trust problem, not just a miss.</div></div>
+      </div>
+    </div>
+
+    <div class="rep-category-card">
+      <div class="rep-cat-header"><div class="rep-cat-accent" style="background:#0d7c3d"></div><div class="rep-cat-title">Probable <span class="pill pp">probable</span></div></div>
+      <div class="rep-cat-body">
+        <p class="rep-cat-what">Strong intent, but not locked. You have genuine confidence this closes this quarter &mdash; there are just a few things left to resolve that are within your control.</p>
+        <div class="rep-cat-label">What belongs here</div>
+        <p class="rep-cat-examples">Champion is actively building internal consensus. Pricing has been discussed and is in range. A path to close is clear &mdash; you can name the remaining steps.</p>
+        <div class="rep-cat-label">What doesn&rsquo;t belong</div>
+        <p class="rep-cat-examples">Deals where you haven&rsquo;t spoken to anyone in two weeks. Close date is aspirational rather than agreed. Waiting on your prospect to re-engage.</p>
+        <div class="rep-tip-box"><div class="rep-tip-icon">&#128161; Coaching tip</div><div class="rep-tip-text">The difference between Probable and Commit is usually one thing: a signed mutual action plan with a close date the prospect has confirmed.</div></div>
+      </div>
+    </div>
+
+    <div class="rep-category-card">
+      <div class="rep-cat-header"><div class="rep-cat-accent" style="background:#b45309"></div><div class="rep-cat-title">Upside <span class="pill pu">upside</span></div></div>
+      <div class="rep-cat-body">
+        <p class="rep-cat-what">Real opportunity, but timing is uncertain. You believe this deal <em>could</em> close this quarter if things break right &mdash; but it&rsquo;s not something you&rsquo;d stand behind in a forecast call.</p>
+        <div class="rep-cat-label">What belongs here</div>
+        <p class="rep-cat-examples">Discovery complete and fit is strong. Prospect has expressed genuine interest. Meaningful obstacles remain &mdash; budget approval, legal, multi-stakeholder alignment &mdash; but you have a path.</p>
+        <div class="rep-cat-label">What doesn&rsquo;t belong</div>
+        <p class="rep-cat-examples">Early-stage discovery deals. Deals where the prospect has gone quiet. Deals that are honestly Q+1.</p>
+        <div class="rep-tip-box rep-tip-box-amber"><div class="rep-tip-icon">&#128161; Coaching tip</div><div class="rep-tip-text">Upside is where you should be fighting hardest. Every deal you push from Upside to Probable &mdash; or Probable to Commit &mdash; is how you beat your number, not just hit it.</div></div>
+      </div>
+    </div>
+
+    <div class="rep-category-card">
+      <div class="rep-cat-header"><div class="rep-cat-accent" style="background:#6b7280"></div><div class="rep-cat-title">Pipeline <span class="pill pg">pipeline</span></div></div>
+      <div class="rep-cat-body">
+        <p class="rep-cat-what">Qualified opportunities that are real, but not closeable this quarter. These are working deals &mdash; they&rsquo;re not closed, and they&rsquo;re not slated for this quarter.</p>
+        <div class="rep-cat-label">What belongs here</div>
+        <p class="rep-cat-examples">Active deals where discovery is underway. Opportunities where you&rsquo;ve confirmed pain and budget exists, but closing this quarter isn&rsquo;t realistic or established yet.</p>
+        <div class="rep-cat-label">What doesn&rsquo;t belong</div>
+        <p class="rep-cat-examples">Zombie deals that haven&rsquo;t moved in 60+ days. Deals you&rsquo;ve lost but haven&rsquo;t marked as such. Anything you&rsquo;re afraid to move to Q+1.</p>
+        <div class="rep-tip-box rep-tip-box-gray"><div class="rep-tip-icon">&#128161; Coaching tip</div><div class="rep-tip-text">A healthy Pipeline is your future quarters&rsquo; revenue. Dead deals in Pipeline hurt your conversion metrics and make your manager&rsquo;s model less accurate &mdash; for you.</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sec-hd">How to be a great forecaster</div>
+  <div class="rep-coaching">
+    <div class="rep-coaching-hdr">Best practices from top performers</div>
+    <div class="rep-coaching-item"><div class="rep-coaching-num">1</div><div><div class="rep-coaching-title">Category should match your gut, not your aspiration</div><div class="rep-coaching-desc">The most common mistake is putting deals in a higher category because you <em>want</em> them to close. An inflated commit that misses destroys trust. A conservative commit that closes builds it.</div></div></div>
+    <div class="rep-coaching-item"><div class="rep-coaching-num">2</div><div><div class="rep-coaching-title">Update your categories after every meaningful interaction</div><div class="rep-coaching-desc">Verbal confirmation of timeline? Move the deal up. Three unanswered calls in a row? Move it down. Your CRM is only as useful as it is current.</div></div></div>
+    <div class="rep-coaching-item"><div class="rep-coaching-num">3</div><div><div class="rep-coaching-title">Know your next step for every Commit and Probable deal</div><div class="rep-coaching-desc">If you can&rsquo;t immediately name the next action, the next owner, and the next date &mdash; that&rsquo;s a red flag. Deals without clear next steps slip. Your forecast call will surface this.</div></div></div>
+    <div class="rep-coaching-item"><div class="rep-coaching-num">4</div><div><div class="rep-coaching-title">Multi-thread before it&rsquo;s urgent</div><div class="rep-coaching-desc">Single-threaded deals are the primary reason Commit deals miss. One org chart change, one vacation, one cold shoulder &mdash; and the deal slips. Build relationships with the economic buyer and legal early.</div></div></div>
+    <div class="rep-coaching-item"><div class="rep-coaching-num">5</div><div><div class="rep-coaching-title">A mutual action plan is your close plan &mdash; use it</div><div class="rep-coaching-desc">A MAP turns a verbal close date into a shared commitment. It externalizes the steps and makes slippage visible to both sides. If a prospect won&rsquo;t agree to a MAP, that tells you something important about their intent.</div></div></div>
+  </div>
+
+  <div style="text-align:center;padding:1.5rem 1rem 4rem;font-size:12px;color:#9ca3af">
+    made reluctantly for Remote by shouting at <a href="https://claude.ai" target="_blank" style="color:#9ca3af;text-decoration:underline;text-underline-offset:3px">claude.ai</a>
+  </div>
+
+</div>
+</div><!-- /view-rep -->
+
+<!-- SETTINGS VIEW -->
+<div id="view-settings" class="view">
+<div class="wrap">
+  <div class="settings-page">
+    <div class="settings-page-hdr">
+      <h2>Settings</h2>
+      <p>Tool-wide preferences, saved to your browser.</p>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-hdr">Salesforce integration</div>
+      <div class="settings-row">
+        <div class="settings-lbl">Pipeline report URL</div>
+        <div class="settings-sub">Direct link to your SFDC pipeline report &mdash; surfaces as a quick-access chip in the import drawer so you can open and export the report without leaving the tool.</div>
+        <input class="settings-input" type="url" id="settings-sfdc-url" placeholder="https://remote-com.lightning.force.com/lightning/r/Report/...">
+        <div class="settings-save-row">
+          <button class="btn btn-primary" onclick="saveSettings()" style="font-size:12px">Save URL</button>
+          <span class="settings-saved-msg" id="settings-saved-msg">&#10003;&nbsp;Saved</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-hdr">Data configuration</div>
+      <div class="settings-row" style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
+        <div>
+          <div class="settings-lbl">Column mapping</div>
+          <div class="settings-sub">Map SFDC report columns to forecast fields and configure category value translations.</div>
+        </div>
+        <button class="btn btn-outline-blue" onclick="openMappingConfig()" style="font-size:12px;flex-shrink:0">Configure &rsaquo;</button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-hdr">About</div>
+      <div class="settings-about-grid">
+        <div class="settings-about-item">
+          <div class="settings-about-lbl">Version</div>
+          <div class="settings-about-val">v2.3</div>
+        </div>
+        <div class="settings-about-item">
+          <div class="settings-about-lbl">Product</div>
+          <div class="settings-about-val">Manager&rsquo;s Forecast Calculator</div>
+        </div>
+        <div class="settings-about-item">
+          <div class="settings-about-lbl">Data storage</div>
+          <div class="settings-about-val">Browser localStorage only &mdash; nothing sent to any server</div>
+        </div>
+        <div class="settings-about-item">
+          <div class="settings-about-lbl">Made by</div>
+          <div class="settings-about-val">Shouting at <a href="https://claude.ai" target="_blank" style="color:var(--blue)">claude.ai</a>, reluctantly, for Remote</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section" style="border-color:#fca5a5">
+      <div class="settings-section-hdr" style="background:#fef2f2;color:#b91c1c;border-color:#fca5a5">Danger zone</div>
+      <div class="settings-row" style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
+        <div>
+          <div class="settings-lbl">Reset mappings &amp; settings</div>
+          <div class="settings-sub">Clears all saved column mappings and settings. Forecast inputs are not affected.</div>
+        </div>
+        <button class="btn" onclick="resetSettings()" style="font-size:12px;color:var(--red);border-color:#fca5a5;flex-shrink:0">Reset &rsaquo;</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div><!-- /view-settings -->
+
+</div><!-- /app-body -->
+
 <div id="flame-canvas" style="display:none;position:fixed;bottom:0;left:0;width:100%;height:180px;pointer-events:none;z-index:9999;overflow:hidden"></div>
-
-<!-- PDF (hidden until print) -->
 <div id="pdf-view"><div class="pdf" id="pdf-content"></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
+// ══════════════════════════════════════════════════════
+// CORE UTILITIES
+// ══════════════════════════════════════════════════════
 const $=id=>document.getElementById(id);
-const pv=id=>parseFloat(($( id).value||'0').replace(/,/g,''))||0;
+const pv=id=>parseFloat(($( id)&&$(id).value||'0').replace(/,/g,''))||0;
 const fmt=n=>'$'+Math.round(n).toLocaleString();
 const pct=n=>Math.round(n)+'%';
 const cl=(v,a,b)=>Math.min(Math.max(v,a),b);
@@ -492,47 +938,779 @@ const linPct=(m,q)=>q>0?cl(Math.round(m/q*100),0,999):0;
 const getMv=(m,k)=>{const e=$(m+'_'+k);return e?parseFloat(e.value.replace(/,/g,''))||0:0};
 let S={};
 
+// ══════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════
+function switchView(view){
+  ['manager','rep','settings'].forEach(v=>{
+    const ve=$('view-'+v);if(ve)ve.classList.toggle('active',v===view);
+    const ne=$('nav-'+v);if(ne)ne.classList.toggle('active',v===view);
+  });
+  const lbl={manager:'Manager View',rep:'Rep View',settings:'Settings'};
+  $('topbar-module-label').textContent=lbl[view]||view;
+  closeSidebar();
+  if(view==='settings')loadSettingsPage();
+}
+let sidebarOpen=false;
+function toggleSidebar(){sidebarOpen?closeSidebar():openSidebar();}
+function openSidebar(){sidebarOpen=true;$('sidebar').classList.add('open');$('sidebar-overlay').classList.add('visible');}
+function closeSidebar(){sidebarOpen=false;$('sidebar').classList.remove('open');$('sidebar-overlay').classList.remove('visible');}
+
+// ══════════════════════════════════════════════════════
+// COLUMN MAPPING — schema & defaults
+// ══════════════════════════════════════════════════════
+// Internal field keys and their display metadata
+const FIELD_DEFS = [
+  // Forecast aggregation fields
+  {key:'f_opp_name',    label:'Opportunity Name',    desc:'Deal identifier',                    req:true,  group:'forecast'},
+  {key:'f_owner',       label:'Opportunity Owner',   desc:'Rep name for grouping',              req:true,  group:'forecast'},
+  {key:'f_amount',      label:'Amount / ACV',        desc:'Deal value (USD)',                   req:true,  group:'forecast'},
+  {key:'f_stage',       label:'Stage',               desc:'Sales stage',                        req:true,  group:'forecast'},
+  {key:'f_fc_cat',      label:'Forecast Category',   desc:'Commit / Probable / Upside / etc',  req:true,  group:'forecast'},
+  {key:'f_close_date',  label:'Close Date',          desc:'Expected close date',               req:true,  group:'forecast'},
+  // Pipeline inspection fields
+  {key:'f_next_step',   label:'Next Step',           desc:'Free text next step (start MM/DD)',  req:false, group:'inspection'},
+  {key:'f_last_activity',label:'Last Activity Date', desc:'Most recent activity timestamp',    req:false, group:'inspection'},
+  // MEDDPICC
+  {key:'f_metrics',     label:'Metrics (M)',         desc:'Quantified business impact',         req:false, group:'meddpicc'},
+  {key:'f_econ_buyer',  label:'Economic Buyer (E)',  desc:'Who controls the budget',            req:false, group:'meddpicc'},
+  {key:'f_dec_criteria',label:'Decision Criteria (D)',desc:'How they evaluate solutions',      req:false, group:'meddpicc'},
+  {key:'f_dec_process', label:'Decision Process (D)',desc:'Steps to reach a decision',         req:false, group:'meddpicc'},
+  {key:'f_proc_process',label:'Procurement Process (P)',desc:'Legal / procurement workflow',   req:false, group:'meddpicc'},
+  {key:'f_implicated',  label:'Implicated Pain (I)', desc:'Root cause business problem',       req:false, group:'meddpicc'},
+  {key:'f_champion',    label:'Champion (C)',        desc:'Internal sponsor',                   req:false, group:'meddpicc'},
+  {key:'f_competitor',  label:'Competitor',          desc:'Competitive presence',               req:false, group:'meddpicc'},
+];
+
+// Default column name → field key mappings (matches your SFDC report)
+const DEFAULT_COLUMN_MAP = {
+  'Opportunity Name':                           'f_opp_name',
+  'Opportunity Owner':                          'f_owner',
+  'Average Annual Booking (converted)':         'f_amount',
+  'Stage':                                      'f_stage',
+  'Forecast Category':                          'f_fc_cat',
+  'Close Date':                                 'f_close_date',
+  'Next Step':                                  'f_next_step',
+  'Account: Last Activity':                     'f_last_activity',
+  'Metrics':                                    'f_metrics',
+  'Economic Buyer':                             'f_econ_buyer',
+  'Decision Criteria':                          'f_dec_criteria',
+  'Decision Process':                           'f_dec_process',
+  'Procurement Process':                        'f_proc_process',
+  'Implicated Pain':                            'f_implicated',
+  'Champion':                                   'f_champion',
+  'Competitor':                                 'f_competitor',
+};
+
+// Forecast category value mappings (CSV value → internal key)
+const DEFAULT_CAT_MAP = {
+  'Closed':   'closed',
+  'Commit':   'commit',
+  'Probable': 'probable',
+  'Upside':   'upside',
+  'Pipeline': 'pipeline',
+  'Omitted':  'omitted',
+};
+
+// Load saved mappings from localStorage, fall back to defaults
+function getColumnMap(){
+  try{return JSON.parse(localStorage.getItem('sfdc_col_map'))||DEFAULT_COLUMN_MAP;}
+  catch{return {...DEFAULT_COLUMN_MAP};}
+}
+function getCatMap(){
+  try{return JSON.parse(localStorage.getItem('sfdc_cat_map'))||DEFAULT_CAT_MAP;}
+  catch{return {...DEFAULT_CAT_MAP};}
+}
+function saveColumnMap(m){localStorage.setItem('sfdc_col_map',JSON.stringify(m));}
+function saveCatMap(m){localStorage.setItem('sfdc_cat_map',JSON.stringify(m));}
+
+// ══════════════════════════════════════════════════════
+// CSV PARSER
+// ══════════════════════════════════════════════════════
+function parseCSV(text){
+  const lines=[];
+  let cur='',inQ=false;
+  const rows=[];
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    if(ch==='"'){
+      if(inQ&&text[i+1]==='"'){cur+='"';i++;}
+      else inQ=!inQ;
+    } else if(ch===','&&!inQ){lines.push(cur);cur='';}
+    else if((ch==='\n'||ch==='\r')&&!inQ){
+      lines.push(cur);cur='';
+      if(lines.some(l=>l.trim()))rows.push(lines.map(l=>l.trim()));
+      lines.length=0;
+      if(ch==='\r'&&text[i+1]==='\n')i++;
+    } else cur+=ch;
+  }
+  if(cur||lines.length){lines.push(cur);if(lines.some(l=>l.trim()))rows.push(lines.map(l=>l.trim()));}
+  return rows;
+}
+
+function csvToObjects(rows){
+  if(!rows.length)return[];
+  const headers=rows[0];
+  return rows.slice(1).filter(r=>r.some(c=>c)).map(r=>{
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=r[i]||'');
+    return obj;
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// IMPORT DATA PROCESSING
+// ══════════════════════════════════════════════════════
+let importedData=null; // normalized records after mapping
+
+function applyMapping(rawRecords, colMap, catMap){
+  // Invert colMap: CSV column name → field key
+  // colMap is stored as {csvCol: fieldKey}
+  return rawRecords.map(raw=>{
+    const norm={};
+    Object.entries(colMap).forEach(([csvCol,fieldKey])=>{
+      norm[fieldKey]=raw[csvCol]||'';
+    });
+    // Normalize forecast category
+    const rawCat=norm['f_fc_cat']||'';
+    norm['f_fc_cat_norm']=catMap[rawCat]||rawCat.toLowerCase()||'unknown';
+    // Parse amount
+    norm['f_amount_num']=parseFloat((norm['f_amount']||'0').replace(/[$,]/g,''))||0;
+    return norm;
+  });
+}
+
+function aggregateForecast(records){
+  let closed=0,commit=0,probable=0,upside=0,pipeline=0;
+  records.forEach(r=>{
+    const cat=r.f_fc_cat_norm;
+    const amt=r.f_amount_num;
+    if(cat==='closed')        closed+=amt;
+    else if(cat==='commit')   commit+=amt;
+    else if(cat==='probable') probable+=amt;
+    else if(cat==='upside')   upside+=amt;
+    else if(cat==='pipeline') pipeline+=amt;
+    // omitted skipped
+  });
+  return{closed,commit,probable,upside,pipeline};
+}
+
+// Bucket closed records into M1/M2/M3 by close date month
+// Quarter months are inferred from the close dates of closed records.
+// We sort unique months ascending and bucket into [0]=M1, [1]=M2, [2]=M3.
+function calcMonthlyClosedBreakdown(records){
+  const closedRecs=records.filter(r=>r.f_fc_cat_norm==='closed'&&r.f_close_date);
+  if(!closedRecs.length)return null;
+  // Parse close dates to get month numbers
+  const parseMonth=d=>{
+    // Formats: M/D/YYYY, MM/DD/YYYY, YYYY-MM-DD
+    const parts=d.trim().split(/[\/-]/);
+    if(parts.length===3){
+      if(parts[0].length===4) return parseInt(parts[1]); // YYYY-MM-DD
+      return parseInt(parts[0]); // M/D/YYYY
+    }
+    return null;
+  };
+  const monthAmounts={};
+  closedRecs.forEach(r=>{
+    const m=parseMonth(r.f_close_date);
+    if(m===null)return;
+    monthAmounts[m]=(monthAmounts[m]||0)+r.f_amount_num;
+  });
+  const sortedMonths=Object.keys(monthAmounts).map(Number).sort((a,b)=>a-b);
+  if(!sortedMonths.length)return null;
+  // Map to M1/M2/M3 (up to 3 distinct months)
+  const buckets=[0,0,0];
+  sortedMonths.slice(0,3).forEach((m,i)=>buckets[i]=monthAmounts[m]||0);
+  return buckets;
+}
+
+function populateForecastFromImport(agg,monthlyClosedByMonth){
+  const setVal=(id,val)=>{
+    const el=$(id);if(!el)return;
+    el.value=Math.round(val).toLocaleString();
+    el.classList.add('imported-field');
+  };
+  setVal('closed',agg.closed);
+  setVal('pipe_commit',agg.commit);
+  setVal('pipe_prob',agg.probable);
+  setVal('pipe_up',agg.upside);
+  setVal('pipe_pipe',agg.pipeline);
+  // Monthly closed by month (M1/M2/M3)
+  if(monthlyClosedByMonth){
+    setVal('m1_closed',monthlyClosedByMonth[0]||0);
+    setVal('m2_closed',monthlyClosedByMonth[1]||0);
+    setVal('m3_closed',monthlyClosedByMonth[2]||0);
+  }
+  calc();
+}
+
+function clearImport(){
+  importedData=null;
+  ['closed','pipe_commit','pipe_prob','pipe_up','pipe_pipe','m1_closed','m2_closed','m3_closed']
+    .forEach(id=>{const el=$(id);if(el)el.classList.remove('imported-field');});
+  const sr=$('import-status-row');
+  if(sr)sr.style.display='none';
+  const dt=$('import-drop-title');
+  if(dt)dt.textContent='Drop CSV or click to browse';
+  const dot=$('nav-import-dot');if(dot)dot.style.background='#d1d5db';
+  const nl=$('nav-import-lbl');if(nl)nl.textContent='Import pipeline';
+  localStorage.removeItem('last_import_meta');
+  calc();
+}
+
+function scrollToImport(){
+  const card=$('import-card');
+  if(card)card.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// ══════════════════════════════════════════════════════
+// FILE INPUT HANDLING
+function triggerFileInput(){
+  const fi=$('file-input');
+  fi.value=''; // reset so same file can be re-selected
+  fi.click();
+}
+
+function handleFileSelect(file){
+  if(!file)return;
+  // Reset input so the same file can be chosen again without page refresh
+  const fi=$('file-input');
+  if(fi)fi.value='';
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      processCSVText(e.target.result,file.name);
+    }catch(err){
+      alert('Could not read file: '+err.message);
+    }
+  };
+  reader.readAsText(file,'latin1');
+}
+
+function importDragLeave(e){
+  e.preventDefault();
+  const z=$('import-drop-zone');if(z)z.classList.remove('drag-over');
+}
+
+function importDrop(e){
+  e.preventDefault();
+  const z=$('import-drop-zone');if(z)z.classList.remove('drag-over');
+  const file=e.dataTransfer.files[0];
+  if(file&&file.name.endsWith('.csv')){handleFileSelect(file);}
+  else alert('Please drop a CSV file.');
+}
+
+// Init drag over styling
+document.addEventListener('DOMContentLoaded',()=>{
+  const zone=$('import-drop-zone');
+  if(zone)zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+  // Refresh status bar at midnight
+  const msToMidnight=()=>{const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);return m-n;};
+  setTimeout(()=>{renderQStatusBar();setInterval(renderQStatusBar,86400000);},msToMidnight());
+});
+
+function processCSVText(text,filename){
+  const rows=parseCSV(text);
+  if(rows.length<2){alert('CSV appears empty or has no data rows.');return;}
+  const headers=rows[0];
+  const rawRecords=csvToObjects(rows);
+
+  // Check if we already have a saved column map that covers these headers
+  const savedMap=getColumnMap();
+  const savedCatMap=getCatMap();
+
+  // Check coverage: do saved map keys appear in this file's headers?
+  const mappedCols=Object.keys(savedMap).filter(c=>headers.includes(c));
+  const requiredFields=['f_opp_name','f_owner','f_amount','f_fc_cat','f_close_date','f_stage'];
+  const coveredRequired=requiredFields.every(fk=>mappedCols.some(c=>savedMap[c]===fk));
+
+  if(coveredRequired){
+    // Silent apply — no wizard needed
+    openPreviewStep(rawRecords,headers,savedMap,savedCatMap,filename,true);
+  } else {
+    // First time or columns changed — show full wizard
+    openWizard(rawRecords,headers,filename);
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// WIZARD
+// ══════════════════════════════════════════════════════
+let wizState={};
+
+function openMappingConfig(){
+  // Open wizard in config-only mode (no file)
+  const savedMap=getColumnMap();
+  const savedCatMap=getCatMap();
+  wizState={mode:'config',step:1,colMap:{...savedMap},catMap:{...savedCatMap},headers:Object.keys(savedMap),rawRecords:[],filename:''};
+  renderWizard();
+  $('wizard-overlay').classList.remove('hidden');
+}
+
+function openWizard(rawRecords,headers,filename){
+  const savedMap=getColumnMap();
+  const savedCatMap=getCatMap();
+  // Build initial colMap: for each header, find if it's in saved map, else try auto-detect
+  const colMap={};
+  Object.entries(savedMap).forEach(([col,fk])=>{
+    if(headers.includes(col))colMap[col]=fk;
+  });
+  // Auto-detect unmapped required fields by fuzzy match
+  headers.forEach(h=>{
+    if(!colMap[h]){
+      const fl=h.toLowerCase();
+      if(fl.includes('name')&&fl.includes('opp'))colMap[h]='f_opp_name';
+      else if(fl.includes('owner'))colMap[h]='f_owner';
+      else if(fl.includes('amount')||fl.includes('booking')||fl.includes('acv'))colMap[h]='f_amount';
+      else if(fl.includes('stage'))colMap[h]='f_stage';
+      else if(fl.includes('forecast')&&fl.includes('cat'))colMap[h]='f_fc_cat';
+      else if(fl.includes('close')&&fl.includes('date'))colMap[h]='f_close_date';
+    }
+  });
+  wizState={mode:'import',step:1,colMap,catMap:{...savedCatMap},headers,rawRecords,filename};
+  renderWizard();
+  $('wizard-overlay').classList.remove('hidden');
+}
+
+function openPreviewStep(rawRecords,headers,colMap,catMap,filename,silent){
+  wizState={mode:'import',step:3,colMap,catMap,headers,rawRecords,filename};
+  renderWizard();
+  $('wizard-overlay').classList.remove('hidden');
+}
+
+function closeWizard(){
+  $('wizard-overlay').classList.add('hidden');
+  wizState={};
+}
+
+function wizBack(){
+  if(wizState.step>1){wizState.step--;renderWizard();}
+}
+
+function wizNext(){
+  if(wizState.step===1){
+    wizState.step=2;renderWizard();
+  } else if(wizState.step===2){
+    // Collect mapping from selects
+    const newMap={};
+    wizState.headers.forEach(h=>{
+      const sel=$('wmap_'+sanitizeId(h));
+      if(sel&&sel.value)newMap[h]=sel.value;
+    });
+    wizState.colMap=newMap;
+    // Collect cat mapping
+    const newCatMap={};
+    // Get unique forecast category values from data
+    if(wizState.rawRecords.length){
+      const fcField=Object.entries(wizState.colMap).find(([,v])=>v==='f_fc_cat')?.[0];
+      if(fcField){
+        const vals=[...new Set(wizState.rawRecords.map(r=>r[fcField]).filter(Boolean))];
+        vals.forEach(v=>{
+          const sel=$('cmap_'+sanitizeId(v));
+          if(sel)newCatMap[v]=sel.value||v.toLowerCase();
+        });
+      }
+    } else {
+      // config-only mode: use existing cat map from UI
+      Object.keys(wizState.catMap).forEach(v=>{
+        const sel=$('cmap_'+sanitizeId(v));
+        if(sel)newCatMap[v]=sel.value;
+      });
+    }
+    wizState.catMap=newCatMap;
+    if(wizState.mode==='config'){
+      saveColumnMap(wizState.colMap);
+      saveCatMap(wizState.catMap);
+      closeWizard();
+      showSaveMsg('Column mapping saved');
+      return;
+    }
+    wizState.step=3;renderWizard();
+  } else if(wizState.step===3){
+    const btn=$('wiz-next-btn');
+    btn.style.pointerEvents='none';
+    // Step 1: do all data work synchronously
+    saveColumnMap(wizState.colMap);
+    saveCatMap(wizState.catMap);
+    const normalized=applyMapping(wizState.rawRecords,wizState.colMap,wizState.catMap);
+    importedData=normalized;
+    const agg=aggregateForecast(normalized);
+    const mClosed=calcMonthlyClosedBreakdown(normalized);
+    populateForecastFromImport(agg,mClosed);
+    const now=new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+    const meta={filename:wizState.filename,time:now,counts:{
+      closed:normalized.filter(r=>r.f_fc_cat_norm==='closed').length,
+      open:normalized.filter(r=>r.f_fc_cat_norm!=='closed'&&r.f_fc_cat_norm!=='omitted').length
+    }};
+    localStorage.setItem('last_import_meta',JSON.stringify(meta));
+    updateImportBadge(meta);
+    // Step 2: wait for the browser to flush all DOM mutations from calc(),
+    // then paint the green confirmation state in the next frame
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      btn.textContent='Applied ✓';
+      btn.style.background='#0d7c3d';
+      btn.style.borderColor='#0d7c3d';
+      btn.style.color='#fff';
+      btn.style.opacity='1';
+      // Step 3: close after user sees the green state
+      setTimeout(()=>closeWizard(),950);
+    }));
+  }
+}
+
+function sanitizeId(s){return s.replace(/[^a-zA-Z0-9]/g,'_');}
+
+function renderWizard(){
+  const {step,mode,headers,rawRecords,filename}=wizState;
+  const totalSteps=mode==='config'?2:3;
+  // Step indicator
+  let steps='';
+  for(let i=1;i<=totalSteps;i++)steps+=`<span class="${i===step?'active':''}"></span>`;
+  $('wiz-steps').innerHTML=steps;
+  // Back button
+  $('wiz-back-btn').style.display=step>1?'inline-flex':'none';
+  // Always reset next button to clean state (fixes back-then-next issue)
+  const btn=$('wiz-next-btn');
+  btn.style.pointerEvents='';
+  btn.style.opacity='';
+  btn.style.background='';
+  btn.style.borderColor='';
+  btn.style.color='';
+  // Step-specific content
+  if(step===1) renderWizStep1();
+  else if(step===2) renderWizStep2();
+  else if(step===3) renderWizStep3();
+}
+
+function renderWizStep1(){
+  const {mode,filename,rawRecords,headers}=wizState;
+  $('wizard-title').textContent=mode==='config'?'Column Mapping Settings':'Import Pipeline Data';
+  $('wizard-subtitle').textContent=mode==='config'?'Configure how your SFDC report columns map to this tool':'Step 1 of 3: Confirm file';
+  $('wiz-step-desc').textContent='Step 1 of '+(mode==='config'?2:3);
+  $('wiz-next-btn').textContent='Next →';
+  if(mode==='config'){
+    $('wizard-body').innerHTML=`
+      <div class="wiz-success">Column mapping is saved and will be applied automatically on future imports. Use this screen to reconfigure if your SFDC report changes.</div>
+      <div style="font-size:13px;color:var(--tx2);line-height:1.6">
+        <p>The mapping wizard stores two things:</p>
+        <ul style="margin:.5rem 0 .5rem 1.25rem;line-height:1.8">
+          <li><strong>Column mapping</strong> — which column in your CSV corresponds to which field in this tool</li>
+          <li><strong>Category mapping</strong> — how Salesforce forecast category values (e.g. "Closed") map to internal categories</li>
+        </ul>
+        <p>Changes here take effect on the next import. Your current forecast values are not affected.</p>
+      </div>`;
+    return;
+  }
+  // Import mode
+  const rowCount=rawRecords.length;
+  $('wizard-body').innerHTML=`
+    <div class="wiz-file-info">
+      <div class="wiz-file-icon">📄</div>
+      <div>
+        <div class="wiz-file-name">${filename}</div>
+        <div class="wiz-file-meta">${rowCount} opportunities · ${headers.length} columns detected</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:var(--tx2);margin-bottom:1rem;line-height:1.6">
+      The file looks good. On the next screen you can confirm how columns map to forecast fields. After that, you'll see a preview before values are applied.
+    </div>
+    <div style="font-size:12px;color:var(--tx2)"><strong>Columns found:</strong> ${headers.join(', ')}</div>`;
+}
+
+function renderWizStep2(){
+  const {mode,headers,rawRecords,colMap,catMap}=wizState;
+  $('wizard-title').textContent='Column Mapping';
+  $('wizard-subtitle').textContent=mode==='config'?'Step 2 of 2: Map columns & categories':'Step 2 of 3: Map columns & categories';
+  $('wiz-step-desc').textContent=mode==='config'?'Step 2 of 2':'Step 2 of 3';
+  $('wiz-next-btn').textContent=mode==='config'?'Save mapping':'Next →';
+
+  // Build column options
+  const colOpts=`<option value="">— skip —</option>`+FIELD_DEFS.map(f=>`<option value="${f.key}">${f.label}${f.req?' *':''}</option>`).join('');
+
+  // Get unique forecast category values
+  let fcValues=Object.keys(catMap);
+  if(rawRecords.length){
+    const fcField=Object.entries(colMap).find(([,v])=>v==='f_fc_cat')?.[0];
+    if(fcField){fcValues=[...new Set(rawRecords.map(r=>r[fcField]).filter(Boolean))];}
+  }
+  const catOpts=`<option value="">— ignore —</option>`+
+    ['closed','commit','probable','upside','pipeline','omitted'].map(v=>`<option value="${v}">${v.charAt(0).toUpperCase()+v.slice(1)}</option>`).join('');
+
+  // Group FIELD_DEFS
+  const groups=[
+    {key:'forecast',label:'Forecast fields (required for aggregation)'},
+    {key:'inspection',label:'Pipeline inspection fields'},
+    {key:'meddpicc',  label:'MEDDPICC fields'},
+  ];
+
+  let mapHtml='';
+  // Column mapping section
+  mapHtml+=`<div class="wiz-map-section"><div class="wiz-map-section-title">Column → Field mapping</div>`;
+  // Show active columns (those that are in the header list) plus any unmapped headers
+  headers.forEach(h=>{
+    const curVal=colMap[h]||'';
+    const fieldDef=FIELD_DEFS.find(f=>f.key===curVal);
+    mapHtml+=`<div class="wiz-map-row">
+      <div><div class="wiz-field-name">${h}</div><div class="wiz-field-desc">CSV column</div></div>
+      <select class="wiz-map-select" id="wmap_${sanitizeId(h)}">
+        ${FIELD_DEFS.map(f=>`<option value="${f.key}"${curVal===f.key?' selected':''}>${f.label}${f.req?' *':''}</option>`).join('')}
+        <option value=""${!curVal?' selected':''}>— skip —</option>
+      </select>
+    </div>`;
+  });
+  mapHtml+='</div>';
+
+  // Category value mapping
+  mapHtml+=`<div class="wiz-val-section"><div class="wiz-map-section-title" style="margin-top:1rem">Forecast category values</div>
+    <div style="font-size:12px;color:var(--tx2);margin-bottom:.75rem">Map each value from your SFDC report to the internal category.</div>`;
+  fcValues.forEach(v=>{
+    const curCat=catMap[v]||'';
+    mapHtml+=`<div class="wiz-val-row">
+      <div><div class="wiz-val-label">${v}</div><div class="wiz-val-sub">SFDC value</div></div>
+      <select class="wiz-map-select" id="cmap_${sanitizeId(v)}">
+        ${['closed','commit','probable','upside','pipeline','omitted'].map(c=>`<option value="${c}"${curCat===c?' selected':''}>${c.charAt(0).toUpperCase()+c.slice(1)}</option>`).join('')}
+        <option value=""${!curCat?' selected':''}>— ignore —</option>
+      </select>
+    </div>`;
+  });
+  mapHtml+='</div>';
+
+  $('wizard-body').innerHTML=mapHtml;
+}
+
+function renderWizStep3(){
+  const {colMap,catMap,rawRecords,filename}=wizState;
+  $('wizard-title').textContent='Confirm Import';
+  $('wizard-subtitle').textContent='Step 3 of 3: Review before applying';
+  $('wiz-step-desc').textContent='Step 3 of 3';
+  $('wiz-next-btn').textContent='Apply to forecast ✓';
+
+  const normalized=applyMapping(rawRecords,colMap,catMap);
+  const agg=aggregateForecast(normalized);
+  const openOpps=normalized.filter(r=>r.f_fc_cat_norm!=='closed'&&r.f_fc_cat_norm!=='omitted');
+  const closedOpps=normalized.filter(r=>r.f_fc_cat_norm==='closed');
+
+  const previewRows=normalized.slice(0,8).map(r=>{
+    const cat=r.f_fc_cat_norm;
+    const catColors={closed:'#0d7c3d',commit:'#1a56db',probable:'#0d7c3d',upside:'#b45309',pipeline:'#6b7280',omitted:'#9ca3af'};
+    const catBg={closed:'#f0fdf4',commit:'#eff6ff',probable:'#f0fdf4',upside:'#fffbeb',pipeline:'#f9fafb',omitted:'#f9fafb'};
+    return `<tr class="preview-row">
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.f_opp_name||'—'}</td>
+      <td style="text-align:left">${r.f_owner||'—'}</td>
+      <td><span style="background:${catBg[cat]||'#f9fafb'};color:${catColors[cat]||'#6b7280'};padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600">${r.f_fc_cat_norm}</span></td>
+      <td>${fmt(r.f_amount_num)}</td>
+      <td style="text-align:left;color:var(--tx2)">${r.f_close_date||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  $('wizard-body').innerHTML=`
+    <div class="preview-summary">
+      <div class="preview-stat"><div class="preview-stat-val" style="color:var(--blue)">${fmt(agg.closed)}</div><div class="preview-stat-lbl">Closed QTD (${closedOpps.length} opps)</div></div>
+      <div class="preview-stat"><div class="preview-stat-val" style="color:var(--tx)">${fmt(agg.commit+agg.probable+agg.upside+agg.pipeline)}</div><div class="preview-stat-lbl">Open pipeline (${openOpps.length} opps)</div></div>
+      <div class="preview-stat"><div class="preview-stat-val" style="color:var(--tx)">${normalized.length}</div><div class="preview-stat-lbl">Total records</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.25rem;font-size:12px">
+      <div style="background:var(--bg2);border:var(--bdr);border-radius:var(--rm);padding:.625rem .875rem">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);margin-bottom:.375rem">Pipeline breakdown</div>
+        <div style="display:flex;justify-content:space-between;padding:2px 0"><span>Commit</span><span style="font-weight:600;color:#1a56db">${fmt(agg.commit)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:2px 0"><span>Probable</span><span style="font-weight:600;color:#0d7c3d">${fmt(agg.probable)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:2px 0"><span>Upside</span><span style="font-weight:600;color:#b45309">${fmt(agg.upside)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:2px 0"><span>Pipeline</span><span style="font-weight:600;color:var(--tx2)">${fmt(agg.pipeline)}</span></div>
+      </div>
+      <div style="background:var(--bg2);border:var(--bdr);border-radius:var(--rm);padding:.625rem .875rem">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);margin-bottom:.375rem">What will be updated</div>
+        <div style="color:var(--tx);line-height:1.7;font-size:12px">
+          ✓ Closed QTD → ${fmt(agg.closed)}<br>
+          ✓ Commit pipeline → ${fmt(agg.commit)}<br>
+          ✓ Probable pipeline → ${fmt(agg.probable)}<br>
+          ✓ Upside pipeline → ${fmt(agg.upside)}<br>
+          ✓ Pipeline deals → ${fmt(agg.pipeline)}
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);margin-bottom:.5rem">Preview (first 8 records)</div>
+    <div class="preview-tbl-wrap">
+      <table class="preview-tbl">
+        <thead><tr><th style="text-align:left">Opportunity</th><th style="text-align:left">Owner</th><th style="text-align:left">Category</th><th>Amount</th><th style="text-align:left">Close Date</th></tr></thead>
+        <tbody>${previewRows}</tbody>
+      </table>
+    </div>
+    ${normalized.length>8?`<div style="font-size:11px;color:var(--tx2);margin-top:.375rem">+ ${normalized.length-8} more records</div>`:''}
+    <div class="wiz-warn" style="margin-top:1rem">⚠ Applying will overwrite Closed QTD and all pipeline fields. Your quota, conversion rates, C&amp;C inputs, and monthly breakdown will not change.</div>`;
+}
+
+function updateImportBadge(meta){
+  // Status row in import card
+  const sr=$('import-status-row');
+  if(sr){sr.style.display='flex';}
+  const bt=$('import-badge-text');
+  if(bt)bt.textContent=`${meta.filename} · ${meta.counts.closed} closed, ${meta.counts.open} open · ${meta.time}`;
+  // Drop zone title
+  const dt=$('import-drop-title');
+  if(dt)dt.textContent='Re-import: drop new CSV or click to browse';
+  // Sidebar nav dot
+  const dot=$('nav-import-dot');if(dot)dot.style.background='#1a56db';
+  const nl=$('nav-import-lbl');if(nl)nl.textContent='Pipeline imported ✓';
+}
+
+// Restore import badge from localStorage on load
+function restoreImportMeta(){
+  try{
+    const meta=JSON.parse(localStorage.getItem('last_import_meta'));
+    if(meta)updateImportBadge(meta);
+  }catch{}
+}
+
+// ══════════════════════════════════════════════════════
+// QUARTER STATUS BAR
+// ══════════════════════════════════════════════════════
+// US Federal holidays 2025-2026 (month is 1-based)
+const US_HOLIDAYS=[
+  '2025-01-01','2025-01-20','2025-02-17','2025-05-26','2025-06-19',
+  '2025-07-04','2025-09-01','2025-10-13','2025-11-11','2025-11-27','2025-12-25',
+  '2026-01-01','2026-01-19','2026-02-16','2026-05-25','2026-06-19',
+  '2026-07-03','2026-09-07','2026-10-12','2026-11-11','2026-11-26','2026-12-25',
+];
+
+function isHoliday(d){
+  const s=d.toISOString().slice(0,10);
+  return US_HOLIDAYS.includes(s);
+}
+
+function isWeekday(d){
+  const day=d.getDay();
+  return day!==0&&day!==6;
+}
+
+function sellDaysRemaining(from,qEnd){
+  // Count Mon-Fri non-holiday days from tomorrow through qEnd (inclusive)
+  let count=0;
+  const d=new Date(from);
+  d.setDate(d.getDate()+1); // start from tomorrow
+  d.setHours(0,0,0,0);
+  const end=new Date(qEnd);
+  end.setHours(23,59,59,999);
+  while(d<=end){
+    if(isWeekday(d)&&!isHoliday(d))count++;
+    d.setDate(d.getDate()+1);
+  }
+  return count;
+}
+
+function getWeekNumber(d){
+  const jan1=new Date(d.getFullYear(),0,1);
+  return Math.ceil(((d-jan1)/86400000+jan1.getDay()+1)/7);
+}
+
+function getCurrentQuarterEnd(d){
+  const m=d.getMonth(); // 0-based
+  const y=d.getFullYear();
+  if(m<3)  return new Date(y,2,31);  // Q1 ends Mar 31
+  if(m<6)  return new Date(y,5,30);  // Q2 ends Jun 30
+  if(m<9)  return new Date(y,8,30);  // Q3 ends Sep 30
+  return new Date(y,11,31);           // Q4 ends Dec 31
+}
+
+function renderQStatusBar(){
+  const bar=$('qstatus-bar');
+  if(!bar)return;
+  const now=new Date();
+  const qEnd=getCurrentQuarterEnd(now);
+  const days=sellDaysRemaining(now,qEnd);
+  const weekNum=getWeekNumber(now);
+  const dateStr=now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  const qLabel=now.getMonth()<3?'Q1':now.getMonth()<6?'Q2':now.getMonth()<9?'Q3':'Q4';
+  const fy=now.getMonth()<3?now.getFullYear():now.getFullYear(); // FY same for simplicity
+  const daysClass=days<=5?'critical':days<=15?'urgent':'';
+  bar.innerHTML=`
+    <div class="qstatus-item"><span class="qstatus-val">${dateStr}</span></div>
+    <span class="qstatus-divider">&middot;</span>
+    <div class="qstatus-item">Week <span class="qstatus-val">${weekNum}</span></div>
+    <span class="qstatus-divider">&middot;</span>
+    <div class="qstatus-item">${qLabel} FY${String(now.getFullYear()).slice(2)}</div>
+    <div class="qstatus-spacer"></div>
+    <div class="qstatus-days-pill"><span class="qstatus-days ${daysClass}">${days}</span><span>selling days left</span></div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════
+const DEFAULT_SFDC_URL='https://remote-com.lightning.force.com/lightning/r/Report/00OSh000002mFV3MAM/view';
+
+function getSettings(){
+  try{return JSON.parse(localStorage.getItem('app_settings'))||{};}
+  catch{return{};}
+}
+function saveSettings(){
+  const url=$('settings-sfdc-url').value.trim()||DEFAULT_SFDC_URL;
+  const s=getSettings();
+  s.sfdcUrl=url;
+  localStorage.setItem('app_settings',JSON.stringify(s));
+  // Update the chip link
+  const link=$('sfdc-report-link');
+  if(link)link.href=url;
+  const msg=$('settings-saved-msg');
+  if(msg){msg.style.display='inline';setTimeout(()=>msg.style.display='none',2500);}
+}
+function loadSettingsPage(){
+  const s=getSettings();
+  const urlEl=$('settings-sfdc-url');
+  if(urlEl)urlEl.value=s.sfdcUrl||DEFAULT_SFDC_URL;
+}
+function resetSettings(){
+  if(!confirm('Reset all column mappings and settings? This cannot be undone.'))return;
+  localStorage.removeItem('sfdc_col_map');
+  localStorage.removeItem('sfdc_cat_map');
+  localStorage.removeItem('app_settings');
+  const link=$('sfdc-report-link');
+  if(link)link.href=DEFAULT_SFDC_URL;
+  showSaveMsg('Settings reset');
+}
+function initSettings(){
+  const s=getSettings();
+  const link=$('sfdc-report-link');
+  if(link)link.href=s.sfdcUrl||DEFAULT_SFDC_URL;
+}
+
+// ══════════════════════════════════════════════════════
+// FORECAST CALC
+// ══════════════════════════════════════════════════════
 function calc(){
   const quota=pv('quota'),closed=pv('closed');
   const pc=pv('pipe_commit'),pp=pv('pipe_prob'),pu=pv('pipe_up'),pp2=pv('pipe_pipe');
   const rc=pv('r_commit')/100,rp=pv('r_prob')/100,ru=pv('r_up')/100,rpp=pv('r_pipe')/100,rcnc=pv('r_cnc')/100;
-
   const bk_c=pc*rc,bk_p=pp*rp,bk_u=pu*ru,bk_pp=pp2*rpp;
   $('exp_commit').textContent=fmt(bk_c);
   $('exp_prob').textContent=fmt(bk_p);
   $('exp_up').textContent=fmt(bk_u);
   $('exp_pipe').textContent=fmt(bk_pp);
-
+  // Pipeline totals row
+  const total_open=pc+pp+pu+pp2;
+  const total_exp=bk_c+bk_p+bk_u+bk_pp;
+  const tpEl=$('total_pipeline');if(tpEl)tpEl.textContent=fmt(total_open);
+  const teEl=$('total_exp_bookings');if(teEl)teEl.textContent=fmt(total_exp);
   const opps=pv('cnc_opps'),asp=pv('cnc_asp');
   const cnc_pipe=opps*asp,cnc_rev=cnc_pipe*rcnc;
-
   $('chain_opps').textContent=Math.round(opps).toLocaleString();
   $('chain_asp').textContent=fmt(asp);
   $('chain_pipe').textContent=fmt(cnc_pipe);
   $('cnc_rate_display').textContent=pct(Math.round(rcnc*100));
-
   $('cnc-out').innerHTML=`
     <div class="cnc-res"><div class="cr-l">Qualified pipeline created</div><div class="cr-v" style="color:var(--blue)">${fmt(cnc_pipe)}</div><div class="cr-s">${Math.round(opps).toLocaleString()} opps × ${fmt(asp)} ASP</div></div>
     <div class="cnc-res"><div class="cr-l">Expected C&amp;C bookings</div><div class="cr-v" style="color:var(--green)">${fmt(cnc_rev)}</div><div class="cr-s">${fmt(cnc_pipe)} × ${pct(Math.round(rcnc*100))} C&amp;C rate</div></div>`;
-
   const fc_commit=closed+bk_c+cnc_rev,fc_prob=fc_commit+bk_p,fc_up=fc_prob+bk_u,fc_full=fc_up+bk_pp;
-
   $('cnc-note').innerHTML=`C&amp;C bookings of <strong>${fmt(cnc_rev)}</strong> included in all headline forecasts — Commit <strong>${fmt(fc_commit)}</strong> · Probable <strong>${fmt(fc_prob)}</strong> · Upside <strong>${fmt(fc_up)}</strong>`;
-
   renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up);
   renderMonthly(fc_commit,fc_prob,fc_up,quota);
-
   S={quota,closed,pc,pp,pu,pp2,rc,rp,ru,rpp,rcnc,bk_c,bk_p,bk_u,bk_pp,opps,asp,cnc_pipe,cnc_rev,fc_commit,fc_prob,fc_up,fc_full};
 }
 
 function renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up){
   const cards=[
-    {tier:'Commit forecast',dot:'#1a56db',color:'#1a56db',fc:fc_commit,
-      rows:[{l:'Closed QTD',v:fmt(closed)},{l:'+ Commit bookings',v:fmt(bk_c)},{l:'+ C&C bookings',v:fmt(cnc_rev),cnc:true}]},
-    {tier:'Probable forecast',dot:'#0d7c3d',color:'#0d7c3d',fc:fc_prob,
-      rows:[{l:'Commit FC',v:fmt(fc_commit)},{l:'+ Probable bookings',v:fmt(bk_p)}]},
-    {tier:'Upside forecast',dot:'#b45309',color:'#b45309',fc:fc_up,
-      rows:[{l:'Probable FC',v:fmt(fc_prob)},{l:'+ Upside bookings',v:fmt(bk_u)}]},
+    {tier:'Commit forecast',dot:'#1a56db',color:'#1a56db',fc:fc_commit,rows:[{l:'Closed QTD',v:fmt(closed)},{l:'+ Commit bookings',v:fmt(bk_c)},{l:'+ C&C bookings',v:fmt(cnc_rev),cnc:true}]},
+    {tier:'Probable forecast',dot:'#0d7c3d',color:'#0d7c3d',fc:fc_prob,rows:[{l:'Commit FC',v:fmt(fc_commit)},{l:'+ Probable bookings',v:fmt(bk_p)}]},
+    {tier:'Upside forecast',dot:'#b45309',color:'#b45309',fc:fc_up,rows:[{l:'Probable FC',v:fmt(fc_prob)},{l:'+ Upside bookings',v:fmt(bk_u)}]},
   ];
   $('fc-cards').innerHTML=cards.map(c=>{
     const ap=attPct(c.fc,quota),ac=attVar(c.fc,quota);
@@ -545,7 +1723,6 @@ function renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up)
       <div class="bkdn">${rows}</div>
     </div>`;
   }).join('');
-
   const q=quota>0,wC=q?cl(closed/quota*100,0,100):0;
   const wBkC=q?cl(bk_c/quota*100,0,100-wC):0;
   const wCnc=q?cl(cnc_rev/quota*100,0,100-wC-wBkC):0;
@@ -570,91 +1747,99 @@ function renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up)
     <span style="font-size:12px;font-weight:600;color:${attVar(fc_up,quota)}">${attPct(fc_up,quota)}%</span>`;
 }
 
+function getQuarterMonthLabels(){
+  return ['Month 1','Month 2','Month 3'];
+}
+
+function getPastMonthFlags(){
+  // Returns [m1IsPast, m2IsPast, m3IsPast]
+  // A month is "past" if it has fully ended (current date is past last day of that month)
+  const now=new Date();
+  const curMonth=now.getMonth(); // 0-based
+  const qStart=Math.floor(curMonth/3)*3; // first month of this quarter, 0-based
+  const y=now.getFullYear();
+  return [0,1,2].map(offset=>{
+    const monthIdx=qStart+offset;
+    const lastDay=new Date(y,monthIdx+1,0); // last day of that month
+    return now>lastDay;
+  });
+}
+
+// Track which past months the user has manually unlocked for override
+let pastUnlocked=[false,false,false];
+function unlockPastMonth(idx){
+  pastUnlocked[idx]=true;
+  calc(); // re-render with unlocked state
+}
+
 function renderMonthly(fc_commit,fc_prob,fc_up,quota){
-  const ms=['m1','m2','m3'],mLbls=['Month 1','Month 2','Month 3'];
+  const ms=['m1','m2','m3'];
+  const mLbls=getQuarterMonthLabels();
+  const pastFlags=getPastMonthFlags();
   const cats=[
     {key:'commit',label:'Commit forecast', qfc:fc_commit,color:'#1a56db'},
     {key:'prob',  label:'Probable forecast',qfc:fc_prob,  color:'#0d7c3d'},
     {key:'up',    label:'Upside forecast',  qfc:fc_up,    color:'#b45309'},
   ];
   const cv=ms.map(m=>getMv(m,'closed')),ct=cv.reduce((a,b)=>a+b,0),cq=pv('closed');
-
   const warns=[];
   if(ct>cq+.5) warns.push(`Closed monthly total exceeds Closed QTD by ${fmt(ct-cq)}`);
   cats.forEach(c=>{const t=ms.reduce((s,m)=>s+getMv(m,c.key),0);if(t>c.qfc+.5)warns.push(`${c.label} monthly total exceeds quarterly forecast by ${fmt(t-c.qfc)}`);});
-
   const varCell=(t,q)=>{const d=t-q;if(Math.abs(d)<1)return`<span class="var-zero">—</span>`;return`<span class="${d>0?'var-neg':'var-pos'}">${d>0?'+':''}${fmt(d)}</span>`;};
   const overBadge=(t,q)=>t>q+.5?`<span class="over-badge">! over</span>`:'';
   const warnHtml=warns.map(w=>`<div class="warn-strip"><span class="warn-ic">!</span><span>${w}</span></div>`).join('');
-
   const cOver=ct>cq+.5;
+  // Closed row — editable for all months
   let rows=`<tr><td>Closed</td>
-    ${ms.map(m=>`<td><input class="minput" type="text" id="${m}_closed" value="${getMv(m,'closed')||''}" placeholder="0" oninput="calc()"></td>`).join('')}
+    ${ms.map((m,i)=>`<td${pastFlags[i]?' class="past-month-cell"':''}><input class="minput${pastFlags[i]&&!pastUnlocked[i]?' past-input':pastFlags[i]?' past-unlocked':''}" type="text" id="${m}_closed" value="${getMv(m,'closed')||''}" placeholder="0" oninput="calc()"></td>`).join('')}
     <td style="font-weight:600;color:${cOver?'var(--red)':'var(--tx)'}">${fmt(ct)}${overBadge(ct,cq)}</td>
     <td>${varCell(ct,cq)}</td>
     <td style="color:var(--tx2);font-size:12px">${fmt(cq)}</td></tr>`;
-
   cats.forEach(c=>{
     const vals=ms.map(m=>getMv(m,c.key)),rt=vals.reduce((a,b)=>a+b,0),over=rt>c.qfc+.5;
+    // For past months: show closed value read-only, styled as locked
     rows+=`<tr>
       <td style="color:${c.color};font-weight:600">${c.label}</td>
-      ${ms.map((m,i)=>`<td><input class="minput" type="text" id="${m}_${c.key}" value="${vals[i]||''}" placeholder="0" oninput="calc()"></td>`).join('')}
+      ${ms.map((m,i)=>{
+        if(pastFlags[i]&&!pastUnlocked[i]){
+          const closedVal=getMv(m,'closed');
+          return `<td class="past-month-cell"><span class="past-month-val">${closedVal>0?fmt(closedVal):'—'}</span><button class="past-unlock-btn" onclick="unlockPastMonth(${i})" title="Click to override">&#9998;</button></td>`;
+        }
+        const extraClass=pastFlags[i]&&pastUnlocked[i]?' past-unlocked':'';
+        return `<td${pastFlags[i]?' class="past-month-cell"':''}><input class="minput${extraClass}" type="text" id="${m}_${c.key}" value="${vals[i]||''}" placeholder="0" oninput="calc()"></td>`;
+      }).join('')}
       <td style="font-weight:600;color:${over?'var(--red)':'var(--tx)'}">${fmt(rt)}${overBadge(rt,c.qfc)}</td>
       <td>${varCell(rt,c.qfc)}</td>
       <td style="color:var(--tx2);font-size:12px">${fmt(c.qfc)}</td>
     </tr>
     <tr class="tr-lin"><td style="font-size:11px;padding-left:20px">linearity</td>
-      ${vals.map(v=>{const l=linPct(v,c.qfc);return`<td><div class="lin-val">${l}%</div><div class="lin-bar"><div class="lin-fill" style="width:${cl(l,0,100)}%;background:${c.color}"></div></div></td>`;}).join('')}
+      ${vals.map((v,i)=>{const l=linPct(v,c.qfc);return`<td${pastFlags[i]?' class="past-month-cell"':''}><div class="lin-val">${l}%</div><div class="lin-bar"><div class="lin-fill" style="width:${cl(l,0,100)}%;background:${c.color}"></div></div></td>`;}).join('')}
       <td colspan="3" style="font-size:11px;color:var(--tx2)">% of ${c.label.toLowerCase()}</td>
     </tr>`;
   });
-
+  const thStyle=i=>pastFlags[i]&&!pastUnlocked[i]?'background:var(--bg2);color:var(--tx2)':pastFlags[i]&&pastUnlocked[i]?'background:#fffbeb;color:var(--tx2)':'';
+  const thSuffix=i=>pastFlags[i]&&!pastUnlocked[i]?'<br><span style="font-size:9px;font-weight:400;opacity:.7">actual</span>':pastFlags[i]&&pastUnlocked[i]?'<br><span style="font-size:9px;font-weight:600;color:#b45309">override</span>':'';
   $('monthly-section').innerHTML=`${warnHtml}<table class="mt">
-    <thead><tr><th style="text-align:left">Category</th>${mLbls.map(l=>`<th>${l}</th>`).join('')}<th>M total</th><th>Variance</th><th>Quarterly FC</th></tr></thead>
+    <thead><tr><th style="text-align:left">Category</th>${mLbls.map((l,i)=>`<th style="${thStyle(i)}">${l}${thSuffix(i)}</th>`).join('')}<th>M total</th><th>Variance</th><th>Quarterly FC</th></tr></thead>
     <tbody>${rows}</tbody></table>`;
   $('monthly-section').querySelectorAll('.minput').forEach(el=>el.addEventListener('input',calc));
 }
 
-const allIds=['quota','closed','pipe_commit','pipe_prob','pipe_up','pipe_pipe','r_commit','r_prob','r_up','r_pipe','r_cnc','cnc_opps','cnc_asp','mgr_name','mgr_team','quarter_lbl',
-  ...['m1','m2','m3'].flatMap(m=>['closed','commit','prob','up'].map(k=>m+'_'+k))];
-
+// ══════════════════════════════════════════════════════
+// THEME & QE MODE
+// ══════════════════════════════════════════════════════
 function toggleDark(){
   const isDark=document.documentElement.classList.toggle('dark');
   localStorage.setItem('theme',isDark?'dark':'light');
   $('theme-lbl').textContent=isDark?'Light mode':'Dark mode';
 }
-
 function initTheme(){
   const saved=localStorage.getItem('theme');
   if(saved==='dark'){document.documentElement.classList.add('dark');$('theme-lbl').textContent='Light mode';}
 }
-
-const QE_MESSAGES=[
-  "Have you tried just… calling them? RIGHT NOW?",
-  "Every deal that slips is a conversation you didn't have.",
-  "The quarter ends when YOU say it ends. (It doesn't. It ends Friday.)",
-  "Discounts are a feeling. Urgency is a strategy.",
-  "Your CRM hygiene is not going to save you. Your pipeline will.",
-  "Legal turnaround is 24 hours. You have 3 days. Make it work.",
-  "If they haven't signed, they haven't said yes.",
-  "Executive sponsor engaged? No? Why not?",
-  "What's the blocker? Name it. Kill it.",
-  "Multi-thread or die. Single-threaded deals slip.",
-  "The mutual action plan exists for a reason. Use it.",
-  "Your forecast is a promise. Treat it like one.",
-  "Comfortable? Good. Now push harder.",
-  "Close date slipped again? That's a discovery problem.",
-  "If you wouldn't bet your bonus on it, it's not commit.",
-];
-
-const QE_TICKER=[
-  "CLOSE EVERYTHING  ·  CALL EVERYONE  ·  NO SLIPPAGE  ·  ",
-  "CHAMPION ENGAGED?  ·  LEGAL UNBLOCKED?  ·  SIGNED = CLOSED  ·  ",
-  "PIPELINE IS NOT REVENUE  ·  ACTIVITY ≠ PROGRESS  ·  DIAL FASTER  ·  ",
-];
-
+const QE_MESSAGES=["Have you tried just… calling them? RIGHT NOW?","Every deal that slips is a conversation you didn't have.","The quarter ends when YOU say it ends. (It doesn't. It ends Friday.)","Discounts are a feeling. Urgency is a strategy.","Your CRM hygiene is not going to save you. Your pipeline will.","Legal turnaround is 24 hours. You have 3 days. Make it work.","If they haven't signed, they haven't said yes.","Executive sponsor engaged? No? Why not?","What's the blocker? Name it. Kill it.","Multi-thread or die. Single-threaded deals slip.","The mutual action plan exists for a reason. Use it.","Your forecast is a promise. Treat it like one.","Comfortable? Good. Now push harder.","Close date slipped again? That's a discovery problem.","If you wouldn't bet your bonus on it, it's not commit."];
+const QE_TICKER=["CLOSE EVERYTHING  ·  CALL EVERYONE  ·  NO SLIPPAGE  ·  ","CHAMPION ENGAGED?  ·  LEGAL UNBLOCKED?  ·  SIGNED = CLOSED  ·  ","PIPELINE IS NOT REVENUE  ·  ACTIVITY ≠ PROGRESS  ·  DIAL FASTER  ·  "];
 let qeInterval=null,qeMsgIdx=0;
-
 function toggleQE(){
   const isQE=document.documentElement.classList.toggle('qe');
   localStorage.setItem('qe',isQE?'on':'off');
@@ -662,65 +1847,33 @@ function toggleQE(){
   if(isQE){
     const ticker=QE_TICKER[Math.floor(Math.random()*QE_TICKER.length)];
     $('qe-ticker-text').textContent=ticker.repeat(4);
-    showQEPanic();
-    qeInterval=setInterval(showQEPanic,7000);
-    startFlames();
-  } else {
-    clearInterval(qeInterval);qeInterval=null;
-    $('qe-panic').textContent='';
-    stopFlames();
-  }
+    showQEPanic();qeInterval=setInterval(showQEPanic,7000);startFlames();
+  }else{clearInterval(qeInterval);qeInterval=null;$('qe-panic').textContent='';stopFlames();}
   calc();
 }
-
 function startFlames(){
-  const container=$('flame-canvas');
-  container.style.display='block';
-  container.innerHTML='';
+  const c=$('flame-canvas');c.style.display='block';c.innerHTML='';
   const count=Math.ceil(window.innerWidth/22);
-  for(let i=0;i<count;i++){
-    const col=document.createElement('div');
-    col.className='flame-col';
-    col.style.left=(i/count*100)+'%';
-    const delay=-(Math.random()*3).toFixed(2)+'s';
-    const dur=(1.2+Math.random()*1.4).toFixed(2)+'s';
-    const h=Math.round(60+Math.random()*100);
-    const w=Math.round(14+Math.random()*18);
-    col.style.cssText+=`;animation-delay:${delay};animation-duration:${dur};height:${h}px;width:${w}px;margin-left:${-(w/2)}px`;
-    // inner flicker
-    const inner=document.createElement('div');
-    inner.className='flame-inner';
-    inner.style.animationDelay=(-(Math.random()*2).toFixed(2))+'s';
-    inner.style.animationDuration=(0.6+Math.random()*0.8).toFixed(2)+'s';
-    col.appendChild(inner);
-    container.appendChild(col);
-  }
+  for(let i=0;i<count;i++){const col=document.createElement('div');col.className='flame-col';col.style.left=(i/count*100)+'%';const delay=-(Math.random()*3).toFixed(2)+'s';const dur=(1.2+Math.random()*1.4).toFixed(2)+'s';const h=Math.round(60+Math.random()*100);const w=Math.round(14+Math.random()*18);col.style.cssText+=`;animation-delay:${delay};animation-duration:${dur};height:${h}px;width:${w}px;margin-left:${-(w/2)}px`;const inner=document.createElement('div');inner.className='flame-inner';inner.style.animationDelay=(-(Math.random()*2).toFixed(2))+'s';inner.style.animationDuration=(0.6+Math.random()*0.8).toFixed(2)+'s';col.appendChild(inner);c.appendChild(col);}
 }
+function stopFlames(){const c=$('flame-canvas');c.style.display='none';c.innerHTML='';}
+function showQEPanic(){const msg=QE_MESSAGES[qeMsgIdx%QE_MESSAGES.length];qeMsgIdx++;$('qe-panic').innerHTML=`<span style="color:#fca5a5;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:3px">Quarter-end reality check</span>${msg}`;}
+function initQE(){if(localStorage.getItem('qe')==='on')toggleQE();}
 
-function stopFlames(){
-  const container=$('flame-canvas');
-  container.style.display='none';
-  container.innerHTML='';
-}
+// ══════════════════════════════════════════════════════
+// SAVE / SHARE / EXPORT
+// ══════════════════════════════════════════════════════
+function showSaveMsg(txt){const m=$('save-msg');m.textContent=txt;m.style.display='inline';setTimeout(()=>m.style.display='none',3500);}
 
-function showQEPanic(){
-  const msg=QE_MESSAGES[qeMsgIdx%QE_MESSAGES.length];
-  qeMsgIdx++;
-  $('qe-panic').innerHTML=`<span style="color:#fca5a5;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:3px">Quarter-end reality check</span>${msg}`;
-}
-
-function initQE(){
-  if(localStorage.getItem('qe')==='on') toggleQE();
-}
+const allIds=['quota','closed','pipe_commit','pipe_prob','pipe_up','pipe_pipe','r_commit','r_prob','r_up','r_pipe','r_cnc','cnc_opps','cnc_asp','mgr_name','mgr_team','quarter_lbl',
+  ...['m1','m2','m3'].flatMap(m=>['closed','commit','prob','up'].map(k=>m+'_'+k))];
 
 function copyUrl(){
   const sp=new URLSearchParams();
   allIds.forEach(id=>{const el=$(id);if(el)sp.set(id,el.value);});
   navigator.clipboard.writeText(location.href.split('?')[0]+'?'+sp.toString()).catch(()=>{});
-  const msg=$('save-msg');msg.textContent='URL copied — bookmark or share it';msg.style.display='inline';
-  setTimeout(()=>msg.style.display='none',3500);
+  showSaveMsg('URL copied — bookmark or share it');
 }
-
 function loadFromUrl(){
   const sp=new URLSearchParams(location.search);
   if(![...sp.keys()].length)return;
@@ -740,7 +1893,6 @@ function printPdf(){
   const wCnc=q?cl(s.cnc_rev/s.quota*100,0,100-wC-wBkC):0;
   const wBkP=q?cl(s.bk_p/s.quota*100,0,100-wC-wBkC-wCnc):0;
   const wBkU=q?cl(s.bk_u/s.quota*100,0,100-wC-wBkC-wCnc-wBkP):0;
-
   const kpis=[
     {tier:'Commit forecast',accent:'#1a56db',fc:s.fc_commit,lines:[{l:'Closed QTD',v:fmt(s.closed)},{l:'+ Commit bookings',v:fmt(s.bk_c)},{l:'+ C&C bookings',v:fmt(s.cnc_rev),cnc:true}]},
     {tier:'Probable forecast',accent:'#0d7c3d',fc:s.fc_prob,lines:[{l:'Commit FC',v:fmt(s.fc_commit)},{l:'+ Probable bookings',v:fmt(s.bk_p)}]},
@@ -749,75 +1901,35 @@ function printPdf(){
   const kpiHtml=kpis.map(k=>{
     const ap=attPct(k.fc,s.quota),ac=attHex(k.fc,s.quota),w=cl(ap,0,100);
     const lines=k.lines.map(l=>`<div class="kpi-line${l.cnc?' cnc':''}"><span>${l.l}</span><span class="kv">${l.v}</span></div>`).join('');
-    return `<div class="pdf-kpi">
-      <div class="kpi-accent" style="background:${k.accent}"></div>
-      <div class="kpi-tier">${k.tier}</div>
-      <div class="kpi-amount" style="color:${ac}">${fmt(k.fc)}</div>
-      <div class="kpi-meta"><span class="kpi-attain" style="color:${ac}">${ap}%</span><span class="kpi-gap">${k.fc>=s.quota?'on track':'gap: '+fmt(s.quota-k.fc)}</span></div>
-      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${w}%;background:${k.accent}"></div></div>
-      <div class="kpi-lines">${lines}</div>
-    </div>`;
+    return `<div class="pdf-kpi"><div class="kpi-accent" style="background:${k.accent}"></div><div class="kpi-tier">${k.tier}</div><div class="kpi-amount" style="color:${ac}">${fmt(k.fc)}</div><div class="kpi-meta"><span class="kpi-attain" style="color:${ac}">${ap}%</span><span class="kpi-gap">${k.fc>=s.quota?'on track':'gap: '+fmt(s.quota-k.fc)}</span></div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${w}%;background:${k.accent}"></div></div><div class="kpi-lines">${lines}</div></div>`;
   }).join('');
-
   const mRows=cats.map(c=>{
     const vals=ms.map(m=>getMv(m,c.key)),total=vals.reduce((a,b)=>a+b,0);
     return `<tr><td style="color:${c.color};font-weight:700">${c.label}</td>${vals.map(v=>`<td>${v>0?fmt(v):'—'}</td>`).join('')}<td>${fmt(total)}</td><td>${varStr(total,c.qfc)}</td><td style="color:#9ca3af">${fmt(c.qfc)}</td></tr>
     <tr class="lin"><td>${c.label.replace(' forecast',' linearity')}</td>${vals.map(v=>`<td>${linPct(v,c.qfc)}%</td>`).join('')}<td colspan="3"></td></tr>`;
   }).join('');
-
   $('pdf-content').innerHTML=`
-    <div class="pdf-hdr">
-      <div><div class="pdf-mark">Remote</div><div class="pdf-name">${nm}${team?' — '+team:''}</div><div class="pdf-sub">${qtr} Forecast &nbsp;·&nbsp; Quota: ${fmt(s.quota)}</div></div>
-      <div class="pdf-hdr-r"><div class="pdf-date">As of ${dateStr}</div><div class="pdf-badge">Confidential</div></div>
-    </div>
+    <div class="pdf-hdr"><div><div class="pdf-mark">Remote</div><div class="pdf-name">${nm}${team?' — '+team:''}</div><div class="pdf-sub">${qtr} Forecast &nbsp;·&nbsp; Quota: ${fmt(s.quota)}</div></div><div class="pdf-hdr-r"><div class="pdf-date">As of ${dateStr}</div><div class="pdf-badge">Confidential</div></div></div>
     <div class="pdf-kpis">${kpiHtml}</div>
     <div class="pdf-body">
-      <div class="pdf-qbar">
-        <span class="pdf-qbar-lbl">Quota progress</span>
-        <div class="pdf-qbar-track">
-          <div class="pdf-qbar-seg" style="background:#1a56db;width:${wC}%"></div>
-          <div class="pdf-qbar-seg" style="background:#93c5fd;width:${wBkC}%"></div>
-          <div class="pdf-qbar-seg" style="background:#34d399;width:${wCnc}%"></div>
-          <div class="pdf-qbar-seg" style="background:#6ee7b7;width:${wBkP}%"></div>
-          <div class="pdf-qbar-seg" style="background:#fcd34d;width:${wBkU}%"></div>
-        </div>
-        <div class="pdf-qbar-leg">
-          <span><span class="pqsw" style="background:#1a56db"></span>Closed</span>
-          <span><span class="pqsw" style="background:#93c5fd"></span>Commit</span>
-          <span><span class="pqsw" style="background:#34d399"></span>C&amp;C</span>
-          <span><span class="pqsw" style="background:#6ee7b7"></span>Probable</span>
-          <span><span class="pqsw" style="background:#fcd34d"></span>Upside</span>
-        </div>
+      <div class="pdf-qbar"><span class="pdf-qbar-lbl">Quota progress</span><div class="pdf-qbar-track"><div class="pdf-qbar-seg" style="background:#1a56db;width:${wC}%"></div><div class="pdf-qbar-seg" style="background:#93c5fd;width:${wBkC}%"></div><div class="pdf-qbar-seg" style="background:#34d399;width:${wCnc}%"></div><div class="pdf-qbar-seg" style="background:#6ee7b7;width:${wBkP}%"></div><div class="pdf-qbar-seg" style="background:#fcd34d;width:${wBkU}%"></div></div><div class="pdf-qbar-leg"><span><span class="pqsw" style="background:#1a56db"></span>Closed</span><span><span class="pqsw" style="background:#93c5fd"></span>Commit</span><span><span class="pqsw" style="background:#34d399"></span>C&amp;C</span><span><span class="pqsw" style="background:#6ee7b7"></span>Probable</span><span><span class="pqsw" style="background:#fcd34d"></span>Upside</span></div></div>
+      <div class="pdf-sec"><div class="pdf-sec-hdr"><div class="pdf-sec-bar"></div><div class="pdf-sec-title">Pipeline summary</div></div>
+        <table class="ptbl"><thead><tr><th>Category</th><th>Open pipeline</th><th>Conv rate</th><th>Expected bookings</th></tr></thead>
+        <tbody>
+          <tr><td>Closed QTD</td><td style="color:#9ca3af">—</td><td style="color:#9ca3af">—</td><td style="color:#1a56db;font-weight:700">${fmt(s.closed)}</td></tr>
+          <tr class="sub"><td>Commit</td><td>${fmt(s.pc)}</td><td>${pct(Math.round(s.rc*100))}</td><td style="color:#1a56db;font-weight:700">${fmt(s.bk_c)}</td></tr>
+          <tr class="sub"><td>Probable</td><td>${fmt(s.pp)}</td><td>${pct(Math.round(s.rp*100))}</td><td style="color:#0d7c3d;font-weight:700">${fmt(s.bk_p)}</td></tr>
+          <tr class="sub"><td>Upside</td><td>${fmt(s.pu)}</td><td>${pct(Math.round(s.ru*100))}</td><td style="color:#b45309;font-weight:700">${fmt(s.bk_u)}</td></tr>
+          <tr class="sub"><td>Pipeline</td><td>${fmt(s.pp2)}</td><td>${pct(Math.round(s.rpp*100))}</td><td style="color:#6b7280">${fmt(s.bk_pp)}</td></tr>
+          <tr class="sub"><td>Create &amp; close (${Math.round(s.opps)} opps × ${fmt(s.asp)} ASP)</td><td>${fmt(s.cnc_pipe)}</td><td>${pct(Math.round(s.rcnc*100))}</td><td style="color:#0d7c3d;font-weight:700">${fmt(s.cnc_rev)}</td></tr>
+        </tbody></table>
       </div>
-      <div class="pdf-sec">
-        <div class="pdf-sec-hdr"><div class="pdf-sec-bar"></div><div class="pdf-sec-title">Pipeline summary</div></div>
-        <table class="ptbl">
-          <thead><tr><th>Category</th><th>Open pipeline</th><th>Conv rate</th><th>Expected bookings</th></tr></thead>
-          <tbody>
-            <tr><td>Closed QTD</td><td style="color:#9ca3af">—</td><td style="color:#9ca3af">—</td><td style="color:#1a56db;font-weight:700">${fmt(s.closed)}</td></tr>
-            <tr class="sub"><td>Commit</td><td>${fmt(s.pc)}</td><td>${pct(Math.round(s.rc*100))}</td><td style="color:#1a56db;font-weight:700">${fmt(s.bk_c)}</td></tr>
-            <tr class="sub"><td>Probable</td><td>${fmt(s.pp)}</td><td>${pct(Math.round(s.rp*100))}</td><td style="color:#0d7c3d;font-weight:700">${fmt(s.bk_p)}</td></tr>
-            <tr class="sub"><td>Upside</td><td>${fmt(s.pu)}</td><td>${pct(Math.round(s.ru*100))}</td><td style="color:#b45309;font-weight:700">${fmt(s.bk_u)}</td></tr>
-            <tr class="sub"><td>Pipeline</td><td>${fmt(s.pp2)}</td><td>${pct(Math.round(s.rpp*100))}</td><td style="color:#6b7280">${fmt(s.bk_pp)}</td></tr>
-            <tr class="sub"><td>Create &amp; close (${Math.round(s.opps)} opps × ${fmt(s.asp)} ASP)</td><td>${fmt(s.cnc_pipe)}</td><td>${pct(Math.round(s.rcnc*100))}</td><td style="color:#0d7c3d;font-weight:700">${fmt(s.cnc_rev)}</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="pdf-sec">
-        <div class="pdf-sec-hdr"><div class="pdf-sec-bar"></div><div class="pdf-sec-title">Monthly breakdown &amp; linearity</div></div>
-        <table class="ptbl">
-          <thead><tr><th>Category</th>${mLbls.map(l=>`<th>${l}</th>`).join('')}<th>M total</th><th>Variance</th><th>Quarterly FC</th></tr></thead>
-          <tbody>
-            <tr><td>Closed</td>${cv.map(v=>`<td>${v>0?fmt(v):'—'}</td>`).join('')}<td>${fmt(ct)}</td><td>${varStr(ct,s.closed)}</td><td style="color:#9ca3af">${fmt(s.closed)}</td></tr>
-            ${mRows}
-          </tbody>
-        </table>
+      <div class="pdf-sec"><div class="pdf-sec-hdr"><div class="pdf-sec-bar"></div><div class="pdf-sec-title">Monthly breakdown &amp; linearity</div></div>
+        <table class="ptbl"><thead><tr><th>Category</th>${mLbls.map(l=>`<th>${l}</th>`).join('')}<th>M total</th><th>Variance</th><th>Quarterly FC</th></tr></thead>
+        <tbody><tr><td>Closed</td>${cv.map(v=>`<td>${v>0?fmt(v):'—'}</td>`).join('')}<td>${fmt(ct)}</td><td>${varStr(ct,s.closed)}</td><td style="color:#9ca3af">${fmt(s.closed)}</td></tr>${mRows}</tbody></table>
       </div>
     </div>
-    <div class="pdf-ftr">
-      <div class="pdf-ftr-l">Manager's Forecast Calculator v1.3<span class="pdot"></span>Remote</div>
-      <div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div>
-    </div>`;
+    <div class="pdf-ftr"><div class="pdf-ftr-l">Manager's Forecast Calculator v2.3<span class="pdot"></span>Remote</div><div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div></div>`;
   window.print();
 }
 
@@ -827,7 +1939,7 @@ function exportXlsx(){
   const wb=XLSX.utils.book_new();
   const mf=(ws,c)=>{if(ws[c])ws[c].z='$#,##0'};
   const pf=(ws,c)=>{if(ws[c])ws[c].z='0%'};
-  const sum=[[`${nm}${team?' — '+team:''} · ${qtr} · v1.3`],[''],
+  const sum=[[`${nm}${team?' — '+team:''} · ${qtr} · v2.1`],[''],
     ['Quota','',s.quota],['Closed QTD','',s.closed],[''],
     ['Pipeline','Open $','Conv Rate','Expected Bookings'],
     ['Commit',s.pc,s.rc,s.bk_c],['Probable',s.pp,s.rp,s.bk_p],
@@ -851,16 +1963,21 @@ function exportXlsx(){
   const ws2=XLSX.utils.aoa_to_sheet(md);
   ws2['!cols']=[{wch:20},{wch:13},{wch:13},{wch:13},{wch:13},{wch:14},{wch:13}];
   XLSX.utils.book_append_sheet(wb,ws2,'Monthly Breakdown');
-  XLSX.writeFile(wb,`${nm.replace(/\s+/g,'_')}_${qtr.replace(/\s+/g,'_')}_Forecast_v1.3.xlsx`);
+  XLSX.writeFile(wb,`${nm.replace(/\s+/g,'_')}_${qtr.replace(/\s+/g,'_')}_Forecast_v2.3.xlsx`);
 }
 
-// Event wiring
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
 $('r_cnc').addEventListener('input',function(){$('r_cnc_out').textContent=this.value+'%';calc();});
 ['r_commit','r_prob','r_up','r_pipe'].forEach(id=>$(id).addEventListener('input',function(){$(id+'_out').textContent=this.value+'%';calc();}));
 document.querySelectorAll('input[type=text]:not(.minput)').forEach(el=>el.addEventListener('input',calc));
 initTheme();
 initQE();
+initSettings();
 loadFromUrl();
+restoreImportMeta();
+renderQStatusBar();
 calc();
 </script>
 </body>
