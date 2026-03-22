@@ -320,6 +320,17 @@ html.dark .import-zone-inner:hover{background:#111827}
 .settings-about-item:nth-last-child(-n+2){border-bottom:none}
 .settings-about-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx2);margin-bottom:4px}
 .settings-about-val{font-size:12px;color:var(--tx);line-height:1.5}
+.changelog-entry{padding:1rem 1.25rem;border-bottom:var(--bdr)}
+.changelog-entry:last-child{border-bottom:none}
+.changelog-ver{display:flex;align-items:center;gap:8px;margin-bottom:.5rem}
+.changelog-ver-badge{font-size:11px;font-weight:700;background:var(--bg2);border:var(--bdr);border-radius:20px;padding:2px 9px;color:var(--tx)}
+.changelog-ver-badge.current{background:#eff6ff;border-color:#93c5fd;color:var(--blue)}
+.changelog-ver-date{font-size:11px;color:var(--tx2)}
+.changelog-items{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:3px}
+.changelog-items li{font-size:12px;color:var(--tx2);padding-left:1rem;position:relative;line-height:1.5}
+.changelog-items li::before{content:"—";position:absolute;left:0;color:var(--tx2);opacity:.4}
+.changelog-items li strong{color:var(--tx);font-weight:600}
+html.dark .changelog-ver-badge.current{background:#1e3a5f;border-color:#3b82f6;color:#93c5fd}
 
 /* ── WIZARD MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem}
@@ -898,6 +909,59 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
           <div class="settings-about-lbl">Made by</div>
           <div class="settings-about-val">Shouting at <a href="https://claude.ai" target="_blank" style="color:var(--blue)">claude.ai</a>, reluctantly, for Remote</div>
         </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-hdr">Version history</div>
+      <div class="changelog-entry">
+        <div class="changelog-ver">
+          <span class="changelog-ver-badge current">v2.3</span>
+          <span class="changelog-ver-date">Mar 2026</span>
+        </div>
+        <ul class="changelog-items">
+          <li><strong>Import pipeline</strong> &mdash; SFDC CSV import with column mapping wizard, preview, and auto-populate</li>
+          <li><strong>Settings page</strong> &mdash; SFDC report URL, column mapping config, version history</li>
+          <li><strong>Quarter status bar</strong> &mdash; date, week number, selling days remaining (US holidays)</li>
+          <li><strong>Pipeline totals row</strong> &mdash; live sum of open pipeline and expected bookings</li>
+          <li><strong>Rep view rollup</strong> &mdash; two-row flow: AE submission + manager view</li>
+          <li><strong>Monthly breakdown</strong> &mdash; past months lock to actuals with manual override</li>
+        </ul>
+      </div>
+      <div class="changelog-entry">
+        <div class="changelog-ver">
+          <span class="changelog-ver-badge">v2.2</span>
+          <span class="changelog-ver-date">Mar 2026</span>
+        </div>
+        <ul class="changelog-items">
+          <li><strong>Sidebar nav</strong> &mdash; hamburger-toggle sidebar with Manager View, Rep View, Settings</li>
+          <li><strong>Rep View</strong> &mdash; forecast category explanations, coaching tips, rollup diagram</li>
+          <li><strong>Dark mode</strong> &mdash; full dark theme toggle, persists across sessions</li>
+          <li><strong>Q-End Mode</strong> &mdash; easter egg panic mode with ticker and flames</li>
+        </ul>
+      </div>
+      <div class="changelog-entry">
+        <div class="changelog-ver">
+          <span class="changelog-ver-badge">v2.0&nbsp;&ndash;&nbsp;2.1</span>
+          <span class="changelog-ver-date">Feb 2026</span>
+        </div>
+        <ul class="changelog-items">
+          <li><strong>App shell</strong> &mdash; topbar, sidebar, multi-view architecture</li>
+          <li><strong>PDF export</strong> &mdash; navy/coral branded print layout</li>
+          <li><strong>Excel export</strong> &mdash; forecast summary + monthly breakdown sheets</li>
+          <li><strong>Save &amp; share URL</strong> &mdash; full state encoded as URL parameters</li>
+        </ul>
+      </div>
+      <div class="changelog-entry">
+        <div class="changelog-ver">
+          <span class="changelog-ver-badge">v1.0&nbsp;&ndash;&nbsp;1.3</span>
+          <span class="changelog-ver-date">Jan 2026</span>
+        </div>
+        <ul class="changelog-items">
+          <li><strong>Core forecast calculator</strong> &mdash; quota, closed QTD, pipeline by category, conversion rates</li>
+          <li><strong>Create &amp; close what-if</strong> &mdash; opps &times; ASP model</li>
+          <li><strong>Monthly breakdown</strong> &mdash; M1/M2/M3 inputs with linearity and variance</li>
+        </ul>
       </div>
     </div>
 
@@ -1903,9 +1967,13 @@ function printPdf(){
     const lines=k.lines.map(l=>`<div class="kpi-line${l.cnc?' cnc':''}"><span>${l.l}</span><span class="kv">${l.v}</span></div>`).join('');
     return `<div class="pdf-kpi"><div class="kpi-accent" style="background:${k.accent}"></div><div class="kpi-tier">${k.tier}</div><div class="kpi-amount" style="color:${ac}">${fmt(k.fc)}</div><div class="kpi-meta"><span class="kpi-attain" style="color:${ac}">${ap}%</span><span class="kpi-gap">${k.fc>=s.quota?'on track':'gap: '+fmt(s.quota-k.fc)}</span></div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${w}%;background:${k.accent}"></div></div><div class="kpi-lines">${lines}</div></div>`;
   }).join('');
+  // Past months: forecast category inputs don't exist in DOM (replaced by spans),
+  // so use closed value for those months — same as what the screen shows.
+  const pdfPastFlags=getPastMonthFlags();
   const mRows=cats.map(c=>{
-    const vals=ms.map(m=>getMv(m,c.key)),total=vals.reduce((a,b)=>a+b,0);
-    return `<tr><td style="color:${c.color};font-weight:700">${c.label}</td>${vals.map(v=>`<td>${v>0?fmt(v):'—'}</td>`).join('')}<td>${fmt(total)}</td><td>${varStr(total,c.qfc)}</td><td style="color:#9ca3af">${fmt(c.qfc)}</td></tr>
+    const vals=ms.map((m,i)=>pdfPastFlags[i]&&!pastUnlocked[i]?getMv(m,'closed'):getMv(m,c.key));
+    const total=vals.reduce((a,b)=>a+b,0);
+    return `<tr><td style="color:${c.color};font-weight:700">${c.label}</td>${vals.map((v,i)=>`<td${pdfPastFlags[i]&&!pastUnlocked[i]?' style="color:#6b7280;font-style:italic"':''}>${v>0?fmt(v):'—'}</td>`).join('')}<td>${fmt(total)}</td><td>${varStr(total,c.qfc)}</td><td style="color:#9ca3af">${fmt(c.qfc)}</td></tr>
     <tr class="lin"><td>${c.label.replace(' forecast',' linearity')}</td>${vals.map(v=>`<td>${linPct(v,c.qfc)}%</td>`).join('')}<td colspan="3"></td></tr>`;
   }).join('');
   $('pdf-content').innerHTML=`
