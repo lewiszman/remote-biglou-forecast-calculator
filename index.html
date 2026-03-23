@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forecast Calculator v2.5</title>
+<title>Forecast Calculator v2.6</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -935,7 +935,7 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
     <button class="btn" onclick="exportXlsx()">Download Excel</button>
     <button class="btn" onclick="printPdf()">Download PDF</button>
     <span id="save-msg" style="font-size:12px;color:var(--green)"></span>
-    <span class="ver">v2.5</span>
+    <span class="ver">v2.6</span>
     <button class="qe-toggle" onclick="toggleQE()" id="qe-btn">
       <div class="qe-track"><div class="qe-thumb"></div></div>
       <span id="qe-lbl">Q-End Mode</span>
@@ -1241,7 +1241,7 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
       <div class="settings-about-grid">
         <div class="settings-about-item">
           <div class="settings-about-lbl">Version</div>
-          <div class="settings-about-val">v2.5</div>
+          <div class="settings-about-val">v2.6</div>
         </div>
         <div class="settings-about-item">
           <div class="settings-about-lbl">Product</div>
@@ -1262,7 +1262,23 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
       <div class="settings-section-hdr">Version history</div>
       <div class="changelog-entry">
         <div class="changelog-ver">
-          <span class="changelog-ver-badge current">v2.5</span>
+          <span class="changelog-ver-badge current">v2.6</span>
+          <span class="changelog-ver-date">Mar 2026</span>
+        </div>
+        <ul class="changelog-items">
+          <li><strong>Pipeline Inspector — AI summaries</strong> &mdash; per-rep coaching summaries via Anthropic API with structured action items, FC rationale in flags, AI flags injected as chips into deal table</li>
+          <li><strong>Pipeline Inspector — manager insights</strong> &mdash; team-level tab with flag frequency chart, AE risk score chart, and AI-generated coaching themes</li>
+          <li><strong>Pipeline Inspector — export</strong> &mdash; PDF (branded, print-ready) and Excel (summary, deal detail, AE summaries) available after each run</li>
+          <li><strong>Pipeline Inspector — progress &amp; status</strong> &mdash; progress bar with per-AE labels, rep header badges showing generating/done/error</li>
+          <li><strong>API usage dashboard</strong> &mdash; tokens and cost by today/week/month/quarter, avg per opp and per AE, recent run history</li>
+          <li><strong>Inspector settings</strong> &mdash; system prompt and coaching focus with defaults and reset; tabbed settings page</li>
+          <li><strong>Prompt caching</strong> &mdash; system prompt cached across rep calls (90% token discount on repeats)</li>
+          <li><strong>Code audit</strong> &mdash; dead code removed, duplicate CSS cleaned, app-body ID fix, qmode guard, hoisted constants</li>
+        </ul>
+      </div>
+      <div class="changelog-entry">
+        <div class="changelog-ver">
+          <span class="changelog-ver-badge current">v2.6</span>
           <span class="changelog-ver-date">Mar 2026</span>
         </div>
         <ul class="changelog-items">
@@ -2543,7 +2559,7 @@ function printPdf(){
         <tbody><tr><td>Closed</td>${cv.map(v=>`<td>${v>0?fmt(v):'—'}</td>`).join('')}<td>${fmt(ct)}</td><td>${varStr(ct,s.closed)}</td><td style="color:#9ca3af">${fmt(s.closed)}</td></tr>${mRows}</tbody></table>
       </div>
     </div>
-    <div class="pdf-ftr"><div class="pdf-ftr-l">Manager's Forecast Calculator v2.5<span class="pdot"></span>Remote</div><div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div></div>`;
+    <div class="pdf-ftr"><div class="pdf-ftr-l">Manager's Forecast Calculator v2.6<span class="pdot"></span>Remote</div><div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div></div>`;
   window.print();
 }
 
@@ -2577,7 +2593,7 @@ function exportXlsx(){
   const ws2=XLSX.utils.aoa_to_sheet(md);
   ws2['!cols']=[{wch:20},{wch:13},{wch:13},{wch:13},{wch:13},{wch:14},{wch:13}];
   XLSX.utils.book_append_sheet(wb,ws2,'Monthly Breakdown');
-  XLSX.writeFile(wb,`${nm.replace(/\s+/g,'_')}_${qtr.replace(/\s+/g,'_')}_Forecast_v2.5.xlsx`);
+  XLSX.writeFile(wb,`${nm.replace(/\s+/g,'_')}_${qtr.replace(/\s+/g,'_')}_Forecast_v2.6.xlsx`);
 }
 
 
