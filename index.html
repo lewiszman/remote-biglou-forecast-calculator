@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forecast Calculator v2.4</title>
+<title>Forecast Calculator v2.5</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -150,9 +150,7 @@ html.dark .nav-item.active{background:#1e3a5f}
 .nav-divider{height:1px;background:#e5e7eb;margin:.5rem calc(var(--rail-w)/2 - 10px);transition:margin .22s}
 html.dark .nav-divider{background:#374151}
 .sidebar.expanded .nav-divider{margin:.5rem .75rem}
-/* app-body shifts right by rail width always */
-.app-body{margin-left:var(--rail-w);transition:margin-left .22s cubic-bezier(.4,0,.2,1)}
-.app-body.expanded{margin-left:var(--sidebar-w)}
+/* app-body layout handled below */
 html.dark .sidebar{background:var(--bg);border-right:var(--bdr)}
 
 /* ── MAIN CONTENT ── */
@@ -332,7 +330,7 @@ html.dark .qstatus-days-pill{background:var(--bg2);border-color:#374151}
 .import-zone-inner{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;cursor:pointer;transition:background .15s;flex-wrap:wrap}
 .import-zone-inner:hover{background:var(--bg2)}
 .import-zone-hints{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
-.import-status-row{display:flex}
+
 html.dark #import-card{background:var(--bg)}
 html.dark .import-zone-inner:hover{background:#111827}
 
@@ -347,7 +345,29 @@ html.dark .import-zone-inner:hover{background:#111827}
 .import-badge{display:inline-flex;align-items:center;gap:5px;background:#eff6ff;border:1px solid #bfdbfe;color:var(--blue);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
 .import-badge-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0}
 .import-status-row{width:100%;margin-top:.5rem;display:flex;align-items:center;gap:8px}
-.settings-page{max-width:620px}
+.settings-page{max-width:640px}
+.settings-tabs{display:flex;gap:0;border-bottom:var(--bdr);margin-bottom:1.25rem}
+.settings-tab{font-size:12px;font-weight:600;padding:.625rem 1.25rem;cursor:pointer;color:var(--tx2);border-bottom:2px solid transparent;transition:color .12s,border-color .12s;user-select:none;white-space:nowrap}
+.settings-tab:hover{color:var(--tx)}
+.settings-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.settings-tab-panel{display:none}
+.settings-tab-panel.active{display:block}
+.usage-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.625rem;margin-bottom:1rem}
+.usage-stat{background:var(--bg2);border:var(--bdr);border-radius:var(--rm);padding:.75rem;text-align:center}
+.usage-stat-val{font-size:18px;font-weight:700;color:var(--tx);line-height:1}
+.usage-stat-lbl{font-size:10px;color:var(--tx2);margin-top:3px;text-transform:uppercase;letter-spacing:.06em}
+.usage-stat-cost{font-size:11px;font-weight:600;color:var(--green);margin-top:2px}
+.usage-run-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:var(--bdr);font-size:12px}
+.usage-eff-row{display:flex;justify-content:space-between;align-items:baseline;padding:.375rem 0;border-bottom:var(--bdr);font-size:12px}
+.usage-eff-row:last-of-type{border-bottom:none}
+.usage-eff-lbl{color:var(--tx2)}
+.usage-eff-val{font-weight:700;color:var(--tx);display:flex;align-items:baseline;gap:6px}
+.usage-eff-range{font-size:10px;font-weight:400;color:var(--tx2)}
+.usage-eff-sub{font-size:10px;color:var(--tx2);margin-top:.375rem}
+.usage-run-row:last-child{border-bottom:none}
+.usage-run-time{color:var(--tx2)}
+.usage-run-tokens{font-weight:600;color:var(--tx)}
+.usage-run-cost{color:var(--green);font-size:11px}
 .settings-page-hdr{margin-bottom:1.75rem}
 .settings-page-hdr h2{font-size:20px;font-weight:700;color:var(--tx);margin-bottom:.375rem}
 .settings-page-hdr p{font-size:13px;color:var(--tx2);line-height:1.6}
@@ -559,6 +579,106 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
   .hero-hdr{gap:6px}
   .preview-summary{grid-template-columns:1fr}
 }
+
+/* ── PIPELINE INSPECTOR ── */
+.inspector-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:.75rem}
+.insp-export-group{display:flex;gap:6px;margin-left:auto}
+.insp-export-btn{font-size:11px;padding:4px 10px;display:none}
+.insp-export-btn.visible{display:inline-flex}
+/* Inspector print stylesheet */
+@media print{
+  .topbar,.sidebar,.app-body{display:none!important}
+  #insp-print-area{display:block!important;position:static!important}
+}
+.inspector-run-btn{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;padding:7px 16px}
+.inspector-run-btn svg{flex-shrink:0}
+.inspector-status{font-size:12px;color:var(--tx2);flex:1}
+.inspector-token-count{font-size:11px;color:var(--tx2);background:var(--bg2);border:var(--bdr);border-radius:20px;padding:2px 9px;white-space:nowrap}
+/* AI progress bar */
+.insp-progress-bar{height:3px;background:var(--bg2);border-radius:2px;overflow:hidden;margin-bottom:.875rem;display:none}
+.insp-progress-bar.active{display:block}
+.insp-progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),#7c3aed);border-radius:2px;transition:width .4s ease;width:0%}
+.insp-progress-label{font-size:11px;color:var(--tx2);margin-bottom:.5rem;display:none}
+.insp-progress-label.active{display:block}
+/* inspector sub-tabs */
+.insp-tabs{display:flex;gap:0;border-bottom:var(--bdr);margin-bottom:1.25rem}
+.insp-tab{font-size:12px;font-weight:600;padding:.5rem 1rem;cursor:pointer;color:var(--tx2);border-bottom:2px solid transparent;transition:color .12s,border-color .12s;user-select:none;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.insp-tab:hover{color:var(--tx)}
+.insp-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.insp-tab-badge{font-size:10px;font-weight:700;background:var(--red);color:#fff;border-radius:20px;padding:1px 6px;line-height:1.4}
+.insp-tab-panel{display:none}
+.insp-tab-panel.active{display:block}
+/* insights visualizations */
+.insights-charts{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+.insights-chart-card{background:var(--bg);border:var(--bdr);border-radius:var(--rl);padding:1rem 1.25rem}
+.insights-chart-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx2);margin-bottom:.875rem}
+.flag-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:.5rem}
+.flag-bar-label{font-size:11px;color:var(--tx);min-width:140px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.flag-bar-track{flex:1;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.flag-bar-fill{height:100%;border-radius:4px;transition:width .4s ease}
+.flag-bar-count{font-size:11px;font-weight:700;color:var(--tx);min-width:20px;text-align:right}
+.ae-health-row{display:flex;align-items:center;gap:8px;padding:.375rem 0;border-bottom:var(--bdr);font-size:12px}
+.ae-health-row:last-child{border-bottom:none}
+.ae-health-name{flex:1;font-weight:600;color:var(--tx)}
+.ae-health-bar{width:80px;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;flex-shrink:0}
+.ae-health-fill{height:100%;border-radius:3px}
+.ae-health-count{font-size:11px;color:var(--tx2);min-width:60px;text-align:right}
+@media(max-width:640px){.insights-charts{grid-template-columns:1fr}}
+
+/* rep accordion */
+.insp-rep-block{background:var(--bg);border:var(--bdr);border-radius:var(--rl);overflow:hidden;margin-bottom:.75rem}
+.insp-rep-hdr{display:flex;align-items:center;gap:10px;padding:.875rem 1.25rem;cursor:pointer;user-select:none;transition:background .12s}
+.insp-rep-hdr:hover{background:var(--bg2)}
+.insp-rep-name{font-size:14px;font-weight:700;color:var(--tx);flex:1}
+.insp-rep-pills{display:flex;gap:5px;flex-wrap:wrap}
+.insp-flag-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.insp-flag-pill.red{background:#fee2e2;color:#b91c1c}
+.insp-flag-pill.amber{background:#fef3c7;color:#b45309}
+.insp-flag-pill.green{background:#dcfce7;color:#166534}
+html.dark .insp-flag-pill.red{background:#450a0a;color:#fca5a5}
+html.dark .insp-flag-pill.amber{background:#451a03;color:#fcd34d}
+html.dark .insp-flag-pill.green{background:#052e16;color:#86efac}
+.insp-rep-chevron{font-size:11px;color:var(--tx2);transition:transform .18s}
+.insp-rep-block.open .insp-rep-chevron{transform:rotate(180deg)}
+.insp-rep-body{display:none;border-top:var(--bdr)}
+.insp-rep-block.open .insp-rep-body{display:block}
+
+/* AI summary */
+.insp-ai-summary{padding:1rem 1.25rem;border-bottom:var(--bdr);background:var(--bg2);font-size:13px;color:var(--tx);line-height:1.65}
+.insp-ai-summary-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);margin-bottom:.5rem;display:flex;align-items:center;gap:6px}
+.insp-ai-loading{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tx2);padding:1rem 1.25rem;border-bottom:var(--bdr)}
+.insp-ai-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:ai-pulse 1s infinite}
+.rep-ai-badge{font-size:10px;color:var(--tx2);display:flex;align-items:center;gap:4px;margin-left:6px}
+.insp-ai-dot:nth-child(2){animation-delay:.2s}
+.insp-ai-dot:nth-child(3){animation-delay:.4s}
+@keyframes ai-pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* deal table */
+.insp-deals-table{width:100%;border-collapse:collapse;font-size:12px}
+.insp-deals-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);padding:7px 12px;text-align:left;border-bottom:var(--bdr);background:var(--bg2);white-space:nowrap}
+.insp-deals-table td{padding:8px 12px;border-bottom:var(--bdr);vertical-align:top;color:var(--tx)}
+.insp-deals-table tr:last-child td{border-bottom:none}
+.insp-deals-table tr:hover td{background:var(--bg2)}
+.insp-deal-name{font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.insp-deal-amount{font-weight:600;color:var(--tx);white-space:nowrap}
+.insp-cat-pill{font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;white-space:nowrap}
+.insp-flags-cell{display:flex;flex-wrap:wrap;gap:3px;max-width:280px}
+.insp-flag-tag{font-size:10px;padding:1px 6px;border-radius:4px;white-space:nowrap}
+.insp-flag-tag.red{background:#fee2e2;color:#b91c1c}
+.insp-flag-tag.amber{background:#fef3c7;color:#b45309}
+.insp-flag-tag.ai{background:#f3e8ff;color:#7c3aed;border:1px solid #e9d5ff}
+html.dark .insp-flag-tag.red{background:#450a0a;color:#fca5a5}
+html.dark .insp-flag-tag.amber{background:#451a03;color:#fcd34d}
+html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d95}
+
+/* empty / no-data state */
+.insp-empty{text-align:center;padding:3rem 1rem;color:var(--tx2)}
+.insp-empty-icon{font-size:32px;margin-bottom:.75rem}
+.insp-empty-title{font-size:15px;font-weight:600;color:var(--tx);margin-bottom:.375rem}
+.insp-empty-sub{font-size:13px;line-height:1.6}
+
+/* api key input in settings */
+.api-key-input{font-family:monospace;letter-spacing:.03em}
 </style>
 </head>
 <body>
@@ -591,7 +711,7 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
     </button>
   </div>
   <div class="rail-nav">
-    <div class="nav-section-lbl">Views</div>
+    <div class="nav-section-lbl">Modules</div>
     <div class="nav-item active" id="nav-manager" onclick="switchView('manager')">
       <span class="nav-icon" title="Manager View">&#128200;</span>
       <div class="nav-dot" style="background:#1a56db"></div>
@@ -601,6 +721,11 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
       <span class="nav-icon" title="Rep View">&#128100;</span>
       <div class="nav-dot" style="background:#E85D3A"></div>
       <span class="nav-label">Rep View</span>
+    </div>
+    <div class="nav-item" id="nav-inspector" onclick="switchView('inspector')">
+      <span class="nav-icon" title="Pipeline Inspector">&#128270;</span>
+      <div class="nav-dot" id="nav-inspector-dot" style="background:#9ca3af"></div>
+      <span class="nav-label" id="nav-inspector-lbl">Pipeline Inspector</span>
     </div>
     <div class="nav-divider"></div>
     <div class="nav-section-lbl">Actions</div>
@@ -666,7 +791,7 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
 </div>
 
 <!-- MAIN BODY -->
-<div class="app-body">
+<div class="app-body" id="app-body">
 <div id="view-manager" class="view active">
 <div class="wrap">
 
@@ -810,7 +935,7 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
     <button class="btn" onclick="exportXlsx()">Download Excel</button>
     <button class="btn" onclick="printPdf()">Download PDF</button>
     <span id="save-msg" style="font-size:12px;color:var(--green)"></span>
-    <span class="ver">v2.4</span>
+    <span class="ver">v2.5</span>
     <button class="qe-toggle" onclick="toggleQE()" id="qe-btn">
       <div class="qe-track"><div class="qe-thumb"></div></div>
       <span id="qe-lbl">Q-End Mode</span>
@@ -935,25 +1060,94 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
 </div>
 </div><!-- /view-rep -->
 
+
+<!-- PIPELINE INSPECTOR VIEW -->
+<div id="view-inspector" class="view">
+<div class="wrap">
+
+  <div class="inspector-toolbar">
+    <button class="btn btn-primary inspector-run-btn" id="inspector-run-btn" onclick="runInspector()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3,2 11,7 3,12"/></svg>
+      Run inspection
+    </button>
+    <span class="inspector-status" id="inspector-status">Import pipeline data to inspect</span>
+    <span class="inspector-token-count" id="inspector-token-count" style="display:none"></span>
+    <div class="insp-export-group">
+      <button class="btn insp-export-btn" id="insp-export-pdf" onclick="exportInspectionPDF()" title="Export as PDF">&#128196; PDF</button>
+      <button class="btn insp-export-btn" id="insp-export-xlsx" onclick="exportInspectionXLSX()" title="Export as Excel">&#128202; Excel</button>
+    </div>
+  </div>
+
+  <!-- AI progress bar — visible during async AI calls -->
+  <div class="insp-progress-label" id="insp-progress-label"></div>
+  <div class="insp-progress-bar" id="insp-progress-bar">
+    <div class="insp-progress-fill" id="insp-progress-fill"></div>
+  </div>
+
+  <!-- Sub-tabs — only shown after a run -->
+  <div class="insp-tabs" id="insp-tabs" style="display:none">
+    <div class="insp-tab active" id="insp-tab-reps" onclick="switchInspTab('reps')">
+      &#128100; Rep summaries <span class="insp-tab-badge" id="insp-tab-reps-badge" style="display:none"></span>
+    </div>
+    <div class="insp-tab" id="insp-tab-insights" onclick="switchInspTab('insights')">
+      &#128200; Manager insights
+      <span id="insp-insights-loading-dot" style="display:none">&#8226;</span>
+    </div>
+  </div>
+
+  <!-- Tab: Rep summaries -->
+  <div class="insp-tab-panel active" id="insp-panel-reps">
+    <div id="inspector-results">
+      <div class="insp-empty">
+        <div class="insp-empty-icon">&#128270;</div>
+        <div class="insp-empty-title">Pipeline Inspector</div>
+        <div class="insp-empty-sub">Import your pipeline CSV then click Run inspection.<br>Rule-based hygiene flags run instantly. AI summaries require an API key in Settings.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Manager insights -->
+  <div class="insp-tab-panel" id="insp-panel-insights">
+    <div class="insights-charts" id="insights-charts" style="display:none"></div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="insp-ai-loading" id="insights-loading" style="display:none;padding:1rem 1.25rem">
+        <div class="insp-ai-dot"></div><div class="insp-ai-dot"></div><div class="insp-ai-dot"></div>
+        <span>Generating manager insights&hellip;</span>
+      </div>
+      <div id="insights-content" style="padding:1.25rem;font-size:13px;color:var(--tx);line-height:1.7;display:none"></div>
+      <div id="insights-empty" style="padding:2rem;text-align:center;color:var(--tx2);font-size:13px">Run an inspection to generate manager insights.</div>
+    </div>
+  </div>
+
+</div>
+</div><!-- /view-inspector -->
+
 <!-- SETTINGS VIEW -->
 <div id="view-settings" class="view">
 <div class="wrap">
   <div class="settings-page">
     <div class="settings-page-hdr">
       <h2>Settings</h2>
-      <p>Tool-wide preferences, saved to your browser.</p>
     </div>
 
+    <div class="settings-tabs">
+      <div class="settings-tab active" onclick="switchSettingsTab('integrations')">Integrations</div>
+      <div class="settings-tab" onclick="switchSettingsTab('inspector')">Inspector</div>
+      <div class="settings-tab" onclick="switchSettingsTab('about')">About</div>
+    </div>
+
+    <!-- TAB: INTEGRATIONS -->
+    <div class="settings-tab-panel active" id="stab-integrations">
     <div class="settings-section">
       <div class="settings-section-hdr">Salesforce &amp; fiscal year</div>
       <div class="settings-row">
         <div class="settings-lbl">Pipeline report URL</div>
-        <div class="settings-sub">Direct link to your SFDC pipeline report &mdash; surfaces as a quick-access chip in the import drawer.</div>
+        <div class="settings-sub">Direct link to your SFDC pipeline report — surfaces as a chip in the import drawer.</div>
         <input class="settings-input" type="url" id="settings-sfdc-url" placeholder="https://remote-com.lightning.force.com/lightning/r/Report/...">
       </div>
       <div class="settings-row">
         <div class="settings-lbl">Fiscal year start month</div>
-        <div class="settings-sub">The first month of your fiscal year. Drives Q1&ndash;Q4 labels and the quarter auto-populate. Set once, works every year.</div>
+        <div class="settings-sub">Drives Q1&ndash;Q4 labels and the quarter auto-populate. Set once, works every year.</div>
         <select class="settings-input" id="settings-fy-start" style="margin-top:.625rem">
           <option value="1">January (FY = calendar year)</option>
           <option value="2">February</option>
@@ -969,6 +1163,11 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
           <option value="12">December</option>
         </select>
       </div>
+      <div class="settings-row">
+        <div class="settings-lbl">Column mapping</div>
+        <div class="settings-sub">Map SFDC report columns to forecast fields and configure category value translations.</div>
+        <div style="margin-top:.5rem"><button class="btn" onclick="openMappingConfig()" style="font-size:12px">Configure column mapping &rsaquo;</button></div>
+      </div>
       <div class="settings-row" style="background:var(--bg2);border-top:var(--bdr)">
         <div class="settings-save-row" style="margin-top:0">
           <button class="btn btn-primary" onclick="saveSettings()" style="font-size:12px">Save</button>
@@ -976,24 +1175,73 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
         </div>
       </div>
     </div>
+    </div><!-- /stab-integrations -->
 
+    <!-- TAB: INSPECTOR -->
+    <div class="settings-tab-panel" id="stab-inspector">
     <div class="settings-section">
-      <div class="settings-section-hdr">Data configuration</div>
-      <div class="settings-row" style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
-        <div>
-          <div class="settings-lbl">Column mapping</div>
-          <div class="settings-sub">Map SFDC report columns to forecast fields and configure category value translations.</div>
+      <div class="settings-section-hdr">Pipeline Inspector</div>
+      <div class="settings-row">
+        <div class="settings-lbl">Anthropic API key</div>
+        <div class="settings-sub">Required for AI summaries. Stored in your browser only &mdash; sent directly to Anthropic&rsquo;s API. Get a key at <a href="https://console.anthropic.com" target="_blank" style="color:var(--blue)">console.anthropic.com</a>.</div>
+        <input class="settings-input api-key-input" type="password" id="settings-api-key" placeholder="sk-ant-...">
+        <div style="margin-top:.5rem">
+          <button class="btn" id="api-key-reveal-btn" onclick="toggleApiKeyVisibility()" style="font-size:11px">Show key</button>
         </div>
-        <button class="btn btn-outline-blue" onclick="openMappingConfig()" style="font-size:12px;flex-shrink:0">Configure &rsaquo;</button>
+      </div>
+      <div class="settings-row">
+        <div class="settings-lbl">System prompt</div>
+        <div class="settings-sub">Gives the AI standing context about your team, company, and methodology. Applied to every inspection run. Write it once and forget it.</div>
+        <textarea class="settings-input" id="settings-system-prompt" rows="6" placeholder="Loaded from defaults — edit to customise for your team and context." style="resize:vertical;font-size:12px;line-height:1.55"></textarea>
+        <div style="margin-top:.375rem;display:flex;gap:8px">
+          <button class="btn" onclick="resetSystemPrompt()" style="font-size:11px">Reset to default</button>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-lbl">Coaching focus <span style="font-size:10px;color:var(--tx2);font-weight:400">(optional, changes each run)</span></div>
+        <div class="settings-sub">Short direction for this specific inspection run. Overrides the default focus. Leave blank to use the system prompt&rsquo;s default guidance.</div>
+        <input class="settings-input" type="text" id="settings-coaching-focus" placeholder="e.g. Focus on EOQ close risk — 10 selling days left">
+        <div style="margin-top:.375rem">
+          <button class="btn" onclick="resetCoachingFocus()" style="font-size:11px">Reset to default</button>
+        </div>
+      </div>
+      <div class="settings-row" style="background:var(--bg2);border-top:var(--bdr)">
+        <div class="settings-save-row" style="margin-top:0">
+          <button class="btn btn-primary" onclick="saveInspectorSettings()" style="font-size:12px">Save</button>
+          <span class="settings-saved-msg" id="inspector-saved-msg">&#10003;&nbsp;Saved</span>
+        </div>
       </div>
     </div>
 
+    <!-- API Usage dashboard -->
+    <div class="settings-section">
+      <div class="settings-section-hdr">API usage</div>
+      <div class="settings-row">
+        <div class="usage-grid" id="usage-grid">
+          <div class="usage-stat"><div class="usage-stat-val" id="usage-today-tok">—</div><div class="usage-stat-lbl">Today</div><div class="usage-stat-cost" id="usage-today-cost"></div></div>
+          <div class="usage-stat"><div class="usage-stat-val" id="usage-week-tok">—</div><div class="usage-stat-lbl">This week</div><div class="usage-stat-cost" id="usage-week-cost"></div></div>
+          <div class="usage-stat"><div class="usage-stat-val" id="usage-month-tok">—</div><div class="usage-stat-lbl">This month</div><div class="usage-stat-cost" id="usage-month-cost"></div></div>
+          <div class="usage-stat"><div class="usage-stat-val" id="usage-quarter-tok">—</div><div class="usage-stat-lbl">This quarter</div><div class="usage-stat-cost" id="usage-quarter-cost"></div></div>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.06em">Efficiency</div>
+        <div id="usage-efficiency" style="margin-bottom:1rem">—</div>
+        <div style="font-size:11px;color:var(--tx2);margin-bottom:.375rem">Recent runs</div>
+        <div id="usage-runs-list" style="font-size:12px;color:var(--tx2)">No runs recorded yet.</div>
+        <div style="margin-top:.75rem">
+          <button class="btn" onclick="clearUsageHistory()" style="font-size:11px;color:var(--tx2)">Clear history</button>
+        </div>
+      </div>
+    </div>
+    </div><!-- /stab-inspector -->
+
+    <!-- TAB: ABOUT -->
+    <div class="settings-tab-panel" id="stab-about">
     <div class="settings-section">
       <div class="settings-section-hdr">About</div>
       <div class="settings-about-grid">
         <div class="settings-about-item">
           <div class="settings-about-lbl">Version</div>
-          <div class="settings-about-val">v2.4</div>
+          <div class="settings-about-val">v2.5</div>
         </div>
         <div class="settings-about-item">
           <div class="settings-about-lbl">Product</div>
@@ -1014,7 +1262,18 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
       <div class="settings-section-hdr">Version history</div>
       <div class="changelog-entry">
         <div class="changelog-ver">
-          <span class="changelog-ver-badge current">v2.4</span>
+          <span class="changelog-ver-badge current">v2.5</span>
+          <span class="changelog-ver-date">Mar 2026</span>
+        </div>
+        <ul class="changelog-items">
+          <li><strong>Pipeline Inspector</strong> &mdash; per-rep hygiene flags (close date, next step, activity, stage/FC mismatch, MEDDPICC gaps), deal table, AI coaching summaries via Anthropic API</li>
+          <li><strong>API key setting</strong> &mdash; Anthropic key stored in browser, used only for inspector AI summaries</li>
+          <li><strong>UX</strong> &mdash; persistent rail nav, FC card expand, skeleton loading, micro-animations, topbar import indicator</li>
+        </ul>
+      </div>
+      <div class="changelog-entry">
+        <div class="changelog-ver">
+          <span class="changelog-ver-badge">v2.4</span>
           <span class="changelog-ver-date">Mar 2026</span>
         </div>
         <ul class="changelog-items">
@@ -1026,7 +1285,7 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
       </div>
       <div class="changelog-entry">
         <div class="changelog-ver">
-          <span class="changelog-ver-badge current">v2.4</span>
+          <span class="changelog-ver-badge">v2.3</span>
           <span class="changelog-ver-date">Mar 2026</span>
         </div>
         <ul class="changelog-items">
@@ -1075,6 +1334,8 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
       </div>
     </div>
 
+    </div><!-- /stab-about -->
+
     <div class="settings-section" style="border-color:#fca5a5">
       <div class="settings-section-hdr" style="background:#fef2f2;color:#b91c1c;border-color:#fca5a5">Danger zone</div>
       <div class="settings-row" style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
@@ -1116,13 +1377,12 @@ let S={};
 // NAVIGATION
 // ══════════════════════════════════════════════════════
 function switchView(view){
-  ['manager','rep','settings'].forEach(v=>{
+  ['manager','rep','inspector','settings'].forEach(v=>{
     const ve=$('view-'+v);if(ve)ve.classList.toggle('active',v===view);
     const ne=$('nav-'+v);if(ne)ne.classList.toggle('active',v===view);
   });
-  const lbl={manager:'Manager View',rep:'Rep View',settings:'Settings'};
+  const lbl={manager:'Manager View',rep:'Rep View',inspector:'Pipeline Inspector',settings:'Settings'};
   $('topbar-module-label').textContent=lbl[view]||view;
-  // Don't close sidebar — rail stays persistent
   if(view==='settings')loadSettingsPage();
 }
 function toggleFcCard(el){
@@ -1706,8 +1966,7 @@ function renderWizStep3(){
 
   const previewRows=normalized.slice(0,8).map(r=>{
     const cat=r.f_fc_cat_norm;
-    const catColors={closed:'#0d7c3d',commit:'#1a56db',probable:'#0d7c3d',upside:'#b45309',pipeline:'#6b7280',omitted:'#9ca3af'};
-    const catBg={closed:'#f0fdf4',commit:'#eff6ff',probable:'#f0fdf4',upside:'#fffbeb',pipeline:'#f9fafb',omitted:'#f9fafb'};
+    const catColors=CAT_COLORS,catBg=CAT_BG;
     return `<tr class="preview-row">
       <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.f_opp_name||'—'}</td>
       <td style="text-align:left">${r.f_owner||'—'}</td>
@@ -1879,6 +2138,7 @@ const QMODE_FIELDS=['quota','closed','pipe_commit','pipe_prob','pipe_up','pipe_p
   ...['m1','m2','m3'].flatMap(m=>['closed','commit','prob','up'].map(k=>m+'_'+k))];
 
 function saveQModeState(mode){
+  if(!mode)return; // guard against empty mode
   const state={};
   QMODE_FIELDS.forEach(id=>{const el=$(id);if(el)state[id]=el.value;});
   try{localStorage.setItem('qmode_state_'+mode,JSON.stringify(state));}catch{}
@@ -1943,7 +2203,7 @@ function renderQStatusBar(){
     <span class="qstatus-divider">&middot;</span>
     <div class="qstatus-item">Week <span class="qstatus-val">${weekNum}</span></div>
     <span class="qstatus-divider">&middot;</span>
-    <div class="qstatus-item">${getFYLabel(getFiscalQuarterInfo('current'))}</div>
+    <div class="qstatus-item">${qMode==='next'?getFYLabel(info)+' (planning)':getFYLabel(info)}</div>
     <div class="qstatus-spacer"></div>
     ${pillHtml}`;
 }
@@ -1980,6 +2240,8 @@ function loadSettingsPage(){
   if(urlEl)urlEl.value=s.sfdcUrl||DEFAULT_SFDC_URL;
   const fyEl=$('settings-fy-start');
   if(fyEl)fyEl.value=s.fyStart||'1';
+  loadInspectorSettings();
+  renderUsageDashboard();
 }
 function resetSettings(){
   if(!confirm('Reset all column mappings and settings? This cannot be undone.'))return;
@@ -2281,7 +2543,7 @@ function printPdf(){
         <tbody><tr><td>Closed</td>${cv.map(v=>`<td>${v>0?fmt(v):'—'}</td>`).join('')}<td>${fmt(ct)}</td><td>${varStr(ct,s.closed)}</td><td style="color:#9ca3af">${fmt(s.closed)}</td></tr>${mRows}</tbody></table>
       </div>
     </div>
-    <div class="pdf-ftr"><div class="pdf-ftr-l">Manager's Forecast Calculator v2.4<span class="pdot"></span>Remote</div><div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div></div>`;
+    <div class="pdf-ftr"><div class="pdf-ftr-l">Manager's Forecast Calculator v2.5<span class="pdot"></span>Remote</div><div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div></div>`;
   window.print();
 }
 
@@ -2315,9 +2577,985 @@ function exportXlsx(){
   const ws2=XLSX.utils.aoa_to_sheet(md);
   ws2['!cols']=[{wch:20},{wch:13},{wch:13},{wch:13},{wch:13},{wch:14},{wch:13}];
   XLSX.utils.book_append_sheet(wb,ws2,'Monthly Breakdown');
-  XLSX.writeFile(wb,`${nm.replace(/\s+/g,'_')}_${qtr.replace(/\s+/g,'_')}_Forecast_v2.4.xlsx`);
+  XLSX.writeFile(wb,`${nm.replace(/\s+/g,'_')}_${qtr.replace(/\s+/g,'_')}_Forecast_v2.5.xlsx`);
 }
 
+
+// Shared category colours (used in inspector + PDF)
+const CAT_COLORS={closed:'#0d7c3d',commit:'#1a56db',probable:'#0d7c3d',upside:'#b45309',pipeline:'#6b7280',omitted:'#9ca3af'};
+const CAT_BG={closed:'#f0fdf4',commit:'#eff6ff',probable:'#f0fdf4',upside:'#fffbeb',pipeline:'#f9fafb',omitted:'#f9fafb'};
+
+// ══════════════════════════════════════════════════════
+// PIPELINE INSPECTOR
+// ══════════════════════════════════════════════════════
+
+// ── Inspector defaults ──
+const DEFAULT_SYSTEM_PROMPT='You are a sales manager assistant. Review opportunity data and produce a structured, actionable inspection summary. Each deal includes pre-computed rule-based flags (date math, activity staleness, amount checks) and full MEDDPICC field content for your qualitative review.\n\nYour job is to:\n1. Confirm or contextualise the rule-based flags\n2. Assess stage vs forecast category alignment based on deal context (next step, MEDDPICC content) — not just field values\n3. Assess MEDDPICC quality: flag fields that are empty, generic, thin, copy-paste, or inconsistent with other fields\n4. Identify any deals needing executive attention\n\nOutput format is strict:\n\nFirst: one sentence overarching observation about the rep pipeline health.\n\nThen headed exactly: [Pipeline action items for {DATE}]\n\nOne bullet per opportunity with an issue:\n* [Opp name ~30 chars]: flag1, flag2, flag3\n\nFlag labels should be concise. For FC and stage flags, always include a short parenthetical reason (2-4 words). Examples: past close date, close imminent, next step past due, next step vague, no booked meeting, FC too aggressive (in discovery stage), FC too conservative (legal review active, should be commit), stage/FC mismatch (commit but no champion), champion thin (name only, no context), no econ buyer, metrics generic (no quantified impact), decision process unclear, no pain identified, no activity Xd, amount suspect, needs exec attention.\n\nOnly include opps with at least one flag. No other prose, headers, or format. Must be Slack-ready.';
+const DEFAULT_COACHING_FOCUS='Be concise and objective. Flag anything needing executive attention.';
+// Sonnet 4.5 pricing: $3/M input, $15/M output, $0.30/M cache read (90% discount)
+const COST_PER_INPUT_TOKEN=3/1000000;
+const COST_PER_OUTPUT_TOKEN=15/1000000;
+
+function getInspectorSettings(){
+  try{return JSON.parse(localStorage.getItem('inspector_settings')||'{}');}
+  catch{return {};}
+}
+function getApiKey(){return getInspectorSettings().apiKey||'';}
+function getSystemPrompt(){return getInspectorSettings().systemPrompt||DEFAULT_SYSTEM_PROMPT;}
+function getCoachingFocus(){return getInspectorSettings().coachingFocus||DEFAULT_COACHING_FOCUS;}
+
+function saveInspectorSettings(){
+  const s={
+    apiKey:(($('settings-api-key')||{}).value||'').trim(),
+    systemPrompt:(($('settings-system-prompt')||{}).value||'').trim(),
+    coachingFocus:(($('settings-coaching-focus')||{}).value||'').trim()
+  };
+  localStorage.setItem('inspector_settings',JSON.stringify(s));
+  const msg=$('inspector-saved-msg');
+  if(msg){msg.style.display='inline';setTimeout(()=>msg.style.display='none',2500);}
+}
+function loadInspectorSettings(){
+  const s=getInspectorSettings();
+  const keyEl=$('settings-api-key');if(keyEl)keyEl.value=s.apiKey||'';
+  const spEl=$('settings-system-prompt');if(spEl)spEl.value=s.systemPrompt||DEFAULT_SYSTEM_PROMPT;
+  const cfEl=$('settings-coaching-focus');if(cfEl)cfEl.value=s.coachingFocus||DEFAULT_COACHING_FOCUS;
+}
+function resetSystemPrompt(){
+  const el=$('settings-system-prompt');if(el)el.value=DEFAULT_SYSTEM_PROMPT;
+}
+function resetCoachingFocus(){
+  const el=$('settings-coaching-focus');if(el)el.value=DEFAULT_COACHING_FOCUS;
+}
+
+// ── Settings tabs ──
+function switchSettingsTab(tab){
+  ['integrations','inspector','about'].forEach(t=>{
+    const panel=$('stab-'+t);if(panel)panel.classList.toggle('active',t===tab);
+  });
+  document.querySelectorAll('.settings-tab').forEach((el,i)=>{
+    const tabs=['integrations','inspector','about'];
+    el.classList.toggle('active',tabs[i]===tab);
+  });
+  if(tab==='inspector')renderUsageDashboard();
+}
+
+// ── Usage tracking ──
+function getUsageLog(){
+  try{return JSON.parse(localStorage.getItem('inspector_usage_log')||'[]');}catch{return [];}
+}
+function logUsageRun(inputTokens,outputTokens,repCount,oppCount){
+  const log=getUsageLog();
+  log.push({ts:Date.now(),input:inputTokens,output:outputTokens,reps:repCount,opps:oppCount||0});
+  const cutoff=Date.now()-90*24*3600*1000;
+  const trimmed=log.filter(r=>r.ts>cutoff);
+  localStorage.setItem('inspector_usage_log',JSON.stringify(trimmed));
+}
+function clearUsageHistory(){
+  localStorage.removeItem('inspector_usage_log');
+  renderUsageDashboard();
+}
+function fmtTokens(n){if(n>=1000)return (n/1000).toFixed(1)+'k';return n.toString();}
+function fmtCost(c){if(c<0.01)return '<$0.01';return '$'+c.toFixed(2);}
+function renderUsageDashboard(){
+  const log=getUsageLog();
+  if(!log.length){
+    ['today','week','month','quarter'].forEach(k=>{
+      const t=$('usage-'+k+'-tok');if(t)t.textContent='0';
+      const cc=$('usage-'+k+'-cost');if(cc)cc.textContent='$0.00';
+    });
+    const rl=$('usage-runs-list');if(rl)rl.textContent='No runs recorded yet.';
+    const em=$('usage-efficiency');if(em)em.innerHTML='<span style="color:var(--tx2);font-size:12px">No data yet.</span>';
+    return;
+  }
+  const now=Date.now();
+  const startOf={
+    today:new Date().setHours(0,0,0,0),
+    week:now-7*24*3600*1000,
+    month:now-30*24*3600*1000,
+    quarter:now-90*24*3600*1000,
+  };
+  Object.entries(startOf).forEach(([key,since])=>{
+    const runs=log.filter(r=>r.ts>=since);
+    const inp=runs.reduce((s,r)=>s+r.input,0);
+    const out=runs.reduce((s,r)=>s+r.output,0);
+    const cost=inp*COST_PER_INPUT_TOKEN+out*COST_PER_OUTPUT_TOKEN;
+    const tok=$('usage-'+key+'-tok');if(tok)tok.textContent=fmtTokens(inp+out);
+    const ct=$('usage-'+key+'-cost');if(ct)ct.textContent=fmtCost(cost);
+  });
+  // Efficiency metrics — use all runs with opp/rep data
+  const runsWithData=log.filter(r=>r.opps>0&&r.reps>0);
+  const emEl=$('usage-efficiency');
+  if(emEl&&runsWithData.length){
+    const tokPerOpp=runsWithData.map(r=>(r.input+r.output)/r.opps);
+    const tokPerAE=runsWithData.map(r=>(r.input+r.output)/r.reps);
+    const avg=arr=>Math.round(arr.reduce((s,v)=>s+v,0)/arr.length);
+    const min=arr=>Math.round(Math.min(...arr));
+    const max=arr=>Math.round(Math.max(...arr));
+    emEl.innerHTML=
+      '<div class="usage-eff-row">'
+        +'<div class="usage-eff-lbl">Avg tokens / opp</div>'
+        +'<div class="usage-eff-val">'+fmtTokens(avg(tokPerOpp))
+          +'<span class="usage-eff-range">'+fmtTokens(min(tokPerOpp))+' – '+fmtTokens(max(tokPerOpp))+'</span></div>'
+      +'</div>'
+      +'<div class="usage-eff-row">'
+        +'<div class="usage-eff-lbl">Avg tokens / AE</div>'
+        +'<div class="usage-eff-val">'+fmtTokens(avg(tokPerAE))
+          +'<span class="usage-eff-range">'+fmtTokens(min(tokPerAE))+' – '+fmtTokens(max(tokPerAE))+'</span></div>'
+      +'</div>'
+      +'<div class="usage-eff-sub">Based on '+runsWithData.length+' run'+(runsWithData.length>1?'s':'')+'</div>';
+  } else if(emEl){
+    emEl.innerHTML='<span style="color:var(--tx2);font-size:12px">Run an inspection to see efficiency metrics.</span>';
+  }
+  // Recent runs list (last 10)
+  const recent=[...log].reverse().slice(0,10);
+  const rl=$('usage-runs-list');
+  if(rl)rl.innerHTML=recent.map(r=>{
+    const dt=new Date(r.ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+    const total=r.input+r.output;
+    const cost=r.input*COST_PER_INPUT_TOKEN+r.output*COST_PER_OUTPUT_TOKEN;
+    const meta=r.opps?r.opps+' opps · '+r.reps+' AEs':'';
+    return '<div class="usage-run-row">'
+      +'<span class="usage-run-time">'+dt+(meta?' <span style="opacity:.6">· '+meta+'</span>':'')+'</span>'
+      +'<span class="usage-run-tokens">'+fmtTokens(total)+'</span>'
+      +'<span class="usage-run-cost">'+fmtCost(cost)+'</span>'
+      +'</div>';
+  }).join('');
+}
+function copySlack(elId){
+  const el=$(elId);
+  if(!el)return;
+  navigator.clipboard.writeText(el.textContent).then(()=>{
+    // Brief visual confirmation on the button
+    const btn=el.parentElement&&el.parentElement.querySelector('button[onclick*="'+elId+'"]');
+    if(btn){const orig=btn.textContent;btn.textContent='Copied!';btn.style.color='var(--green)';setTimeout(()=>{btn.textContent=orig;btn.style.color='';},1800);}
+  }).catch(()=>{});
+}
+
+function toggleApiKeyVisibility(){
+  const el=$('settings-api-key');
+  const btn=$('api-key-reveal-btn');
+  if(!el)return;
+  if(el.type==='password'){el.type='text';if(btn)btn.textContent='Hide key';}
+  else{el.type='password';if(btn)btn.textContent='Show key';}
+}
+
+// ── Rule-based hygiene flags ──
+const STAGE_FC_MATRIX={
+  // stage (lowercase) → allowed forecast categories
+  'discovery':          ['pipeline','upside'],
+  'qualification':      ['pipeline','upside'],
+  'solution design':    ['pipeline','upside','probable'],
+  'value proposition':  ['pipeline','upside','probable'],
+  'business case':      ['upside','probable','commit'],
+  'proposal':           ['upside','probable','commit'],
+  'negotiation':        ['probable','commit'],
+  'legal & commercial': ['probable','commit'],
+  'contract review':    ['probable','commit'],
+  'verbal commit':      ['commit'],
+};
+
+function parseNextStepDate(nextStep, closeDate){
+  if(!nextStep)return null;
+  const m=nextStep.match(/^(\d{1,2})\/(\d{1,2})/);
+  if(!m)return null;
+  const month=parseInt(m[1])-1,day=parseInt(m[2]);
+  // Infer year from close date if available
+  let year=new Date().getFullYear();
+  if(closeDate){
+    const cd=new Date(closeDate);
+    if(!isNaN(cd))year=cd.getFullYear();
+  }
+  return new Date(year,month,day);
+}
+
+// Vague/low-confidence next step patterns
+const VAGUE_NS_PATTERNS=[
+  /^follow\s*up/i,/^check\s*in/i,/^touch\s*base/i,/^reach\s*out/i,
+  /^circle\s*back/i,/^reconnect/i,/^ping/i,/^waiting/i,/^TBD/i,
+  /^to\s*be\s*(determined|confirmed|scheduled)/i,
+  /^next\s*(call|steps?|meeting|check)/i,
+  /^send\s*(email|follow)/i,/^email/i,
+];
+function isVagueNextStep(ns){
+  if(!ns||ns.trim().length<8)return true;
+  const stripped=ns.replace(/^\d{1,2}\/\d{1,2}\s*[-:]?\s*/,'').trim();
+  if(stripped.length<8)return true;
+  return VAGUE_NS_PATTERNS.some(p=>p.test(stripped));
+}
+
+function flagDeal(deal){
+  const flags=[];
+  const now=new Date();now.setHours(0,0,0,0);
+  const cat=deal.f_fc_cat_norm||'';
+  const stage=(deal.f_stage||'').toLowerCase().trim();
+  const amt=deal.f_amount_num||0;
+  // Proposal-or-later stages for tighter activity threshold
+  const lateStages=['proposal','negotiation','legal & commercial','contract review','verbal commit','business case'];
+  const isLate=lateStages.some(s=>stage.includes(s));
+
+  // Close date
+  if(!deal.f_close_date){
+    flags.push({sev:'amber',text:'No close date'});
+  } else {
+    const cd=new Date(deal.f_close_date);
+    if(!isNaN(cd)){
+      const daysToClose=Math.floor((cd-now)/86400000);
+      if(daysToClose<0&&cat!=='closed')
+        flags.push({sev:'red',text:'Close date passed'});
+      else if(daysToClose<=14&&!['commit'].includes(cat))
+        flags.push({sev:'amber',text:'Close <14d, not commit — advance or re-date'});
+    }
+  }
+
+  // Next step — date + vagueness
+  if(!deal.f_next_step||deal.f_next_step.trim()===''){
+    flags.push({sev:['commit','probable'].includes(cat)?'red':'amber',text:'No next step'});
+  } else {
+    const nsDate=parseNextStepDate(deal.f_next_step,deal.f_close_date);
+    if(!nsDate)
+      flags.push({sev:'amber',text:'Next step missing date'});
+    else if(nsDate<now)
+      flags.push({sev:'red',text:'Next step past due'});
+    if(isVagueNextStep(deal.f_next_step))
+      flags.push({sev:'amber',text:'Next step vague/low confidence'});
+  }
+
+  // Last activity — 14d for late stage, 30d otherwise
+  if(deal.f_last_activity){
+    const la=new Date(deal.f_last_activity);
+    if(!isNaN(la)){
+      const daysSince=Math.floor((now-la)/86400000);
+      const redThresh=isLate?14:30;
+      const amberThresh=isLate?7:14;
+      if(daysSince>redThresh)
+        flags.push({sev:'red',text:'No activity '+daysSince+'d'+(isLate?' (late stage)':'')});
+      else if(daysSince>amberThresh)
+        flags.push({sev:'amber',text:'Quiet '+daysSince+'d'});
+    }
+  } else {
+    flags.push({sev:'amber',text:'No activity data'});
+  }
+
+  // Stage/FC alignment and MEDDPICC quality → handled by AI (qualitative)
+  // Rules only catch structural issues; content quality requires reading comprehension
+
+  // Amount suspect
+  if(amt===0)flags.push({sev:'red',text:'Amount $0'});
+  else if(amt%10000===0&&amt>=50000)flags.push({sev:'amber',text:'Amount suspiciously round'});
+
+  return flags;
+}
+
+function groupByRep(records){
+  const map={};
+  records.forEach(r=>{
+    const owner=r.f_owner||'Unknown';
+    if(!map[owner])map[owner]=[];
+    map[owner].push(r);
+  });
+  return map;
+}
+
+
+// ── Render ──
+function renderInspectorEmpty(msg){
+  $('inspector-results').innerHTML=`<div class="insp-empty">
+    <div class="insp-empty-icon">&#128270;</div>
+    <div class="insp-empty-title">No data</div>
+    <div class="insp-empty-sub">${msg}</div>
+  </div>`;
+}
+
+function renderRepBlock(owner, deals, aiHtml){
+  const allFlags=deals.flatMap(d=>d._flags||[]);
+  const redCount=allFlags.filter(f=>f.sev==='red').length;
+  const amberCount=allFlags.filter(f=>f.sev==='amber').length;
+  const totalAmt=deals.reduce((s,d)=>s+d.f_amount_num,0);
+  const catColors=CAT_COLORS,catBg=CAT_BG;
+
+  const pillsHtml=`
+    ${redCount>0?`<span class="insp-flag-pill red">&#9888; ${redCount} critical</span>`:''}
+    ${amberCount>0?`<span class="insp-flag-pill amber">&#9650; ${amberCount} warning</span>`:''}
+    ${redCount===0&&amberCount===0?`<span class="insp-flag-pill green">&#10003; Clean</span>`:''}
+    <span style="font-size:11px;color:var(--tx2);margin-left:4px">${deals.length} deals &middot; ${fmt(totalAmt)}</span>`;
+
+  // Sort: red-flagged first, then amber, then clean
+  const sortedDeals=[...deals].sort((a,b)=>{
+    const sa=(a._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:f.sev==='amber'?1:0),0);
+    const sb=(b._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:f.sev==='amber'?1:0),0);
+    return sb-sa;
+  });
+  const rows=sortedDeals.map(d=>{
+    const cat=d.f_fc_cat_norm||'unknown';
+    const flags=d._flags||[];
+    // ALL flags shown — no truncation
+    const flagsHtml=flags.length
+      ?'<div class="insp-flags-cell">'+flags.map(f=>'<span class="insp-flag-tag '+f.sev+'">'+f.text+'</span>').join('')+'</div>'
+      :'<span style="font-size:10px;color:var(--green)">&#10003; clean</span>';
+    const cd=d.f_close_date?new Date(d.f_close_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
+    const nsShort=(d.f_next_step||'—').substring(0,60)+(d.f_next_step&&d.f_next_step.length>60?'…':'');
+    const hasRed=flags.some(f=>f.sev==='red');
+    return '<tr'+(hasRed?' style="background:rgba(220,38,38,.04)"':'')+'>'
+      +'<td class="insp-deal-name" title="'+(d.f_opp_name||'')+'">'+(d.f_opp_name||'—')+'</td>'
+      +'<td><span class="insp-cat-pill" style="background:'+(catBg[cat]||'#f9fafb')+';color:'+(catColors[cat]||'#6b7280')+'">'+(cat)+'</span></td>'
+      +'<td class="insp-deal-amount">'+fmt(d.f_amount_num)+'</td>'
+      +'<td style="color:var(--tx2)">'+cd+'</td>'
+      +'<td style="color:var(--tx2);max-width:180px" title="'+(d.f_next_step||'')+'">'+nsShort+'</td>'
+      +'<td>'+flagsHtml+'</td>'
+      +'</tr>';
+  }).join('');
+
+  const id='rep_'+owner.replace(/\W/g,'_');
+  return `<div class="insp-rep-block" id="${id}">
+    <div class="insp-rep-hdr" onclick="toggleRepBlock('${id}')">
+      <span class="insp-rep-name">${owner}</span>
+      <div class="insp-rep-pills">${pillsHtml}</div>
+      <span class="insp-rep-chevron">&#9660;</span>
+    </div>
+    <div class="insp-rep-body">
+      ${aiHtml}
+      <div style="overflow-x:auto">
+        <table class="insp-deals-table">
+          <thead><tr>
+            <th>Deal</th><th>Category</th><th>Amount</th><th>Close</th><th>Next step</th><th>Flags</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleRepBlock(id){
+  const block=$(id);if(!block)return;
+  block.classList.toggle('open');
+}
+
+// ── AI summary call ──
+async function fetchAISummary(owner, deals, apiKey, systemPrompt, coachingFocus){
+  const trunc=(s,n)=>(s&&s.length>n)?s.substring(0,n)+'…':s||'';
+  const blank='—';
+  const repDeals=deals.map(d=>{
+    const flags=(d._flags||[]).map(f=>f.text).join(', ')||'none';
+    // Rule-based flags + full MEDDPICC content for AI qualitative assessment
+    // Field lengths: next step 100, MEDDPICC fields 80 each (enough for quality judgment)
+    const meddpicc=[
+      'M:'+( trunc(d.f_metrics,80)||blank),
+      'E:'+(trunc(d.f_econ_buyer,80)||blank),
+      'DC:'+(trunc(d.f_dec_criteria,80)||blank),
+      'DP:'+(trunc(d.f_dec_process,80)||blank),
+      'PP:'+(trunc(d.f_proc_process,80)||blank),
+      'I:'+(trunc(d.f_implicated,80)||blank),
+      'C:'+(trunc(d.f_champion,80)||blank),
+    ].join(' | ');
+    return '- '+trunc(d.f_opp_name,40)+' | '+d.f_fc_cat_norm+' | '+fmt(d.f_amount_num)
+      +' | close '+(d.f_close_date||'?')+' | stage: '+(d.f_stage||'?')
+      +'\n  rule-flags: '+flags
+      +'\n  next-step: '+trunc(d.f_next_step,100)
+      +'\n  meddpicc: '+meddpicc;
+  }).join('\n');
+
+  const today=new Date().toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
+  const focusLine=coachingFocus?'\n\nAdditional focus: '+coachingFocus:'';
+
+  const userMsg='Generate the inspection summary for '+owner+'. Today is '+today+'.\n\n'
+    +'DEAL DATA:\n'+repDeals+focusLine;
+
+  // Prompt caching: system prompt cached after first call in a run (90% discount on repeats)
+  const body={
+    model:'claude-sonnet-4-5',
+    max_tokens:Math.min(200+deals.length*50,700),
+    system:[{
+      type:'text',
+      text:systemPrompt||DEFAULT_SYSTEM_PROMPT,
+      cache_control:{type:'ephemeral'}
+    }],
+    messages:[{role:'user',content:userMsg}]
+  };
+
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-beta':'prompt-caching-2024-07-31',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body:JSON.stringify(body)
+  });
+  if(!resp.ok)throw new Error('API '+resp.status);
+  const data=await resp.json();
+  const text=(data.content&&data.content[0]&&data.content[0].text)||'';
+  const usage=data.usage||{};
+  // cache_read_input_tokens cost 10% of normal; cache_creation_input_tokens cost 125%
+  const cacheRead=usage.cache_read_input_tokens||0;
+  const cacheWrite=usage.cache_creation_input_tokens||0;
+  const normalInput=(usage.input_tokens||0)-cacheRead-cacheWrite;
+  // Effective input tokens for cost = normal + 0.1×read + 1.25×write
+  const effectiveInput=normalInput+Math.round(cacheRead*0.1)+Math.round(cacheWrite*1.25);
+  return {text, inputTokens:effectiveInput, outputTokens:usage.output_tokens||0,
+    cacheRead, cacheWrite};
+}
+
+// Last inspection result — persists in memory for export
+let lastInspectionResult=null; // {repsSorted, active, insights, runDate}
+
+// ── Inspector sub-tab switching ──
+function switchInspTab(tab){
+  ['reps','insights'].forEach(t=>{
+    const panel=$('insp-panel-'+t);if(panel)panel.classList.toggle('active',t===tab);
+    const tabEl=$('insp-tab-'+t);if(tabEl)tabEl.classList.toggle('active',t===tab);
+  });
+}
+
+// ── Progress bar helpers ──
+function setProgress(current,total,label){
+  const bar=$('insp-progress-bar');
+  const fill=$('insp-progress-fill');
+  const lbl=$('insp-progress-label');
+  const pct=total>0?Math.round((current/total)*100):0;
+  if(bar)bar.classList.add('active');
+  if(fill)fill.style.width=pct+'%';
+  if(lbl){lbl.classList.add('active');lbl.textContent=label||'';}
+}
+function clearProgress(){
+  const bar=$('insp-progress-bar');
+  const fill=$('insp-progress-fill');
+  const lbl=$('insp-progress-label');
+  if(fill)fill.style.width='100%'; // complete before hiding
+  setTimeout(()=>{
+    if(bar)bar.classList.remove('active');
+    if(fill)fill.style.width='0%';
+    if(lbl)lbl.classList.remove('active');
+  },400);
+}
+
+// ── Render insights charts ──
+function renderInsightsCharts(repsSorted, active){
+  const chartsEl=$('insights-charts');
+  if(!chartsEl)return;
+
+  // Chart 1: Top flags by frequency
+  const flagCounts={};
+  active.forEach(d=>(d._flags||[]).forEach(f=>{flagCounts[f.text]=(flagCounts[f.text]||0)+1;}));
+  const topFlags=Object.entries(flagCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const maxFlagCount=topFlags.length?topFlags[0][1]:1;
+  const flagColors={'red':'var(--red)','amber':'var(--amber)'};
+  const flagBarsHtml=topFlags.map(([text,count])=>{
+    const sev=active.flatMap(d=>d._flags||[]).find(f=>f.text===text)?.sev||'amber';
+    const color=sev==='red'?'var(--red)':'var(--amber)';
+    const pct=Math.round(count/maxFlagCount*100);
+    return '<div class="flag-bar-row">'
+      +'<div class="flag-bar-label" title="'+text+'">'+text+'</div>'
+      +'<div class="flag-bar-track"><div class="flag-bar-fill" style="width:'+pct+'%;background:'+color+'"></div></div>'
+      +'<div class="flag-bar-count">'+count+'</div>'
+      +'</div>';
+  }).join('');
+
+  // Chart 2: AE health scores (red flags weighted 2x)
+  const aeHealth=repsSorted.map(([owner,deals])=>{
+    const flags=deals.flatMap(d=>d._flags||[]);
+    const score=flags.reduce((s,f)=>s+(f.sev==='red'?2:1),0);
+    const maxScore=deals.length*4; // rough max
+    const pct=Math.min(Math.round(score/Math.max(maxScore,1)*100),100);
+    const red=flags.filter(f=>f.sev==='red').length;
+    const amber=flags.filter(f=>f.sev==='amber').length;
+    // Colour: green=low risk, amber=medium, red=high
+    const color=pct<25?'var(--green)':pct<60?'var(--amber)':'var(--red)';
+    return '<div class="ae-health-row">'
+      +'<div class="ae-health-name">'+owner+'</div>'
+      +'<div class="ae-health-bar"><div class="ae-health-fill" style="width:'+pct+'%;background:'+color+'"></div></div>'
+      +'<div class="ae-health-count">'+(red>0?'<span style="color:var(--red);font-weight:700">'+red+'&#9888;</span> ':'')+amber+'&#9650;</div>'
+      +'</div>';
+  }).join('');
+
+  chartsEl.style.display='grid';
+  chartsEl.innerHTML=
+    '<div class="insights-chart-card">'
+      +'<div class="insights-chart-title">Most common flags</div>'
+      +flagBarsHtml
+    +'</div>'
+    +'<div class="insights-chart-card">'
+      +'<div class="insights-chart-title">AE risk score</div>'
+      +aeHealth
+    +'</div>';
+}
+
+// ── Parse AI flags from structured summary output ──
+function parseAIFlags(text){
+  // Returns Map: lowercased opp name fragment → array of flag strings
+  const map=new Map();
+  if(!text)return map;
+  const lines=text.split('\n');
+  let inItems=false;
+  for(const line of lines){
+    if(/\[Pipeline action items/i.test(line)){inItems=true;continue;}
+    if(!inItems)continue;
+    // Match bullet: * Opp name: flag1, flag2
+    const m=line.match(/^\*\s+(.+?):\s*(.+)$/);
+    if(!m)continue;
+    const oppKey=m[1].replace(/\u2026.*$/,'').trim().toLowerCase();
+    const flags=m[2].split(',').map(f=>f.trim()).filter(Boolean);
+    map.set(oppKey,flags);
+  }
+  return map;
+}
+
+// Match a deal to an AI flag entry by fuzzy opp name
+function matchAIFlags(deal, aiMap){
+  if(!aiMap.size)return [];
+  const name=(deal.f_opp_name||'').toLowerCase();
+  // Exact match first
+  if(aiMap.has(name))return aiMap.get(name);
+  // Prefix/substring match — AI may have truncated the name
+  for(const [key,flags] of aiMap){
+    if(name.startsWith(key)||key.startsWith(name.substring(0,20)))
+      return flags;
+    // Check if name contains the key or vice versa (handles truncation with …)
+    const cleanKey=key.replace(/….*/,'');
+    if(name.includes(cleanKey)||cleanKey.length>=15&&name.startsWith(cleanKey.substring(0,15)))
+      return flags;
+  }
+  return [];
+}
+
+// Inject AI flags into deal rows already rendered in the DOM for a rep block
+function injectAIFlagsIntoTable(owner, aiMap){
+  const safeId='rep_'+owner.replace(/\W/g,'_');
+  const block=$(safeId);
+  if(!block)return;
+  const rows=block.querySelectorAll('.insp-deals-table tbody tr');
+  rows.forEach(row=>{
+    const nameCell=row.querySelector('.insp-deal-name');
+    if(!nameCell)return;
+    const oppName=nameCell.textContent.trim().toLowerCase();
+    // Find matching AI flags
+    let aiFlags=[];
+    for(const [key,flags] of aiMap){
+      const cleanKey=key.replace(/….*/,'');
+      if(oppName.startsWith(cleanKey)||cleanKey.startsWith(oppName.substring(0,Math.min(20,oppName.length)))){
+        aiFlags=flags;break;
+      }
+    }
+    if(!aiFlags.length)return;
+    const flagsCell=row.querySelector('td:last-child');
+    if(!flagsCell)return;
+    // Append AI chips after rule-based chips
+    const aiChips=aiFlags.map(f=>
+      '<span class="insp-flag-tag ai" title="AI-identified">'+f+'</span>'
+    ).join('');
+    flagsCell.innerHTML=flagsCell.innerHTML+aiChips;
+    // If row was clean, remove the clean indicator
+    const cleanSpan=flagsCell.querySelector('span[style*="green"]');
+    if(cleanSpan&&aiChips)cleanSpan.remove();
+  });
+}
+
+// ── Manager insights call ──
+async function fetchManagerInsights(repsSorted, active, apiKey, systemPrompt){
+  // Aggregate flag counts across all deals
+  const flagCounts={};
+  active.forEach(d=>{
+    (d._flags||[]).forEach(f=>{
+      flagCounts[f.text]=(flagCounts[f.text]||0)+1;
+    });
+  });
+  const topFlags=Object.entries(flagCounts)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,10)
+    .map(([k,v])=>k+': '+v)
+    .join(', ');
+
+  // Per-AE flag summary
+  const aeSummary=repsSorted.map(([owner,deals])=>{
+    const flags=deals.flatMap(d=>d._flags||[]);
+    const red=flags.filter(f=>f.sev==='red').length;
+    const amber=flags.filter(f=>f.sev==='amber').length;
+    return owner+' ('+deals.length+' deals, '+red+' critical, '+amber+' warnings)';
+  }).join('\n');
+
+  const userMsg='Team pipeline inspection summary. '+active.length+' active deals across '+repsSorted.length+' AEs.\n\n'
+    +'Most common flags (flag: count):\n'+topFlags+'\n\n'
+    +'Per-AE summary:\n'+aeSummary+'\n\n'
+    +'Provide manager insights covering:\n'
+    +'1. Most common issues across the team (2-3 sentences)\n'
+    +'2. Themes suggesting AE skill gaps or coaching opportunities (2-3 sentences)\n'
+    +'3. Top 2-3 specific coaching or development recommendations\n'
+    +'4. Any exec-attention items at the team level\n\n'
+    +'Be direct and specific. Use AE names where relevant. No bullet points for sections 1-2, use bullets for section 3 only.';
+
+  const body={
+    model:'claude-sonnet-4-5',
+    max_tokens:500,
+    system:[{type:'text',text:systemPrompt,cache_control:{type:'ephemeral'}}],
+    messages:[{role:'user',content:userMsg}]
+  };
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-beta':'prompt-caching-2024-07-31',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body:JSON.stringify(body)
+  });
+  if(!resp.ok)throw new Error('API '+resp.status);
+  const data=await resp.json();
+  const text=(data.content&&data.content[0]&&data.content[0].text)||'';
+  const usage=data.usage||{};
+  const cacheRead=usage.cache_read_input_tokens||0;
+  const cacheWrite=usage.cache_creation_input_tokens||0;
+  const normalInput=(usage.input_tokens||0)-cacheRead-cacheWrite;
+  const effectiveInput=normalInput+Math.round(cacheRead*0.1)+Math.round(cacheWrite*1.25);
+  return {text, inputTokens:effectiveInput, outputTokens:usage.output_tokens||0};
+}
+
+// ── Main run ──
+async function runInspector(){
+  if(!importedData||importedData.length===0){
+    renderInspectorEmpty('Import your pipeline CSV from the Manager View first.');
+    return;
+  }
+
+  const apiKey=getApiKey();
+  const btn=$('inspector-run-btn');
+  const status=$('inspector-status');
+  const tokenEl=$('inspector-token-count');
+
+  // Filter to active deals only (exclude closed/omitted)
+  const active=importedData.filter(d=>!['closed','omitted'].includes(d.f_fc_cat_norm));
+
+  // Run rule-based flags on all active deals
+  active.forEach(d=>{ d._flags=flagDeal(d); });
+
+  // Group by rep, sort by severity
+  const byRep=groupByRep(active);
+  const repsSorted=Object.entries(byRep).sort(([,a],[,b])=>{
+    const sa=a.flatMap(d=>d._flags).reduce((s,f)=>s+(f.sev==='red'?2:1),0);
+    const sb=b.flatMap(d=>d._flags).reduce((s,f)=>s+(f.sev==='red'?2:1),0);
+    return sb-sa;
+  });
+
+  const redFlags=active.flatMap(d=>d._flags).filter(f=>f.sev==='red').length;
+  status.textContent=`${active.length} active deals · ${redFlags} critical flags · ${repsSorted.length} reps`;
+
+  // Hide insights section until this run completes
+  // Reset tabs to reps view, hide charts/content
+  const tabsEl2=$('insp-tabs');if(tabsEl2)tabsEl2.style.display='none';
+  switchInspTab('reps');
+  const chartsEl=$('insights-charts');if(chartsEl)chartsEl.style.display='none';
+  const icEl=$('insights-content');if(icEl){icEl.style.display='none';icEl.innerHTML='';}
+  const ieEl=$('insights-empty');if(ieEl)ieEl.style.display='block';
+  // Render skeleton rep blocks immediately (rule-based done)
+  const container=$('inspector-results');
+  container.innerHTML=repsSorted.map(([owner,deals])=>renderRepBlock(owner,deals,
+    apiKey
+      ? `<div class="insp-ai-loading" id="ai_${owner.replace(/\W/g,'_')}"><div class="insp-ai-dot"></div><div class="insp-ai-dot"></div><div class="insp-ai-dot"></div><span>Generating AI summary…</span></div>`
+      : ''
+  )).join('');
+
+  // Auto-expand first rep
+  if(repsSorted.length>0){
+    const firstId='rep_'+repsSorted[0][0].replace(/\W/g,'_');
+    const firstBlock=$(firstId);
+    if(firstBlock)firstBlock.classList.add('open');
+  }
+
+  if(!apiKey){
+    status.textContent+=' · Add API key in Settings for AI summaries';
+    tokenEl.style.display='none';
+    return;
+  }
+
+  // Show sub-tabs and start progress
+  const tabsEl=$('insp-tabs');if(tabsEl)tabsEl.style.display='flex';
+  switchInspTab('reps');
+  const totalSteps=repsSorted.length+1;
+  let completedSteps=0;
+  setProgress(0,totalSteps,'Starting AI summaries…');
+
+  // AI summaries — sequential to avoid rate limits
+  btn.disabled=true;btn.style.opacity='.6';
+  let totalInput=0,totalOutput=0;
+  for(const [owner,deals] of repsSorted){
+    const loadingId='ai_'+owner.replace(/\W/g,'_');
+    setProgress(completedSteps,totalSteps,'Summarising '+owner+'… ('+completedSteps+' of '+repsSorted.length+' AEs)');
+    // Add generating badge to rep header
+    const repBlockId='rep_'+owner.replace(/\W/g,'_');
+    const repBlock=$(repBlockId);
+    if(repBlock){
+      const hdr=repBlock.querySelector('.insp-rep-name');
+      if(hdr&&!repBlock.querySelector('.rep-ai-badge')){
+        const badge=document.createElement('span');
+        badge.className='rep-ai-badge';
+        badge.innerHTML='<span class="insp-ai-dot" style="width:5px;height:5px;display:inline-block"></span> generating…';
+        hdr.after(badge);
+      }
+    }
+    try{
+      const result=await fetchAISummary(owner,deals,apiKey,getSystemPrompt(),getCoachingFocus());
+      const {text,inputTokens,outputTokens}=result;
+      totalInput+=inputTokens;totalOutput+=outputTokens;
+      const loadingEl=$(loadingId);
+      if(loadingEl){
+        const safeId=owner.replace(/\W/g,'_');
+        const slackText='*Pipeline coaching — '+owner+'*\n'+text;
+        loadingEl.outerHTML='<div class="insp-ai-summary">'
+          +'<div class="insp-ai-summary-lbl" style="justify-content:space-between">'
+          +'<span>✨ AI coaching summary</span>'
+          +'<button class="btn" onclick="copySlack(&quot;slk_'+safeId+'&quot;)" style="font-size:10px;padding:2px 8px">Copy for Slack</button>'
+          +'</div>'
+          +'<div id="slk_'+safeId+'" style="display:none">'+slackText+'</div>'
+          +text.replace(/\n/g,'<br>')+'</div>';
+        const aiMap=parseAIFlags(text);
+        if(aiMap.size)injectAIFlagsIntoTable(owner,aiMap);
+      }
+      if(repBlock){const badge=repBlock.querySelector('.rep-ai-badge');if(badge){badge.innerHTML='✨ done';badge.style.color='var(--green)';}}
+    }catch(err){
+      const loadingEl=$(loadingId);
+      if(loadingEl)loadingEl.outerHTML='<div class="insp-ai-summary" style="color:var(--red);font-size:12px">AI summary unavailable: '+err.message+'</div>';
+      if(repBlock){const badge=repBlock.querySelector('.rep-ai-badge');if(badge){badge.innerHTML='⚠ error';badge.style.color='var(--red)';}}
+    }
+    completedSteps++;
+  }
+
+  // Manager insights call
+  setProgress(completedSteps,totalSteps,'Generating manager insights…');
+  const insightsLoadingEl=$('insights-loading');
+  const insightsContentEl=$('insights-content');
+  const insightsEmptyEl=$('insights-empty');
+  const insightsLoadingDot=$('insp-insights-loading-dot');
+  if(insightsLoadingEl)insightsLoadingEl.style.display='flex';
+  if(insightsContentEl)insightsContentEl.style.display='none';
+  if(insightsEmptyEl)insightsEmptyEl.style.display='none';
+  if(insightsLoadingDot){insightsLoadingDot.style.display='inline';insightsLoadingDot.style.color='var(--amber)';}
+  renderInsightsCharts(repsSorted,active);
+  try{
+    const ins=await fetchManagerInsights(repsSorted,active,apiKey,getSystemPrompt());
+    totalInput+=ins.inputTokens;totalOutput+=ins.outputTokens;
+    if(insightsLoadingEl)insightsLoadingEl.style.display='none';
+    if(insightsContentEl){
+      insightsContentEl.style.display='block';
+      const escaped=ins.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      insightsContentEl.innerHTML='<p>'+escaped.replace(/\n\n/g,'</p><p style="margin-top:.75rem">').replace(/\n/g,'<br>')+'</p>';
+    }
+    if(insightsLoadingDot)insightsLoadingDot.style.display='none';
+  }catch(err){
+    if(insightsLoadingEl)insightsLoadingEl.style.display='none';
+    if(insightsContentEl){insightsContentEl.style.display='block';insightsContentEl.innerHTML='<span style="color:var(--tx2);font-size:12px">Insights unavailable: '+err.message+'</span>';}
+    if(insightsLoadingDot)insightsLoadingDot.style.display='none';
+  }
+
+  btn.disabled=false;btn.style.opacity='1';
+  clearProgress();
+  logUsageRun(totalInput,totalOutput,repsSorted.length,active.length);
+  const totalTok=totalInput+totalOutput;
+  const runCost=totalInput*COST_PER_INPUT_TOKEN+totalOutput*COST_PER_OUTPUT_TOKEN;
+  tokenEl.style.display='inline';
+  tokenEl.textContent=fmtTokens(totalTok)+' tokens · '+fmtCost(runCost);
+  status.textContent=active.length+' active deals · '+redFlags+' critical · '+repsSorted.length+' AEs · complete';
+  // Store result for export
+  lastInspectionResult={
+    repsSorted,active,
+    insights:($('insights-content')||{}).innerText||'',
+    runDate:new Date(),
+    managerName:$('mgr_name')&&$('mgr_name').value||'Manager',
+    quarter:$('quarter_lbl')&&$('quarter_lbl').value||''
+  };
+  // Show export buttons
+  document.querySelectorAll('.insp-export-btn').forEach(b=>b.classList.add('visible'));
+}
+
+
+// ══════════════════════════════════════════════════════
+// INSPECTOR EXPORTS
+// ══════════════════════════════════════════════════════
+
+function exportInspectionPDF(){
+  if(!lastInspectionResult){alert('Run an inspection first.');return;}
+  const {repsSorted,active,insights,runDate,managerName,quarter}=lastInspectionResult;
+  const dateStr=runDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const navy='#1a1a2e',coral='#E85D3A',blue='#1a56db',red='#dc2626',amber='#b45309',green='#0d7c3d';
+
+  // Flag counts for summary
+  const allFlags=active.flatMap(d=>d._flags||[]);
+  const redCount=allFlags.filter(f=>f.sev==='red').length;
+  const amberCount=allFlags.filter(f=>f.sev==='amber').length;
+  const totalAmt=active.reduce((s,d)=>s+d.f_amount_num,0);
+
+  // Per-rep sections
+  const repSections=repsSorted.map(([owner,deals])=>{
+    const flags=deals.flatMap(d=>d._flags||[]);
+    const rc=flags.filter(f=>f.sev==='red').length;
+    const ac=flags.filter(f=>f.sev==='amber').length;
+    const amt=deals.reduce((s,d)=>s+d.f_amount_num,0);
+    const statusColor=rc>0?red:ac>0?amber:green;
+    const statusText=rc>0?rc+' critical':ac>0?ac+' warnings':'Clean';
+
+    const sorted=[...deals].sort((a,b)=>{
+      const sa=(a._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:1),0);
+      const sb=(b._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:1),0);
+      return sb-sa;
+    });
+
+    const dealRows=sorted.map(d=>{
+      const allDealFlags=d._flags||[];
+      const flagStr=allDealFlags.map(f=>'<span style="font-size:8pt;background:'+(f.sev==='red'?'#fee2e2':'#fef3c7')+';color:'+(f.sev==='red'?red:amber)+';padding:1px 5px;border-radius:3px;margin-right:3px">'+f.text+'</span>').join('');
+      const cd=d.f_close_date?new Date(d.f_close_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
+      const ns=(d.f_next_step||'—').substring(0,70)+(d.f_next_step&&d.f_next_step.length>70?'…':'');
+      const rowBg=allDealFlags.some(f=>f.sev==='red')?'#fff8f8':'';
+      return '<tr style="background:'+rowBg+'">'
+        +'<td style="padding:5px 8px;font-weight:600;font-size:9pt;max-width:160px;word-break:break-word">'+(d.f_opp_name||'—')+'</td>'
+        +'<td style="padding:5px 8px;font-size:9pt;white-space:nowrap">'+fmt(d.f_amount_num)+'</td>'
+        +'<td style="padding:5px 8px;font-size:9pt;white-space:nowrap">'+cd+'</td>'
+        +'<td style="padding:5px 8px;font-size:9pt">'+ns+'</td>'
+        +'<td style="padding:5px 8px">'+flagStr+'</td>'
+        +'</tr>';
+    }).join('');
+
+    // AI summary text
+    const aiEl=document.querySelector('#rep_'+owner.replace(/\W/g,'_')+' .insp-ai-summary');
+    const aiText=aiEl?aiEl.innerText.replace(/^✨ AI coaching summary\n?/,'').replace(/Copy for Slack$/,'').trim():'';
+
+    return '<div style="margin-bottom:24px;page-break-inside:avoid">'
+      +'<div style="display:flex;align-items:center;gap:10px;background:#f9fafb;border-left:4px solid '+statusColor+';padding:10px 14px;margin-bottom:8px">'
+        +'<div style="font-size:12pt;font-weight:700;color:#111;flex:1">'+owner+'</div>'
+        +'<div style="font-size:9pt;font-weight:700;color:'+statusColor+'">'+statusText+'</div>'
+        +'<div style="font-size:9pt;color:#6b7280">'+deals.length+' deals · '+fmt(amt)+'</div>'
+      +'</div>'
+      +(aiText?'<div style="font-size:9pt;color:#374151;background:#f0f9ff;border:1px solid #bfdbfe;border-radius:4px;padding:10px 12px;margin-bottom:8px;line-height:1.6">'+aiText+'</div>':'')
+      +'<table style="width:100%;border-collapse:collapse;font-size:9pt">'
+        +'<thead><tr style="background:#f3f4f6">'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Deal</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Amount</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Close</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Next step</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Flags</th>'
+        +'</tr></thead>'
+        +'<tbody>'+dealRows+'</tbody>'
+      +'</table>'
+    +'</div>';
+  }).join('');
+
+  const insightsSection=insights
+    ?'<div style="margin-top:24px;page-break-before:always">'
+      +'<div style="font-size:11pt;font-weight:700;color:'+navy+';border-bottom:2px solid '+coral+';padding-bottom:6px;margin-bottom:14px">Manager Insights</div>'
+      +'<div style="font-size:10pt;color:#374151;line-height:1.7">'+insights.split('\n').join('<br>')+'</div>'
+    +'</div>':'' ;
+
+  const html='<div style="font-family:Arial,Helvetica,sans-serif;color:#111;max-width:900px">'
+    // Header
+    +'<div style="background:'+navy+';padding:24px 32px;margin-bottom:0">'
+      +'<div style="font-size:8pt;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:'+coral+';margin-bottom:6px">Remote</div>'
+      +'<div style="font-size:18pt;font-weight:700;color:#fff;margin-bottom:4px">Pipeline Inspection Report</div>'
+      +'<div style="font-size:9pt;color:#9ca3b8">'+managerName+(quarter?' · '+quarter:'')+'</div>'
+    +'</div>'
+    +'<div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:10px 32px;display:flex;gap:24px;margin-bottom:20px">'
+      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">As of</span><br><span style="font-size:10pt;font-weight:600">'+dateStr+'</span></div>'
+      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Active deals</span><br><span style="font-size:10pt;font-weight:600">'+active.length+'</span></div>'
+      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Pipeline</span><br><span style="font-size:10pt;font-weight:600">'+fmt(totalAmt)+'</span></div>'
+      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Critical flags</span><br><span style="font-size:10pt;font-weight:600;color:'+red+'">'+redCount+'</span></div>'
+      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Warnings</span><br><span style="font-size:10pt;font-weight:600;color:'+amber+'">'+amberCount+'</span></div>'
+    +'</div>'
+    +'<div style="padding:0 32px">'
+      +'<div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;margin-bottom:12px;border-bottom:1px solid #e5e7eb;padding-bottom:6px">Per-AE Breakdown</div>'
+      +repSections
+      +insightsSection
+    +'</div>'
+    +'<div style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:10px 32px;margin-top:24px;font-size:8pt;color:#9ca3af;display:flex;justify-content:space-between">'
+      +'<span>Remote · Pipeline Inspector</span>'
+      +'<span>Generated '+dateStr+'</span>'
+    +'</div>'
+  +'</div>';
+
+  const printArea=$('insp-print-area');
+  printArea.innerHTML=html;
+  printArea.style.display='block';
+  // Use afterprint event for reliable cleanup
+  const cleanup=()=>{printArea.style.display='none';window.removeEventListener('afterprint',cleanup);};
+  window.addEventListener('afterprint',cleanup);
+  window.print();
+}
+
+function exportInspectionXLSX(){
+  if(!lastInspectionResult){alert('Run an inspection first.');return;}
+  if(!window.XLSX){alert('Excel library not loaded, try again.');return;}
+  const {repsSorted,active,insights,runDate,managerName,quarter}=lastInspectionResult;
+  const wb=XLSX.utils.book_new();
+  const dateStr=runDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  // Sheet 1: Summary
+  const allFlags=active.flatMap(d=>d._flags||[]);
+  const flagCounts={};
+  allFlags.forEach(f=>{flagCounts[f.text]=(flagCounts[f.text]||0)+1;});
+  const topFlags=Object.entries(flagCounts).sort((a,b)=>b[1]-a[1]);
+  const summaryData=[
+    ['Pipeline Inspection Report'],
+    ['Manager',managerName,'Quarter',quarter],
+    ['Date',dateStr,'Active deals',active.length],
+    ['Total pipeline',active.reduce((s,d)=>s+d.f_amount_num,0),'Critical flags',allFlags.filter(f=>f.sev==='red').length],
+    [],
+    ['Top Flags','Count','Severity'],
+    ...topFlags.map(([k,v])=>[k,v,allFlags.find(f=>f.text===k)?.sev||'']),
+  ];
+  const ws1=XLSX.utils.aoa_to_sheet(summaryData);
+  ws1['!cols']=[{wch:35},{wch:20},{wch:20},{wch:15}];
+  XLSX.utils.book_append_sheet(wb,ws1,'Summary');
+
+  // Sheet 2: Deal detail (one row per deal with all flags)
+  const dealRows=[['AE','Opportunity','Forecast Category','Stage','Amount','Close Date','Next Step','Critical Flags','Warning Flags','All Flags']];
+  repsSorted.forEach(([owner,deals])=>{
+    deals.forEach(d=>{
+      const flags=d._flags||[];
+      const red=flags.filter(f=>f.sev==='red').map(f=>f.text).join('; ');
+      const amber=flags.filter(f=>f.sev==='amber').map(f=>f.text).join('; ');
+      dealRows.push([
+        owner,
+        d.f_opp_name||'',
+        d.f_fc_cat_norm||'',
+        d.f_stage||'',
+        d.f_amount_num||0,
+        d.f_close_date||'',
+        d.f_next_step||'',
+        red,
+        amber,
+        flags.map(f=>f.text).join('; ')
+      ]);
+    });
+  });
+  const ws2=XLSX.utils.aoa_to_sheet(dealRows);
+  ws2['!cols']=[{wch:20},{wch:35},{wch:14},{wch:22},{wch:12},{wch:12},{wch:50},{wch:40},{wch:40},{wch:60}];
+  // Freeze header row
+  ws2['!freeze']={xSplit:0,ySplit:1};
+  XLSX.utils.book_append_sheet(wb,ws2,'Deal Detail');
+
+  // Sheet 3: AE summaries (AI text if available)
+  const aeRows=[['AE','Deals','Pipeline','Critical','Warnings','AI Coaching Summary']];
+  repsSorted.forEach(([owner,deals])=>{
+    const flags=deals.flatMap(d=>d._flags||[]);
+    const aiEl=document.querySelector('#rep_'+owner.replace(/\W/g,'_')+' .insp-ai-summary');
+    const aiText=aiEl?aiEl.innerText.replace(/^✨ AI coaching summary\n?/,'').replace(/Copy for Slack$/,'').trim():'';
+    aeRows.push([
+      owner,
+      deals.length,
+      deals.reduce((s,d)=>s+d.f_amount_num,0),
+      flags.filter(f=>f.sev==='red').length,
+      flags.filter(f=>f.sev==='amber').length,
+      aiText
+    ]);
+  });
+  if(insights)aeRows.push([],['✨ Manager Insights'],[insights]);
+  const ws3=XLSX.utils.aoa_to_sheet(aeRows);
+  ws3['!cols']=[{wch:22},{wch:8},{wch:14},{wch:10},{wch:10},{wch:80}];
+  XLSX.utils.book_append_sheet(wb,ws3,'AE Summaries');
+
+  const nm=(managerName||'Inspection').replace(/\s+/g,'_');
+  const qtr=(quarter||'').replace(/\s+/g,'_');
+  XLSX.writeFile(wb,nm+'_'+(qtr?qtr+'_':'')+'Pipeline_Inspection.xlsx');
+}
 // ══════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════
@@ -2344,5 +3582,7 @@ renderQStatusBar();
 if(localStorage.getItem('rail_expanded')==='1')openSidebar();
 calc();
 </script>
+<!-- Inspector print area — lives at body level to avoid view display:none -->
+<div id="insp-print-area" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:#fff;overflow:auto"></div>
 </body>
 </html>
