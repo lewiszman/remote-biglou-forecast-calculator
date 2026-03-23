@@ -1471,7 +1471,7 @@ html.dark .db-card:hover{border-color:#4b5563}
         </div>
         <div class="settings-about-item">
           <div class="settings-about-lbl">Data storage</div>
-          <div class="settings-about-val">Browser localStorage only &mdash; nothing sent to any server</div>
+          <div class="settings-about-val">Browser localStorage only &mdash; nothing sent to any server. Last imported pipeline is cached and restored on reload.</div>
         </div>
         <div class="settings-about-item">
           <div class="settings-about-lbl">Made by</div>
@@ -1983,6 +1983,7 @@ function clearImport(){
   const tbDot=$('topbar-import-dot');if(tbDot)tbDot.classList.remove('has-data');
   const tbLbl=$('topbar-import-lbl');if(tbLbl)tbLbl.textContent='No data';
   localStorage.removeItem('last_import_meta');
+  localStorage.removeItem('last_import_data');
   calc();
 }
 
@@ -2173,6 +2174,9 @@ function wizNext(){
       open:normalized.filter(r=>r.f_fc_cat_norm!=='closed'&&r.f_fc_cat_norm!=='omitted').length
     }};
     localStorage.setItem('last_import_meta',JSON.stringify(meta));
+    // Persist deal records so they survive page refresh
+    try{localStorage.setItem('last_import_data',JSON.stringify(normalized));}
+    catch(e){console.warn('Import data too large to cache:',e);}
     updateImportBadge(meta);
     // Step 2: wait for the browser to flush all DOM mutations from calc(),
     // then paint the green confirmation state in the next frame
@@ -2387,12 +2391,30 @@ function updateImportBadge(meta){
 function restoreImportMeta(){
   try{
     const meta=JSON.parse(localStorage.getItem('last_import_meta'));
-    if(meta)updateImportBadge(meta);
-    else{
-      // Ensure topbar shows correct no-data state
+    const data=JSON.parse(localStorage.getItem('last_import_data'));
+    if(meta&&data&&data.length){
+      // Restore deal records into memory
+      importedData=data;
+      scopeSelected=null;
+      updateScopeUI();
+      // Re-aggregate and repopulate forecast inputs
+      const agg=aggregateForecast(data);
+      const mClosed=calcMonthlyClosedBreakdown(data);
+      populateForecastFromImport(agg,mClosed);
+      updateImportBadge(meta);
+      // Show a subtle "restored" note in the badge
+      const badge=$('import-badge-text');
+      if(badge&&meta.filename)badge.textContent=meta.filename+' (restored)';
+    } else if(meta){
+      updateImportBadge(meta);
+    } else {
       const tbDot=$('topbar-import-dot');if(tbDot)tbDot.classList.remove('has-data');
     }
-  }catch{}
+  }catch(e){
+    // Corrupt data — clear silently
+    localStorage.removeItem('last_import_data');
+    const tbDot=$('topbar-import-dot');if(tbDot)tbDot.classList.remove('has-data');
+  }
 }
 
 // ══════════════════════════════════════════════════════
