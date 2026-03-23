@@ -632,6 +632,8 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
   #insp-print-area{display:block!important;position:static!important}
 }
 .inspector-run-btn{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;padding:7px 16px}
+.insp-stop-btn{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--red);border-color:var(--red)}
+.insp-stop-btn:hover{background:#fee2e2}
 .inspector-run-btn svg{flex-shrink:0}
 .inspector-status{font-size:12px;color:var(--tx2);flex:1}
 .inspector-token-count{font-size:11px;color:var(--tx2);background:var(--bg2);border:var(--bdr);border-radius:20px;padding:2px 9px;white-space:nowrap}
@@ -1220,6 +1222,10 @@ html.dark .db-card:hover{border-color:#4b5563}
     <button class="btn btn-primary inspector-run-btn" id="inspector-run-btn" onclick="runInspector()">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3,2 11,7 3,12"/></svg>
       Run inspection
+    </button>
+    <button class="btn insp-stop-btn" id="insp-stop-btn" onclick="stopInspector()" style="display:none">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="2" width="8" height="8" rx="1.5"/></svg>
+      Stop
     </button>
     <span class="inspector-status" id="inspector-status">Import pipeline data to inspect</span>
     <span class="inspector-token-count" id="inspector-token-count" style="display:none"></span>
@@ -3078,7 +3084,7 @@ const CAT_BG={closed:'#f0fdf4',commit:'#eff6ff',probable:'#f0fdf4',upside:'#fffb
 // ══════════════════════════════════════════════════════
 
 // ── Inspector defaults ──
-const DEFAULT_SYSTEM_PROMPT='You are a sales manager assistant. Review opportunity data and produce a structured, actionable inspection summary. Each deal includes pre-computed rule-based flags (date math, activity staleness, amount checks) and full MEDDPICC field content for your qualitative review.\n\nYour job is to:\n1. Confirm or contextualise the rule-based flags\n2. Assess stage vs forecast category alignment based on deal context (next step, MEDDPICC content) — not just field values\n3. Assess MEDDPICC quality: flag fields that are empty, generic, thin, copy-paste, or inconsistent with other fields\n4. Identify any deals needing executive attention\n\nOutput format is strict:\n\nFirst: one sentence overarching observation about the rep pipeline health.\n\nThen headed exactly: [Pipeline action items for {DATE}]\n\nOne bullet per opportunity with an issue:\n* [Opp name ~30 chars]: flag1, flag2, flag3\n\nFlag labels should be concise. For FC and stage flags, always include a short parenthetical reason (2-4 words). Examples: past close date, close imminent, next step past due, next step vague, no booked meeting, FC too aggressive (in discovery stage), FC too conservative (legal review active, should be commit), stage/FC mismatch (commit but no champion), champion thin (name only, no context), no econ buyer, metrics generic (no quantified impact), decision process unclear, no pain identified, no activity Xd, amount suspect, needs exec attention.\n\nOnly include opps with at least one flag. No other prose, headers, or format. Must be Slack-ready.';
+const DEFAULT_SYSTEM_PROMPT='You are a sales manager assistant. Review opportunity data and produce a structured, Slack-ready inspection summary grouped by forecast category.\n\nYour job is to:\n1. Confirm or contextualise the rule-based flags\n2. Assess stage alignment from deal context (next step, MEDDPICC content) — not just field values\n3. Assess MEDDPICC content quality — but only flag MEDDPICC gaps on Commit and Probable deals. For Upside, Pipeline, or deals in Discovery/Qualification stage, MEDDPICC is expected to be incomplete; do not flag it.\n4. Identify deals needing executive attention\n\nDo NOT flag or comment on forecast category (FC) assignments. FC is managed separately.\n\nOutput format — strict, no deviation:\n\nLine 1: One sentence overarching observation about pipeline health.\n\nLine 2: [Pipeline action items for M/DD]\n\nGroup action items by forecast category, each group preceded by a header line:\n*Commit* | *Probable* | *Upside* | *Pipeline*\n(only include groups that have flagged deals)\n\nUnder each group, one line per flagged opportunity:\n🔴 *Opp Name*: issue1, issue2  (🔴 = exec-attention: past close, no path to close, broken commit, missing champion/EB on commit deal)\n🟡 *Opp Name*: issue1, issue2  (🟡 = all other warnings)\n\nOpp names must be wrapped in *asterisks* for Slack bold. Use • (bullet) not * for any list formatting.\n\nIssue labels — use ONLY these standard terms:\npast close date | close imminent | no next step | next step past due | next step vague | no booked meeting | champion missing | champion thin | no econ buyer | metrics missing | metrics generic | decision process unclear | pain not identified | no activity [Xd] | stale [Xd] | amount suspect | needs exec attention\n\nOnly include opps with at least one flag. No other prose or headers.';
 const DEFAULT_COACHING_FOCUS='Be concise and objective. Flag anything needing executive attention.';
 // Sonnet 4.5 pricing: $3/M input, $15/M output, $0.30/M cache read (90% discount)
 const COST_PER_INPUT_TOKEN=3/1000000;
@@ -3423,34 +3429,40 @@ function toggleRepBlock(id){
 }
 
 // ── AI summary call ──
-async function fetchAISummary(owner, deals, apiKey, systemPrompt, coachingFocus){
+async function fetchAISummary(owner, deals, apiKey, systemPrompt, coachingFocus, signal){
   const trunc=(s,n)=>(s&&s.length>n)?s.substring(0,n)+'…':s||'';
   const blank='—';
-  const repDeals=deals.map(d=>{
-    const flags=(d._flags||[]).map(f=>f.text).join(', ')||'none';
-    // Rule-based flags + full MEDDPICC content for AI qualitative assessment
-    // Field lengths: next step 100, MEDDPICC fields 80 each (enough for quality judgment)
-    const meddpicc=[
-      'M:'+( trunc(d.f_metrics,80)||blank),
-      'E:'+(trunc(d.f_econ_buyer,80)||blank),
-      'DC:'+(trunc(d.f_dec_criteria,80)||blank),
-      'DP:'+(trunc(d.f_dec_process,80)||blank),
-      'PP:'+(trunc(d.f_proc_process,80)||blank),
-      'I:'+(trunc(d.f_implicated,80)||blank),
-      'C:'+(trunc(d.f_champion,80)||blank),
-    ].join(' | ');
-    return '- '+trunc(d.f_opp_name,40)+' | '+d.f_fc_cat_norm+' | '+fmt(d.f_amount_num)
-      +' | close '+(d.f_close_date||'?')+' | stage: '+(d.f_stage||'?')
-      +'\n  rule-flags: '+flags
-      +'\n  next-step: '+trunc(d.f_next_step,100)
-      +'\n  meddpicc: '+meddpicc;
-  }).join('\n');
 
   const today=new Date().toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
   const focusLine=coachingFocus?'\n\nAdditional focus: '+coachingFocus:'';
 
+  // Group deal data by FC category for cleaner AI output
+  const catOrder=['commit','probable','upside','pipeline'];
+  const grouped=catOrder.map(cat=>{
+    const catDeals=deals.filter(d=>d.f_fc_cat_norm===cat);
+    if(!catDeals.length)return null;
+    const catData=catDeals.map(d=>{
+      const flags=(d._flags||[]).map(f=>f.text).join(', ')||'none';
+      const meddpicc=[
+        'M:'+(trunc(d.f_metrics,80)||blank),
+        'E:'+(trunc(d.f_econ_buyer,80)||blank),
+        'DC:'+(trunc(d.f_dec_criteria,80)||blank),
+        'DP:'+(trunc(d.f_dec_process,80)||blank),
+        'PP:'+(trunc(d.f_proc_process,80)||blank),
+        'I:'+(trunc(d.f_implicated,80)||blank),
+        'C:'+(trunc(d.f_champion,80)||blank),
+      ].join(' | ');
+      return '  - '+trunc(d.f_opp_name,40)+' | '+fmt(d.f_amount_num)
+        +' | close '+(d.f_close_date||'?')+' | stage: '+(d.f_stage||'?')
+        +'\n    rule-flags: '+flags
+        +'\n    next-step: '+trunc(d.f_next_step,100)
+        +'\n    meddpicc: '+meddpicc;
+    }).join('\n');
+    return cat.toUpperCase()+':\n'+catData;
+  }).filter(Boolean).join('\n\n');
+
   const userMsg='Generate the inspection summary for '+owner+'. Today is '+today+'.\n\n'
-    +'DEAL DATA:\n'+repDeals+focusLine;
+    +'DEAL DATA (grouped by forecast category):\n'+grouped+focusLine;
 
   // Prompt caching: system prompt cached after first call in a run (90% discount on repeats)
   const body={
@@ -3466,6 +3478,7 @@ async function fetchAISummary(owner, deals, apiKey, systemPrompt, coachingFocus)
 
   const resp=await fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
+    signal:signal||null,
     headers:{
       'Content-Type':'application/json',
       'x-api-key':apiKey,
@@ -3491,8 +3504,18 @@ async function fetchAISummary(owner, deals, apiKey, systemPrompt, coachingFocus)
 
 // Last inspection result — persists in memory for export
 let lastInspectionResult=null; // {repsSorted, active, insights, runDate}
+let _inspAbortController=null; // current run's AbortController
 
 // ── Inspector sub-tab switching ──
+function stopInspector(){
+  if(_inspAbortController)_inspAbortController.abort();
+  const btn=$('insp-stop-btn');if(btn)btn.style.display='none';
+  const runBtn=$('inspector-run-btn');if(runBtn){runBtn.disabled=false;runBtn.style.opacity='1';}
+  clearProgress();
+  const status=$('inspector-status');
+  if(status)status.textContent=status.textContent.replace('…','— stopped');
+}
+
 function switchInspTab(tab){
   ['reps','insights'].forEach(t=>{
     const panel=$('insp-panel-'+t);if(panel)panel.classList.toggle('active',t===tab);
@@ -3575,7 +3598,6 @@ function renderInsightsCharts(repsSorted, active){
 
 // ── Parse AI flags from structured summary output ──
 function parseAIFlags(text){
-  // Returns Map: lowercased opp name fragment → array of flag strings
   const map=new Map();
   if(!text)return map;
   const lines=text.split('\n');
@@ -3583,15 +3605,47 @@ function parseAIFlags(text){
   for(const line of lines){
     if(/\[Pipeline action items/i.test(line)){inItems=true;continue;}
     if(!inItems)continue;
-    // Match bullet: * Opp name: flag1, flag2
+    // New format: 🔴/🟡 *Opp Name*: flags  (emoji = U+1F534 or U+1F7E1)
+    const cp=line.codePointAt(0);
+    if(cp===0x1F534||cp===0x1F7E1){
+      const rest=line.slice(2).trim(); // skip the 2-byte emoji
+      const colon=rest.indexOf(':');
+      if(colon<0)continue;
+      const rawName=rest.slice(0,colon).replace(/\*/g,'').trim();
+      const oppKey=rawName.replace(/\u2026.*$/,'').trim().toLowerCase();
+      const flags=rest.slice(colon+1).split(',').map(f=>f.trim()).filter(Boolean);
+      if(oppKey)map.set(oppKey,flags);
+      continue;
+    }
+    // Old format: * Opp name: flags
     const m=line.match(/^\*\s+(.+?):\s*(.+)$/);
-    if(!m)continue;
-    const oppKey=m[1].replace(/\u2026.*$/,'').trim().toLowerCase();
-    const flags=m[2].split(',').map(f=>f.trim()).filter(Boolean);
-    map.set(oppKey,flags);
+    if(m){
+      const oppKey=m[1].replace(/\u2026.*$/,'').trim().toLowerCase();
+      const flags=m[2].split(',').map(f=>f.trim()).filter(Boolean);
+      map.set(oppKey,flags);
+    }
   }
   return map;
 }
+
+// Format AI text for Slack: • bullets, *bold* opp names
+function formatForSlack(text){
+  if(!text)return'';
+  return text.split('\n').map(line=>{
+    // Convert stray "* " bullet to "• "
+    if(line.startsWith('* '))return'\u2022 '+line.slice(2);
+    // Ensure opp name is bold on flag lines (starts with 🔴 or 🟡)
+    const cp=line.codePointAt(0);
+    if((cp===0x1F534||cp===0x1F7E1)&&!line.includes('*')){
+      // bold the name portion (between emoji+space and first colon)
+      const rest=line.slice(2).trim();
+      const colon=rest.indexOf(':');
+      if(colon>0)return line.slice(0,2)+' *'+rest.slice(0,colon).trim()+'*:'+rest.slice(colon+1);
+    }
+    return line;
+  }).join('\n');
+}
+
 
 // Match a deal to an AI flag entry by fuzzy opp name
 function matchAIFlags(deal, aiMap){
@@ -3770,7 +3824,10 @@ async function runInspector(){
   setProgress(0,totalSteps,'Starting AI summaries…');
 
   // AI summaries — sequential to avoid rate limits
+  _inspAbortController=new AbortController();
+  const {signal}=_inspAbortController;
   btn.disabled=true;btn.style.opacity='.6';
+  const stopBtn=$('insp-stop-btn');if(stopBtn)stopBtn.style.display='flex';
   let totalInput=0,totalOutput=0;
   for(const [owner,deals] of repsSorted){
     const loadingId='ai_'+owner.replace(/\W/g,'_');
@@ -3788,25 +3845,32 @@ async function runInspector(){
       }
     }
     try{
-      const result=await fetchAISummary(owner,deals,apiKey,getSystemPrompt(),getCoachingFocus());
+      const result=await fetchAISummary(owner,deals,apiKey,getSystemPrompt(),getCoachingFocus(),signal);
       const {text,inputTokens,outputTokens}=result;
       totalInput+=inputTokens;totalOutput+=outputTokens;
       const loadingEl=$(loadingId);
       if(loadingEl){
         const safeId=owner.replace(/\W/g,'_');
-        const slackText='*Pipeline coaching — '+owner+'*\n'+text;
+        const slackText='*Pipeline coaching — '+owner+'*\n'+formatForSlack(text);
         loadingEl.outerHTML='<div class="insp-ai-summary">'
           +'<div class="insp-ai-summary-lbl" style="justify-content:space-between">'
           +'<span>✨ AI coaching summary</span>'
           +'<button class="btn" onclick="copySlack(&quot;slk_'+safeId+'&quot;)" style="font-size:10px;padding:2px 8px">Copy for Slack</button>'
           +'</div>'
           +'<div id="slk_'+safeId+'" style="display:none">'+slackText+'</div>'
-          +text.replace(/\n/g,'<br>')+'</div>';
+          +formatForSlack(text).replace(/\n/g,'<br>')+'</div>';
         const aiMap=parseAIFlags(text);
         if(aiMap.size)injectAIFlagsIntoTable(owner,aiMap);
       }
       if(repBlock){const badge=repBlock.querySelector('.rep-ai-badge');if(badge){badge.innerHTML='✨ done';badge.style.color='var(--green)';}}
     }catch(err){
+      if(err.name==='AbortError'){
+        // Stopped by user — mark remaining reps and break
+        const loadingEl=$(loadingId);
+        if(loadingEl)loadingEl.outerHTML='<div class="insp-ai-summary" style="color:var(--tx2);font-size:12px">Stopped.</div>';
+        if(repBlock){const badge=repBlock.querySelector('.rep-ai-badge');if(badge){badge.innerHTML='— stopped';badge.style.color='var(--tx2)';}}
+        break; // exit the for loop
+      }
       const loadingEl=$(loadingId);
       if(loadingEl)loadingEl.outerHTML='<div class="insp-ai-summary" style="color:var(--red);font-size:12px">AI summary unavailable: '+err.message+'</div>';
       if(repBlock){const badge=repBlock.querySelector('.rep-ai-badge');if(badge){badge.innerHTML='⚠ error';badge.style.color='var(--red)';}}
@@ -3842,6 +3906,8 @@ async function runInspector(){
   }
 
   btn.disabled=false;btn.style.opacity='1';
+  if(stopBtn)stopBtn.style.display='none';
+  _inspAbortController=null;
   clearProgress();
   logUsageRun(totalInput,totalOutput,repsSorted.length,active.length);
   const totalTok=totalInput+totalOutput;
