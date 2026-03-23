@@ -718,6 +718,72 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
 .insp-empty-title{font-size:15px;font-weight:600;color:var(--tx);margin-bottom:.375rem}
 .insp-empty-sub{font-size:13px;line-height:1.6}
 
+/* ── DEAL-BACKING ── */
+/* Full-width: override .wrap for this view */
+#view-dealback .wrap{max-width:none;padding:0 1.25rem}
+.db-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:1.25rem}
+.db-toolbar-stats{display:flex;gap:.75rem;flex-wrap:wrap;flex:1}
+.db-stat{display:flex;flex-direction:column}
+.db-stat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2)}
+.db-stat-val{font-size:15px;font-weight:700;color:var(--tx);line-height:1.2}
+.db-stat-sub{font-size:10px;color:var(--tx2)}
+.db-stat-divider{width:1px;background:var(--bdr);align-self:stretch;margin:0 .25rem}
+.db-reset-btn{font-size:11px;margin-left:auto;flex-shrink:0}
+/* board — full width, no wrap constraint */
+.db-board{display:grid;grid-template-columns:minmax(220px,1.2fr) minmax(220px,1.2fr) minmax(220px,1.2fr) minmax(180px,.7fr);gap:10px;align-items:stretch;padding-bottom:2rem}
+.db-col{position:relative}
+.db-col-inner{border-radius:var(--rl);overflow:hidden;border:var(--bdr);background:var(--bg);height:100%;display:flex;flex-direction:column}
+/* waterfall: each forecast col gets a left connector showing prior tier flows in */
+.db-wf-connector{height:4px;display:flex;margin-bottom:-1px;position:relative}
+.db-wf-seg{flex:1;opacity:.35}
+.db-wf-arrow{position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent}
+/* column header */
+.db-col-hdr{padding:.875rem 1rem .75rem;border-bottom:var(--bdr)}
+.db-col-accent{height:4px;margin:-1px -1px 0;border-radius:2px 2px 0 0}
+.db-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx2);margin-bottom:.375rem}
+.db-col-total{font-size:22px;font-weight:700;color:var(--tx);line-height:1;margin-bottom:.375rem}
+.db-col-meta{font-size:11px;color:var(--tx2);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.db-col-vs{font-weight:600}
+.db-col-vs.over{color:var(--green)}
+.db-col-vs.under{color:var(--red)}
+/* waterfall composition band — the key additive story */
+.db-waterfall-band{background:var(--bg2);border-bottom:var(--bdr);padding:.625rem 1rem}
+.db-wf-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;font-size:11px}
+.db-wf-row:last-child{margin-bottom:0}
+.db-wf-swatch{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.db-wf-label{color:var(--tx2);flex:1}
+.db-wf-amount{font-weight:600;color:var(--tx)}
+.db-wf-total-row{display:flex;justify-content:space-between;align-items:baseline;padding-top:.375rem;margin-top:.375rem;border-top:1px solid rgba(0,0,0,.07)}
+html.dark .db-wf-total-row{border-top-color:rgba(255,255,255,.08)}
+.db-wf-total-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2)}
+.db-wf-total-val{font-size:13px;font-weight:700;color:var(--tx)}
+/* card list */
+.db-card-list{min-height:140px;padding:.625rem .625rem;display:flex;flex-direction:column;gap:6px;flex:1}
+.db-card-list.drag-over{background:rgba(26,86,219,.05);outline:2px dashed var(--blue);outline-offset:-3px;border-radius:4px}
+/* deal card */
+.db-card{background:var(--bg);border:var(--bdr);border-radius:var(--rm);padding:.75rem .875rem;cursor:grab;transition:box-shadow .15s,transform .12s,border-color .12s;user-select:none;position:relative}
+.db-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08);border-color:#d1d5db}
+html.dark .db-card:hover{border-color:#4b5563}
+.db-card:active{cursor:grabbing}
+.db-card.dragging{opacity:.35;transform:scale(.96);box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.db-card-name{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.db-card-acv{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:4px}
+.db-card-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.db-card-owner{font-size:10px;color:var(--tx2)}
+.db-card-date{font-size:10px;color:var(--tx2)}
+.db-card-cat{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;border-radius:3px;flex-shrink:0}
+.db-moved-badge{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--amber);title:"Moved from original category"}
+/* bench col */
+.db-bench .db-col-inner{border-style:dashed}
+.db-bench .db-col-accent{background:repeating-linear-gradient(45deg,#9ca3af,#9ca3af 2px,transparent 2px,transparent 8px)!important}
+.db-bench .db-card{opacity:.72}
+
+/* empty state */
+.db-empty{text-align:center;padding:3rem 1rem;color:var(--tx2)}
+.db-empty-icon{font-size:32px;margin-bottom:.75rem}
+.db-empty-title{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:.375rem}
+.db-empty-sub{font-size:12px;line-height:1.6}
+.db-col-empty{text-align:center;padding:1.5rem .5rem;color:var(--tx2);font-size:11px;font-style:italic;opacity:.6}
 /* api key input in settings */
 .api-key-input{font-family:monospace;letter-spacing:.03em}
 </style>
@@ -755,13 +821,13 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
       <span class="nav-icon" title="Manager View"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="3.5" width="12" height="9" rx="1.5"/><line x1="1.5" y1="7" x2="13.5" y2="7"/><line x1="5" y1="7" x2="5" y2="12.5"/></svg></span>
       <span class="nav-label">Manager View</span>
     </div>
-    <div class="nav-item" id="nav-rep" onclick="switchView('rep')">
-      <span class="nav-icon" title="Rep View"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="5" r="2.5"/><path d="M2.5 13c0-2.76 2.24-5 5-5s5 2.24 5 5"/></svg></span>
-      <span class="nav-label">Rep View</span>
-    </div>
     <div class="nav-item" id="nav-inspector" onclick="switchView('inspector')">
       <span class="nav-icon" title="Pipeline Inspector"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="4"/><line x1="9.5" y1="9.5" x2="13" y2="13"/></svg></span>
       <span class="nav-label" id="nav-inspector-lbl">Pipeline Inspector</span>
+    </div>
+    <div class="nav-item" id="nav-dealback" onclick="switchView('dealback')">
+      <span class="nav-icon" title="Deal-Backing"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="3" height="9" rx=".75"/><rect x="5.5" y="5" width="3" height="7" rx=".75"/><rect x="10" y="1.5" width="3.5" height="10.5" rx=".75"/></svg></span>
+      <span class="nav-label">Deal-Backing</span>
     </div>
     <div class="nav-divider"></div>
     <div class="nav-section-lbl">Actions</div>
@@ -796,6 +862,12 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
         <span class="nav-label">Settings</span>
         <span class="nav-label nav-sublabel" id="nav-settings-sub" style="font-size:10px;font-weight:400;opacity:.6;margin-top:1px"></span>
       </div>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-section-lbl">Beta</div>
+    <div class="nav-item" id="nav-rep" onclick="switchView('rep')">
+      <span class="nav-icon" title="Rep View"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="5" r="2.5"/><path d="M2.5 13c0-2.76 2.24-5 5-5s5 2.24 5 5"/></svg></span>
+      <span class="nav-label">Rep View <span style="font-size:8px;font-weight:700;background:#ede9fe;color:#7c3aed;border-radius:3px;padding:1px 4px;vertical-align:middle">BETA</span></span>
     </div>
   </div>
 </nav>
@@ -1204,6 +1276,23 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
 </div>
 </div><!-- /view-inspector -->
 
+<!-- DEAL-BACKING VIEW -->
+<div id="view-dealback" class="view">
+<div class="wrap">
+  <div class="db-toolbar">
+    <div id="db-quota-pill" style="flex:1;min-width:0"></div>
+    <button class="btn db-reset-btn" onclick="resetDealBack()">Reset</button>
+  </div>
+  <div id="db-board-wrap">
+    <div class="db-empty">
+      <div class="db-empty-icon">&#128200;</div>
+      <div class="db-empty-title">Deal-Backing</div>
+      <div class="db-empty-sub">Import your pipeline CSV, then open this module to build<br>a deal-backed path to your forecast.</div>
+    </div>
+  </div>
+</div>
+</div><!-- /view-dealback -->
+
 <!-- SETTINGS VIEW -->
 <div id="view-settings" class="view">
 <div class="wrap">
@@ -1526,13 +1615,14 @@ let S={};
 // NAVIGATION
 // ══════════════════════════════════════════════════════
 function switchView(view){
-  ['manager','rep','inspector','settings'].forEach(v=>{
+  ['manager','rep','inspector','dealback','settings'].forEach(v=>{
     const ve=$('view-'+v);if(ve)ve.classList.toggle('active',v===view);
     const ne=$('nav-'+v);if(ne)ne.classList.toggle('active',v===view);
   });
-  const lbl={manager:'Manager View',rep:'Rep View',inspector:'Pipeline Inspector',settings:'Settings'};
+  const lbl={manager:'Manager View',rep:'Rep View',inspector:'Pipeline Inspector',dealback:'Deal-Backing',settings:'Settings'};
   $('topbar-module-label').textContent=lbl[view]||view;
   if(view==='settings')loadSettingsPage();
+  if(view==='dealback')renderDealBack();
 }
 function toggleFcCard(el){
   const wasExpanded=el.classList.contains('expanded');
@@ -3935,6 +4025,258 @@ function exportInspectionXLSX(){
   const nm=(managerName||'Inspection').replace(/\s+/g,'_');
   const qtr=(quarter||'').replace(/\s+/g,'_');
   XLSX.writeFile(wb,nm+'_'+(qtr?qtr+'_':'')+'Pipeline_Inspection.xlsx');
+}
+
+// ══════════════════════════════════════════════════════
+// DEAL-BACKING MODULE
+// ══════════════════════════════════════════════════════
+
+// State: map of deal id → column ('bench','commit','probable','upside')
+let dbState={}; // {dealId: colKey}
+let dbDeals=[]; // snapshot of deals when module was last loaded
+let dbDragId=null;
+
+const DB_COLS=[
+  {key:'bench',    label:'Bench',    accent:'#9ca3af', sub:'Not counting this quarter'},
+  {key:'commit',   label:'Commit',   accent:'#1a56db', sub:'High confidence — counting on it'},
+  {key:'probable', label:'Probable', accent:'#0d7c3d', sub:'Strong intent — likely closes'},
+  {key:'upside',   label:'Upside',   accent:'#b45309', sub:'Possible — needs things to break right'},
+];
+
+const CAT_PILL_STYLE={
+  commit:   'background:#dbeafe;color:#1a56db',
+  probable: 'background:#dcfce7;color:#0d7c3d',
+  upside:   'background:#fef3c7;color:#b45309',
+  pipeline: 'background:#f3f4f6;color:#6b7280',
+  bench:    'background:#f3f4f6;color:#6b7280',
+};
+
+function dbGetDeals(){
+  if(!importedData||!importedData.length)return[];
+  return importedData
+    .filter(d=>d.f_fc_cat_norm!=='omitted')
+    .map((d,i)=>({
+      id:'db_'+i,
+      name:d.f_opp_name||'Unknown',
+      acv:d.f_amount_num||0,
+      owner:d.f_owner||'',
+      cat:d.f_fc_cat_norm||'pipeline',
+      closeDate:d.f_close_date||'',
+      closed:d.f_fc_cat_norm==='closed', // locked — not draggable
+    }));
+}
+
+function dbGetDefaultCol(deal){
+  const map={closed:'closed',commit:'commit',probable:'probable',upside:'upside',pipeline:'upside'};
+  return map[deal.cat]||'upside';
+}
+
+function resetDealBack(){
+  dbState={};
+  renderDealBack();
+}
+
+function renderDealBack(){
+  const wrap=$('db-board-wrap');
+  const toolbarEl=$('db-toolbar-inner');
+  if(!wrap)return;
+  const deals=dbGetDeals();
+  dbDeals=deals;
+
+  if(!deals.length){
+    wrap.innerHTML='<div class="db-empty"><div class="db-empty-icon">&#128200;</div><div class="db-empty-title">Deal-Backing</div><div class="db-empty-sub">Import your pipeline CSV, then open this module to build a deal-backed path to your forecast.</div></div>';
+    const p=$("db-quota-pill");if(p)p.textContent='Import pipeline data to begin';
+    return;
+  }
+
+  // Init state
+  deals.forEach(d=>{if(!(d.id in dbState))dbState[d.id]=dbGetDefaultCol(d);});
+
+  // Totals per bucket
+  const tot={bench:0,closed:0,commit:0,probable:0,upside:0};
+  const cnt={bench:0,closed:0,commit:0,probable:0,upside:0};
+  deals.forEach(d=>{const k=dbState[d.id];tot[k]=(tot[k]||0)+d.acv;cnt[k]=(cnt[k]||0)+1;});
+
+  // Cumulative (additive waterfall)
+  const closedAmt=tot.closed; // closed won anchors every forecast tier
+  const cumC=closedAmt+tot.commit;
+  const cumP=closedAmt+tot.commit+tot.probable;
+  const cumU=closedAmt+tot.commit+tot.probable+tot.upside;
+
+  const quota=S?S.quota:0;
+
+  // Toolbar stats
+  const pill=$("db-quota-pill");
+  if(pill){
+    pill.innerHTML=
+      '<div class="db-toolbar-stats">'+
+      (quota>0?'<div class="db-stat"><span class="db-stat-lbl">Quota</span><span class="db-stat-val">'+fmt(quota)+'</span></div><div class="db-stat-divider"></div>':'') +
+      '<div class="db-stat"><span class="db-stat-lbl">Closed Won</span><span class="db-stat-val" style="color:#059669">'+fmt(closedAmt)+'</span><span class="db-stat-sub">'+cnt.closed+' deals</span></div>'+
+      '<div class="db-stat-divider"></div>'+
+      '<div class="db-stat"><span class="db-stat-lbl">Commit FC</span><span class="db-stat-val">'+fmt(cumC)+'</span></div>'+
+      '<div class="db-stat-divider"></div>'+
+      '<div class="db-stat"><span class="db-stat-lbl">Probable FC</span><span class="db-stat-val">'+fmt(cumP)+'</span></div>'+
+      '<div class="db-stat-divider"></div>'+
+      '<div class="db-stat"><span class="db-stat-lbl">Upside FC</span><span class="db-stat-val">'+fmt(cumU)+'</span></div>'+
+      '<div class="db-stat-divider"></div>'+
+      '<div class="db-stat"><span class="db-stat-lbl">Benched</span><span class="db-stat-val" style="color:var(--tx2)">'+fmt(tot.bench)+'</span><span class="db-stat-sub" style="color:var(--tx2)">'+cnt.bench+' deals</span></div>'+
+      '</div>';
+  }
+
+
+  // Waterfall composition band data
+  // Shows what accumulates into each forecast total
+  const closedRow={label:'Closed won',amt:closedAmt,color:'#059669'};
+  const wfBands={
+    commit:[
+      closedRow,
+      {label:'+ Commit deals',amt:tot.commit,color:'#1a56db'},
+    ],
+    probable:[
+      closedRow,
+      {label:'+ Commit deals',amt:tot.commit,color:'#1a56db'},
+      {label:'+ Probable deals',amt:tot.probable,color:'#0d7c3d'},
+    ],
+    upside:[
+      closedRow,
+      {label:'+ Commit deals',amt:tot.commit,color:'#1a56db'},
+      {label:'+ Probable deals',amt:tot.probable,color:'#0d7c3d'},
+      {label:'+ Upside deals',amt:tot.upside,color:'#b45309'},
+    ],
+  };
+  const cumTotals={commit:cumC,probable:cumP,upside:cumU};
+
+  const makeCard=(d)=>{
+    const moved=!d.closed&&dbGetDefaultCol(d)!==dbState[d.id];
+    const cd=d.closeDate?new Date(d.closeDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+    const draggable=!d.closed;
+    return'<div class="db-card'+(d.closed?' db-card-closed':'')+'" '+(draggable?'draggable="true"':'') +' data-id="'+d.id+'" '+
+      (draggable?'ondragstart="dbDragStart(event,'+"'"+d.id+"'"+')" ondragend="dbDragEnd(event)"':'') +'>'+
+      (moved?'<div class="db-moved-badge" title="Moved from original category"></div>':'') +
+      '<div class="db-card-name" title="'+d.name+'">'+d.name.substring(0,32)+(d.name.length>32?'…':'')+'</div>'+
+      '<div class="db-card-acv">'+fmt(d.acv)+'</div>'+
+      '<div class="db-card-meta">'+
+        (d.owner?'<span class="db-card-owner">'+d.owner+'</span>':'') +
+        (cd?'<span class="db-card-date">&#128197; '+cd+'</span>':'') +
+        '<span class="db-card-cat" style="'+CAT_PILL_STYLE[d.cat]+'">'+d.cat+'</span>'+
+      '</div>'+
+    '</div>';
+  };
+
+  // Bench column (separate, narrower)
+  const benchDeals=deals.filter(d=>dbState[d.id]==='bench').sort((a,b)=>b.acv-a.acv);
+  const benchHtml='<div class="db-col db-bench">'+
+    '<div class="db-col-inner" data-col="bench" ondragover="dbDragOver(event,\'bench\')" ondragleave="dbDragLeave(event)" ondrop="dbDrop(event,\'bench\')">'+
+      '<div class="db-col-accent" style="background:#9ca3af"></div>'+
+      '<div class="db-col-hdr">'+
+        '<div class="db-col-title" style="color:#6b7280">Bench</div>'+
+        '<div class="db-col-total" style="color:var(--tx2)">'+fmt(tot.bench)+'</div>'+
+        '<div class="db-col-meta">'+cnt.bench+' deal'+(cnt.bench!==1?'s':'')+' not counting</div>'+
+      '</div>'+
+      '<div class="db-card-list" id="db-list-bench" '+
+        'ondragover="dbDragOver(event,\'bench\')" '+
+        'ondragleave="dbDragLeave(event)" '+
+        'ondrop="dbDrop(event,\'bench\')">'+
+        (benchDeals.length?benchDeals.map(makeCard).join(''):'<div class="db-col-empty">Drag deals here to park them</div>')+
+      '</div>'+
+    '</div>'+
+  '</div>';
+
+  // Forecast columns (commit, probable, upside)
+  const fcCols=[
+    {key:'commit',  label:'Commit',   accent:'#1a56db', cum:cumC, sub:'Counting on these to close'},
+    {key:'probable',label:'Probable', accent:'#0d7c3d', cum:cumP, sub:'Strong intent — likely closes'},
+    {key:'upside',  label:'Upside',   accent:'#b45309', cum:cumU, sub:'Possible if things break right'},
+  ];
+
+  const fcHtml=fcCols.map((col)=>{
+    const colDeals=deals.filter(d=>dbState[d.id]===col.key).sort((a,b)=>b.acv-a.acv);
+    const band=wfBands[col.key];
+    const cumTotal=cumTotals[col.key];
+
+    // Waterfall composition band
+    const bandRows=band.map(row=>
+      '<div class="db-wf-row">'+
+        '<div class="db-wf-swatch" style="background:'+row.color+'"></div>'+
+        '<span class="db-wf-label">'+row.label+'</span>'+
+        '<span class="db-wf-amount">'+fmt(row.amt)+'</span>'+
+      '</div>'
+    ).join('');
+    const bandHtml='<div class="db-waterfall-band">'+
+      bandRows+
+
+    '</div>';
+
+    // vs MV delta for headline
+    const mvDelta=(()=>{
+      if(!col.mv)return'';
+      const d=cumTotal-col.mv,p=Math.round(Math.abs(d)/col.mv*100);
+      if(Math.abs(d)<1)return'<span style="font-size:11px;font-weight:600;color:var(--tx2)">=&nbsp;MV</span>';
+      const cls=d>0?'over':'under';
+      return'<span class="db-col-vs '+cls+'" style="font-size:11px">'+( d>0?'+':'-')+fmt(Math.abs(d))+'</span>';
+    })();
+    return'<div class="db-col">'+
+      '<div class="db-col-inner">'+
+        '<div class="db-col-accent" style="background:'+col.accent+'"></div>'+
+        '<div class="db-col-hdr">'+
+          '<div class="db-col-title">'+col.label+' Forecast</div>'+
+          '<div class="db-col-total" style="color:'+col.accent+'">'+fmt(cumTotal)+'</div>'+
+          '<div class="db-col-meta">'+
+            '<span style="opacity:.65">'+colDeals.length+' '+col.label.toLowerCase()+' deal'+(colDeals.length!==1?'s':'')+' &nbsp;·&nbsp; '+fmt(tot[col.key])+'</span>'+
+          '</div>'+
+        '</div>'+
+        bandHtml+
+        '<div class="db-card-list" id="db-list-'+col.key+'" '+
+          'ondragover="dbDragOver(event,\''+(col.key)+'\')" '+
+          'ondragleave="dbDragLeave(event)" '+
+          'ondrop="dbDrop(event,\''+(col.key)+'\')">'+
+          (colDeals.length?colDeals.map(makeCard).join(''):'<div class="db-col-empty">Drop deals here</div>')+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+
+  wrap.innerHTML='<div class="db-board">'+fcHtml+benchHtml+'</div>';
+}
+
+// ── Drag and drop ──
+function dbDragStart(e,id){
+  dbDragId=id;
+  e.dataTransfer.effectAllowed='move';
+  setTimeout(()=>{
+    const el=document.querySelector('.db-card[data-id="'+id+'"]');
+    if(el)el.classList.add('dragging');
+  },0);
+}
+function dbDragEnd(e){
+  document.querySelectorAll('.db-card.dragging').forEach(el=>el.classList.remove('dragging'));
+  document.querySelectorAll('.db-card-list.drag-over').forEach(el=>el.classList.remove('drag-over'));
+}
+function dbDragOver(e,col){
+  e.preventDefault();
+  e.stopPropagation();
+  e.dataTransfer.dropEffect='move';
+  // Highlight only the card list, not the whole column
+  document.querySelectorAll('.db-card-list.drag-over').forEach(el=>el.classList.remove('drag-over'));
+  const list=$('db-list-'+col);
+  if(list)list.classList.add('drag-over');
+}
+function dbDragLeave(e){
+  // Only clear if leaving the column entirely (not moving between child elements)
+  const col=e.currentTarget.dataset&&e.currentTarget.dataset.col;
+  if(col&&!e.currentTarget.contains(e.relatedTarget)){
+    const list=$('db-list-'+col);
+    if(list)list.classList.remove('drag-over');
+  }
+}
+function dbDrop(e,col){
+  e.preventDefault();
+  const list=$('db-list-'+col);
+  if(list)list.classList.remove('drag-over');
+  if(!dbDragId)return;
+  dbState[dbDragId]=col;
+  dbDragId=null;
+  renderDealBack();
 }
 // ══════════════════════════════════════════════════════
 // INIT
