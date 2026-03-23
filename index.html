@@ -169,12 +169,34 @@ html.dark .sidebar{background:var(--bg);border-right:var(--bdr)}
 .hero-hdr input::placeholder{color:var(--tx2)}
 .hero-sep{color:#d1d5db;font-size:16px}
 .hero-tag{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--tx2);white-space:nowrap}
-.qmode-toggle{display:inline-flex;border:var(--bdr);border-radius:20px;overflow:hidden;flex-shrink:0;margin-left:auto}
+.qmode-toggle{display:inline-flex;border:var(--bdr);border-radius:20px;overflow:hidden;flex-shrink:0}
 .qmode-btn{font-family:var(--font);font-size:11px;font-weight:600;padding:3px 10px;border:none;background:transparent;color:var(--tx2);cursor:pointer;transition:background .12s,color .12s;white-space:nowrap}
 .qmode-btn.active{background:var(--blue);color:#fff}
 .qmode-btn:not(.active):hover{background:var(--bg2)}
 html.dark .qmode-toggle{border-color:#374151}
 html.dark .qmode-btn:not(.active):hover{background:#1f2937}
+/* Scope selector */
+.scope-wrap{display:flex;align-items:center;gap:6px;margin-left:auto}
+.scope-selector{position:relative;display:inline-block}
+.scope-btn{font-family:var(--font);font-size:11px;font-weight:600;padding:3px 10px;border:var(--bdr);border-radius:20px;background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:background .12s,color .12s,border-color .12s}
+.scope-btn:hover{background:var(--bg2);color:var(--tx)}
+.scope-btn.scoped{background:#fff7ed;color:#b45309;border-color:#fed7aa}
+html.dark .scope-btn.scoped{background:#431407;color:#fdba74;border-color:#9a3412}
+.scope-btn svg{flex-shrink:0;transition:transform .15s}
+.scope-btn.open svg{transform:rotate(180deg)}
+.scope-dropdown{position:absolute;top:calc(100% + 4px);right:0;min-width:200px;background:var(--bg);border:var(--bdr);border-radius:var(--rm);box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:300;overflow:hidden;display:none}
+.scope-dropdown.open{display:block}
+.scope-dd-hdr{display:flex;justify-content:space-between;align-items:center;padding:.5rem .75rem;border-bottom:var(--bdr);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx2)}
+.scope-dd-hdr button{font-size:10px;font-weight:600;color:var(--blue);background:none;border:none;cursor:pointer;padding:0}
+.scope-dd-hdr button:hover{text-decoration:underline}
+.scope-dd-item{display:flex;align-items:center;gap:8px;padding:.4rem .75rem;cursor:pointer;font-size:12px;color:var(--tx);transition:background .1s;user-select:none}
+.scope-dd-item:hover{background:var(--bg2)}
+.scope-dd-item input[type=checkbox]{accent-color:var(--blue);width:13px;height:13px;flex-shrink:0;cursor:pointer}
+#scope-dd-items{max-height:220px;overflow-y:auto}
+.scope-dd-footer{padding:.5rem .75rem;border-top:var(--bdr);display:flex;gap:6px}
+.scope-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#fff7ed;color:#b45309;border:1px solid #fed7aa;white-space:nowrap;display:none}
+.scope-badge.visible{display:inline-flex;align-items:center;gap:4px}
+html.dark .scope-badge{background:#431407;color:#fdba74;border-color:#9a3412}
 .fc-cards{display:grid;grid-template-columns:repeat(3,1fr)}
 .fc-tier{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.5rem;display:flex;align-items:center;gap:5px}
 .fc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
@@ -845,9 +867,32 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
       <input id="mgr_team" placeholder="Team / region" style="width:130px">
       <span class="hero-sep">·</span>
       <input id="quarter_lbl" placeholder="Q1 FY26" style="width:65px">
-      <div class="qmode-toggle" style="margin-left:auto">
-        <button class="qmode-btn active" id="qmode-current" onclick="setQMode('current')">CQ</button>
-        <button class="qmode-btn" id="qmode-next" onclick="setQMode('next')">Q+1</button>
+      <div class="scope-wrap">
+        <span class="scope-badge" id="scope-badge"></span>
+        <div class="scope-selector" id="scope-selector">
+          <button class="scope-btn" id="scope-btn" onclick="toggleScopeDropdown()">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="4.5" cy="4.5" r="3"/><line x1="7" y1="7" x2="10" y2="10"/></svg>
+            <span id="scope-btn-label">All AEs</span>
+            <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="1.5,3 4.5,6 7.5,3"/></svg>
+          </button>
+          <div class="scope-dropdown" id="scope-dropdown">
+            <div class="scope-dd-hdr">
+              <span>Filter by AE</span>
+              <div style="display:flex;gap:8px">
+                <button onclick="setScopeAll()">All</button>
+                <button onclick="setScopeNone()">None</button>
+              </div>
+            </div>
+            <div id="scope-dd-items"></div>
+            <div class="scope-dd-footer">
+              <button class="btn" style="font-size:11px;width:100%" onclick="clearScope()">Clear filter</button>
+            </div>
+          </div>
+        </div>
+        <div class="qmode-toggle">
+          <button class="qmode-btn active" id="qmode-current" onclick="setQMode('current')">CQ</button>
+          <button class="qmode-btn" id="qmode-next" onclick="setQMode('next')">Q+1</button>
+        </div>
       </div>
     </div>
     <div class="fc-cards" id="fc-cards"></div>
@@ -1722,8 +1767,123 @@ function populateForecastFromImport(agg,monthlyClosedByMonth){
   calc();
 }
 
+// ══════════════════════════════════════════════════════
+// SCOPE FILTER
+// ══════════════════════════════════════════════════════
+let scopeSelected=null; // null = all; Set of owner names = filtered
+
+function getScopeOwners(){
+  // Unique AE owners from imported data
+  if(!importedData||!importedData.length)return[];
+  return[...new Set(importedData.map(d=>d.f_owner||'Unknown'))].sort();
+}
+
+function buildScopeDropdown(){
+  const owners=getScopeOwners();
+  const container=$('scope-dd-items');
+  if(!container)return;
+  if(!owners.length){
+    container.innerHTML='<div class="scope-dd-item" style="color:var(--tx2);font-style:italic">Import data to filter by AE</div>';
+    return;
+  }
+  container.innerHTML=owners.map(name=>{
+    const checked=scopeSelected===null||scopeSelected.has(name);
+    return`<label class="scope-dd-item"><input type="checkbox" class="scope-chk" value="${name}"${checked?' checked':''}><span>${name}</span></label>`;
+  }).join('');
+  // Auto-apply on every checkbox change — no Apply button needed
+  container.querySelectorAll('.scope-chk').forEach(el=>{
+    el.addEventListener('change',applyScope);
+  });
+}
+
+function toggleScopeDropdown(){
+  const dd=$('scope-dropdown');
+  const btn=$('scope-btn');
+  if(!dd)return;
+  const isOpen=dd.classList.toggle('open');
+  if(btn)btn.classList.toggle('open',isOpen);
+  if(isOpen)buildScopeDropdown();
+}
+
+function closeScopeDropdown(){
+  const dd=$('scope-dropdown');
+  const btn=$('scope-btn');
+  if(dd)dd.classList.remove('open');
+  if(btn)btn.classList.remove('open');
+}
+
+function setScopeAll(){
+  document.querySelectorAll('.scope-chk').forEach(el=>el.checked=true);
+}
+function setScopeNone(){
+  document.querySelectorAll('.scope-chk').forEach(el=>el.checked=false);
+}
+
+function applyScope(){
+  const checks=[...document.querySelectorAll('.scope-chk')];
+  const owners=getScopeOwners();
+  const checked=checks.filter(el=>el.checked).map(el=>el.value);
+  // If all checked or none checked → treat as no filter
+  if(checked.length===0||checked.length===owners.length){
+    scopeSelected=null;
+  } else {
+    scopeSelected=new Set(checked);
+  }
+  // Don't close — let user keep adjusting and see live updates
+  updateScopeUI();
+  applyScopeToForecast();
+}
+
+function clearScope(){
+  scopeSelected=null;
+  closeScopeDropdown();
+  updateScopeUI();
+  applyScopeToForecast();
+  // Rebuild so checkboxes show all-checked state
+  buildScopeDropdown();
+}
+
+function updateScopeUI(){
+  const btn=$('scope-btn');
+  const badge=$('scope-badge');
+  const lbl=$('scope-btn-label');
+  if(!btn)return;
+  if(scopeSelected===null){
+    btn.classList.remove('scoped');
+    if(lbl)lbl.textContent='All AEs';
+    if(badge){badge.classList.remove('visible');badge.textContent='';}
+  } else {
+    btn.classList.add('scoped');
+    const names=[...scopeSelected];
+    const short=names.length===1?names[0]:names.length+' AEs';
+    if(lbl)lbl.textContent=short;
+    if(badge){
+      badge.classList.add('visible');
+      badge.innerHTML='Scoped: '+short+' <span style="cursor:pointer;opacity:.6" onclick="clearScope()" title="Clear scope">×</span>';
+    }
+  }
+}
+
+function applyScopeToForecast(){
+  if(!importedData||!importedData.length)return;
+  const records=scopeSelected
+    ? importedData.filter(d=>scopeSelected.has(d.f_owner||'Unknown'))
+    : importedData;
+  const agg=aggregateForecast(records);
+  const monthly=calcMonthlyClosedBreakdown(records);
+  populateForecastFromImport(agg,monthly);
+}
+
+// Close dropdown on outside click — but not on clicks inside it
+document.addEventListener('click',e=>{
+  const sel=$('scope-selector');
+  if(sel&&!sel.contains(e.target))closeScopeDropdown();
+},true); // capture phase so we see it before stopPropagation
+
 function clearImport(){
   importedData=null;
+  scopeSelected=null;
+  updateScopeUI();
   ['closed','pipe_commit','pipe_prob','pipe_up','pipe_pipe','m1_closed','m2_closed','m3_closed']
     .forEach(id=>{const el=$(id);if(el)el.classList.remove('imported-field');});
   const sr=$('import-status-row');if(sr)sr.style.display='none';
@@ -1912,6 +2072,8 @@ function wizNext(){
     saveCatMap(wizState.catMap);
     const normalized=applyMapping(wizState.rawRecords,wizState.colMap,wizState.catMap);
     importedData=normalized;
+    scopeSelected=null; // reset scope on new import
+    updateScopeUI();
     const agg=aggregateForecast(normalized);
     const mClosed=calcMonthlyClosedBreakdown(normalized);
     populateForecastFromImport(agg,mClosed);
@@ -3783,6 +3945,9 @@ document.querySelectorAll('input[type=text]:not(.minput)').forEach(el=>el.addEve
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeShareModal();}});
 initTheme();
 initQE();
+// Prevent dropdown internal clicks from triggering outside-click handler
+const _scopeDd=$('scope-dropdown');
+if(_scopeDd)_scopeDd.addEventListener('click',e=>e.stopPropagation());
 initSettings();
 // Show skeleton immediately while state loads
 showSkeletonCards();
