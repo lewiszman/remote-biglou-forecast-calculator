@@ -3084,7 +3084,8 @@ const CAT_BG={closed:'#f0fdf4',commit:'#eff6ff',probable:'#f0fdf4',upside:'#fffb
 // ══════════════════════════════════════════════════════
 
 // ── Inspector defaults ──
-const DEFAULT_SYSTEM_PROMPT='You are a sales manager assistant. Review opportunity data and produce a structured, Slack-ready inspection summary grouped by forecast category.\n\nYour job is to:\n1. Confirm or contextualise the rule-based flags\n2. Assess stage alignment from deal context (next step, MEDDPICC content) — not just field values\n3. Assess MEDDPICC content quality — but only flag MEDDPICC gaps on Commit and Probable deals. For Upside, Pipeline, or deals in Discovery/Qualification stage, MEDDPICC is expected to be incomplete; do not flag it.\n4. Identify deals needing executive attention\n\nDo NOT flag or comment on forecast category (FC) assignments. FC is managed separately.\n\nOutput format — strict, no deviation:\n\nLine 1: One sentence overarching observation about pipeline health.\n\nLine 2: [Pipeline action items for M/DD]\n\nGroup action items by forecast category, each group preceded by a header line:\n*Commit* | *Probable* | *Upside* | *Pipeline*\n(only include groups that have flagged deals)\n\nUnder each group, one line per flagged opportunity:\n🔴 *Opp Name*: issue1, issue2  (🔴 = exec-attention: past close, no path to close, broken commit, missing champion/EB on commit deal)\n🟡 *Opp Name*: issue1, issue2  (🟡 = all other warnings)\n\nOpp names must be wrapped in *asterisks* for Slack bold. Use • (bullet) not * for any list formatting.\n\nIssue labels — use ONLY these standard terms:\npast close date | close imminent | no next step | next step past due | next step vague | no booked meeting | champion missing | champion thin | no econ buyer | metrics missing | metrics generic | decision process unclear | pain not identified | no activity [Xd] | stale [Xd] | amount suspect | needs exec attention\n\nOnly include opps with at least one flag. No other prose or headers.';
+const DEFAULT_SYSTEM_PROMPT='You are a sales manager assistant. Review opportunity data and produce a structured, Slack-ready inspection summary grouped by forecast category.\n\nYour job is to:\n1. Confirm or contextualise the rule-based flags\n2. Assess stage alignment from deal context (next step, MEDDPICC content) — not just field values\n3. Assess MEDDPICC content quality — but only flag MEDDPICC gaps on Commit and Probable deals. For Upside, Pipeline, or deals in Discovery/Qualification stage, MEDDPICC is expected to be incomplete; do not flag it.\n4. Identify deals needing executive attention\n\nDo NOT flag or comment on forecast category (FC) assignments. FC is managed separately.\n\nOutput format — mirror this structure exactly:\\n\\nOne sentence observation about this AE pipeline health.\\n\\n[Pipeline action items for M/DD]\\n\\n*Commit*\\n🔴 *Acme Corp*: past close date, no next step\\n🟡 *Beta Inc*: champion thin, no activity 18d\\n\\n*Probable*\\n🟡 *Gamma Ltd*: next step vague, stale 14d\\n\\nRules: bold category header per group, one line per flagged deal, opp name in *asterisks*, 🔴 for exec-attention only (past close/broken commit/missing champion or EB on commit), 🟡 for all other flags. Only include categories with flagged deals. No other prose or headers.';
+
 const DEFAULT_COACHING_FOCUS='Be concise and objective. Flag anything needing executive attention.';
 // Sonnet 4.5 pricing: $3/M input, $15/M output, $0.30/M cache read (90% discount)
 const COST_PER_INPUT_TOKEN=3/1000000;
@@ -3628,21 +3629,35 @@ function parseAIFlags(text){
   return map;
 }
 
-// Format AI text for Slack: • bullets, *bold* opp names
+// Format AI text for Slack: normalise bullets and bold opp names
+// Handles all model output variants: emoji-prefixed, * bullet, or plain
 function formatForSlack(text){
   if(!text)return'';
+  // Category headers like "*Commit*" or "Commit:" — pass through, already Slack-formatted
+  const isCategoryHeader=l=>/^\*?(Commit|Probable|Upside|Pipeline)\*?[:\s]*$/i.test(l.trim());
   return text.split('\n').map(line=>{
-    // Convert stray "* " bullet to "• "
-    if(line.startsWith('* '))return'\u2022 '+line.slice(2);
-    // Ensure opp name is bold on flag lines (starts with 🔴 or 🟡)
     const cp=line.codePointAt(0);
-    if((cp===0x1F534||cp===0x1F7E1)&&!line.includes('*')){
-      // bold the name portion (between emoji+space and first colon)
-      const rest=line.slice(2).trim();
-      const colon=rest.indexOf(':');
-      if(colon>0)return line.slice(0,2)+' *'+rest.slice(0,colon).trim()+'*:'+rest.slice(colon+1);
+    const hasEmoji=cp===0x1F534||cp===0x1F7E1; // 🔴 or 🟡
+    const hasBullet=line.startsWith('* ');
+    if(!hasEmoji&&!hasBullet)return line; // observation line, header, etc — pass through
+    if(isCategoryHeader(line))return line;
+    // Extract: prefix | opp name | flags
+    let prefix='\u2022'; // default bullet
+    let rest=line;
+    if(hasEmoji){
+      // Emoji takes 2 chars in JS string (surrogate pair)
+      prefix=line.slice(0,2);
+      rest=line.slice(2).trim();
+    } else if(hasBullet){
+      rest=line.slice(2).trim();
     }
-    return line;
+    // Find the colon separating name from flags
+    const colon=rest.indexOf(':');
+    if(colon<0)return prefix+' '+rest; // no colon — just reformat bullet
+    const rawName=rest.slice(0,colon).replace(/\*/g,'').trim(); // strip any existing asterisks
+    const flags=rest.slice(colon+1).trim();
+    // Reassemble with guaranteed bold name
+    return prefix+' *'+rawName+'*: '+flags;
   }).join('\n');
 }
 
@@ -3858,7 +3873,7 @@ async function runInspector(){
           +'<button class="btn" onclick="copySlack(&quot;slk_'+safeId+'&quot;)" style="font-size:10px;padding:2px 8px">Copy for Slack</button>'
           +'</div>'
           +'<div id="slk_'+safeId+'" style="display:none">'+slackText+'</div>'
-          +formatForSlack(text).replace(/\n/g,'<br>')+'</div>';
+          +formatForSlack(text).replace(/\n/g,'<br>').replace(/\*([^*\n]+)\*/g,'<strong>$1</strong>')+'</div>';
         const aiMap=parseAIFlags(text);
         if(aiMap.size)injectAIFlagsIntoTable(owner,aiMap);
       }
