@@ -878,8 +878,8 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
     <div class="crow"><div class="ilbl">Commit <span class="pill pc">commit</span></div><div class="cright"><input type="range" id="r_commit" min="50" max="100" value="80" step="1"><span class="cval" id="r_commit_out">80%</span></div></div>
     <div class="crow"><div class="ilbl">Probable <span class="pill pp">probable</span></div><div class="cright"><input type="range" id="r_prob" min="30" max="95" value="75" step="1"><span class="cval" id="r_prob_out">75%</span></div></div>
     <div class="crow"><div class="ilbl">Upside <span class="pill pu">upside</span></div><div class="cright"><input type="range" id="r_up" min="10" max="80" value="50" step="1"><span class="cval" id="r_up_out">50%</span></div></div>
-    <div class="crow"><div class="ilbl">Pipeline <span class="pill pg">pipeline</span></div><div class="cright"><input type="range" id="r_pipe" min="5" max="50" value="25" step="1"><span class="cval" id="r_pipe_out">25%</span></div></div>
-    <div class="crow"><div><div class="ilbl">Create &amp; close</div><div style="font-size:11px;color:var(--tx2);margin-top:2px">Used in C&amp;C section below</div></div><div class="cright"><input type="range" id="r_cnc" min="5" max="50" value="10" step="1"><span class="cval" id="r_cnc_out">10%</span></div></div>
+    <div class="crow"><div class="ilbl">Pipeline <span class="pill pg">pipeline</span></div><div class="cright"><input type="range" id="r_pipe" min="5" max="50" value="18" step="1"><span class="cval" id="r_pipe_out">18%</span></div></div>
+    <div class="crow"><div><div class="ilbl">Create &amp; close</div><div style="font-size:11px;color:var(--tx2);margin-top:2px">Used in C&amp;C section below</div></div><div class="cright"><input type="range" id="r_cnc" min="5" max="50" value="18" step="1"><span class="cval" id="r_cnc_out">18%</span></div></div>
   </div>
 
   <!-- C&C -->
@@ -887,7 +887,7 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
   <div class="card">
     <div class="cnc-inputs">
       <div class="cnc-fld"><label>Qualified opps to create</label><div class="frow"><input type="text" id="cnc_opps" value="5" style="width:80px;font-size:16px"></div></div>
-      <div class="cnc-fld"><label>Average selling price (ASP)</label><div class="frow"><span class="iprefix">$</span><input type="text" id="cnc_asp" value="15,000" style="width:110px;font-size:16px"></div></div>
+      <div class="cnc-fld"><label>Average selling price (ASP)</label><div class="frow"><span class="iprefix">$</span><input type="text" id="cnc_asp" value="14,000" style="width:110px;font-size:16px"></div></div>
     </div>
     <div class="cnc-chain">
       <div class="cc"><div class="cc-lbl">Opps</div><div class="cc-val" id="chain_opps">5</div></div>
@@ -1172,6 +1172,57 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
         <div class="settings-save-row" style="margin-top:0">
           <button class="btn btn-primary" onclick="saveSettings()" style="font-size:12px">Save</button>
           <span class="settings-saved-msg" id="settings-saved-msg">&#10003;&nbsp;Saved</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-hdr">Forecast defaults</div>
+      <div class="settings-sub" style="padding:.625rem 1.25rem .25rem;font-size:12px;color:var(--tx2)">Applied on page load and when starting a fresh session. You can still override values manually at any time.</div>
+      <div class="settings-row">
+        <div class="settings-lbl">Conversion rates</div>
+        <div class="settings-sub">Default values for the conversion rate sliders.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-top:.625rem">
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px">Commit %</label>
+            <input class="settings-input" type="number" id="def-r-commit" min="50" max="100" value="80" style="width:80px">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px">Probable %</label>
+            <input class="settings-input" type="number" id="def-r-prob" min="30" max="95" value="75" style="width:80px">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px">Upside %</label>
+            <input class="settings-input" type="number" id="def-r-up" min="10" max="80" value="50" style="width:80px">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px">Pipeline %</label>
+            <input class="settings-input" type="number" id="def-r-pipe" min="5" max="50" value="18" style="width:80px">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px">Create &amp; close %</label>
+            <input class="settings-input" type="number" id="def-r-cnc" min="5" max="50" value="18" style="width:80px">
+          </div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-lbl">Create &amp; close defaults</div>
+        <div class="settings-sub">Default qualified opportunities and average selling price for the C&amp;C what-if.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-top:.625rem">
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px">Qualified opps</label>
+            <input class="settings-input" type="number" id="def-cnc-opps" min="1" max="100" value="5" style="width:80px">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px">ASP ($)</label>
+            <input class="settings-input" type="number" id="def-cnc-asp" min="1000" step="1000" value="14000" style="width:120px">
+          </div>
+        </div>
+      </div>
+      <div class="settings-row" style="background:var(--bg2);border-top:var(--bdr)">
+        <div class="settings-save-row" style="margin-top:0">
+          <button class="btn btn-primary" onclick="saveSettings()" style="font-size:12px">Save</button>
+          <span class="settings-saved-msg" id="settings-saved-msg-2">&#10003;&nbsp;Saved</span>
         </div>
       </div>
     </div>
@@ -2149,8 +2200,9 @@ function getCurrentQuarterEnd(d){
 let qMode='current'; // 'current' | 'next'
 
 // Field IDs that are saved/restored per quarter mode
-const QMODE_FIELDS=['quota','closed','pipe_commit','pipe_prob','pipe_up','pipe_pipe',
-  'r_commit','r_prob','r_up','r_pipe','r_cnc','cnc_opps','cnc_asp','quarter_lbl',
+// Conversion rates and C&C defaults are team-level settings — not per-quarter.
+// They live in app_settings and are applied by applyForecastDefaults(), not qmode state.
+const QMODE_FIELDS=['quota','closed','pipe_commit','pipe_prob','pipe_up','pipe_pipe','quarter_lbl',
   ...['m1','m2','m3'].flatMap(m=>['closed','commit','prob','up'].map(k=>m+'_'+k))];
 
 function saveQModeState(mode){
@@ -2239,16 +2291,26 @@ function saveSettings(){
   const s=getSettings();
   s.sfdcUrl=url.trim()||DEFAULT_SFDC_URL;
   if(fyEl)s.fyStart=fyEl.value;
+  // Forecast defaults — clamp to valid ranges
+  const clampInt=(id,min,max,fb)=>Math.min(max,Math.max(min,parseInt(($( id)||{}).value)||fb));
+  s.defRCommit = clampInt('def-r-commit',50,100,80);
+  s.defRProb   = clampInt('def-r-prob',30,95,75);
+  s.defRUp     = clampInt('def-r-up',10,80,50);
+  s.defRPipe   = clampInt('def-r-pipe',5,50,25);
+  s.defRCnc    = clampInt('def-r-cnc',5,50,10);
+  s.defCncOpps = clampInt('def-cnc-opps',1,100,5);
+  s.defCncAsp  = Math.max(1000,parseInt(($('def-cnc-asp')||{}).value)||15000);
   localStorage.setItem('app_settings',JSON.stringify(s));
   const link=$('sfdc-report-link');
   if(link)link.href=s.sfdcUrl;
-  // Re-derive quarter label with new FY start
   const info=getFiscalQuarterInfo(qMode);
   const lbl=$('quarter_lbl');
   if(lbl&&!lbl._manuallyEdited)lbl.value=getFYLabel(info);
   renderQStatusBar();
-  const msg=$('settings-saved-msg');
-  if(msg){msg.style.display='inline';setTimeout(()=>msg.style.display='none',2500);}
+  // Show both saved messages (Integrations tab has two save buttons)
+  ['settings-saved-msg','settings-saved-msg-2'].forEach(id=>{
+    const msg=$(id);if(msg){msg.style.display='inline';setTimeout(()=>msg.style.display='none',2500);}
+  });
 }
 function loadSettingsPage(){
   const s=getSettings();
@@ -2256,6 +2318,17 @@ function loadSettingsPage(){
   if(urlEl)urlEl.value=s.sfdcUrl||DEFAULT_SFDC_URL;
   const fyEl=$('settings-fy-start');
   if(fyEl)fyEl.value=s.fyStart||'1';
+  // Forecast defaults
+  const fd=[
+    ['def-r-commit', s.defRCommit,  80],
+    ['def-r-prob',   s.defRProb,    75],
+    ['def-r-up',     s.defRUp,      50],
+    ['def-r-pipe',   s.defRPipe,    18],
+    ['def-r-cnc',    s.defRCnc,     18],
+    ['def-cnc-opps', s.defCncOpps,  5],
+    ['def-cnc-asp',  s.defCncAsp,   14000],
+  ];
+  fd.forEach(([id,val,fb])=>{const el=$(id);if(el)el.value=val!=null?val:fb;});
   loadInspectorSettings();
   renderUsageDashboard();
 }
@@ -2274,13 +2347,41 @@ function initSettings(){
   const s=getSettings();
   const link=$('sfdc-report-link');
   if(link)link.href=s.sfdcUrl||DEFAULT_SFDC_URL;
-  // Auto-populate quarter label on first load (if blank)
+  // Apply forecast defaults to inputs (only if no saved/URL state has already set them)
+  // We defer this to run after loadFromUrl — see init block below
+  // Track manual edits on quarter label
   const lbl=$('quarter_lbl');
   if(lbl&&!lbl.value){
     lbl.value=getFYLabel(getFiscalQuarterInfo('current'));
   }
-  // Track manual edits so we don't overwrite user's custom label
   if(lbl)lbl.addEventListener('input',()=>{lbl._manuallyEdited=true;});
+}
+
+function applyForecastDefaults(){
+  // Apply saved defaults to sliders + C&C inputs
+  // Called after loadFromUrl so URL params take precedence
+  const s=getSettings();
+  const map=[
+    ['r_commit', s.defRCommit,  80],
+    ['r_prob',   s.defRProb,    75],
+    ['r_up',     s.defRUp,      50],
+    ['r_pipe',   s.defRPipe,    18],
+    ['r_cnc',    s.defRCnc,     18],
+    ['cnc_opps', s.defCncOpps,  5],
+    ['cnc_asp',  s.defCncAsp,   14000],
+  ];
+  map.forEach(([id,val,fb])=>{
+    const el=$(id);
+    if(!el)return;
+    const v=val!=null?val:fb;
+    // URL params take precedence — skip if URL loaded values
+    if(el._fromUrl)return;
+    if(id==='cnc_asp')el.value=Number(v).toLocaleString();
+    else el.value=v;
+    // Sync slider display spans
+    const outEl=$(id+'_out');
+    if(outEl&&el.type==='range')outEl.textContent=el.value+'%';
+  });
 }
 
 // ══════════════════════════════════════════════════════
@@ -2504,7 +2605,10 @@ function copyUrl(){
 function loadFromUrl(){
   const sp=new URLSearchParams(location.search);
   if(![...sp.keys()].length)return;
-  [...sp.entries()].forEach(([k,v])=>{const el=$(k);if(el)el.value=v;});
+  [...sp.entries()].forEach(([k,v])=>{
+    const el=$(k);
+    if(el){el.value=v;el._fromUrl=true;}  // flag so applyForecastDefaults skips
+  });
 }
 
 function printPdf(){
@@ -3588,6 +3692,8 @@ loadFromUrl(); // URL params take precedence over saved state
 if(![...new URLSearchParams(location.search).keys()].length){
   restoreQModeState(qMode);
 }
+// Apply saved forecast defaults (only affects fields still at HTML defaults)
+applyForecastDefaults();
 // Sync slider display values after any state restore
 ['r_commit','r_prob','r_up','r_pipe','r_cnc'].forEach(id=>{
   const el=$(id);if(el)$(id+'_out').textContent=el.value+'%';
