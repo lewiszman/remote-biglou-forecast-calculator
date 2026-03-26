@@ -218,6 +218,12 @@ html.dark .skeleton{background:linear-gradient(90deg,#374151 25%,#4b5563 50%,#37
 html.dark .fc-card:hover{background:#1f2937}
 html.dark .fc-card.expanded{background:#1e3a5f22}
 .fc-expand-hint{font-size:10px;color:var(--tx2);opacity:.5;margin-top:.5rem;display:flex;align-items:center;gap:3px}
+.hero-actions{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;border-top:var(--bdr);background:var(--bg2)}
+.hero-copy-btn{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:var(--rm);border:var(--bdr);background:var(--bg);color:var(--tx2);cursor:pointer;transition:background .12s,color .12s,border-color .12s}
+.hero-copy-btn:hover{background:var(--bg2);color:var(--tx);border-color:#d1d5db}
+.hero-copy-btn.copied{color:var(--green);border-color:var(--green)}
+.hero-expand-all{font-size:11px;color:var(--tx2);cursor:pointer;padding:4px 8px;border-radius:var(--rm);border:none;background:none;transition:color .12s}
+.hero-expand-all:hover{color:var(--tx)}
 .fc-detail-panel{display:none;border-top:var(--bdr);padding:.75rem 0 .25rem;margin-top:.625rem}
 .fc-card.expanded .fc-detail-panel{display:block}
 .fc-card.expanded .fc-expand-hint{opacity:1;color:var(--blue)}
@@ -240,6 +246,14 @@ html.dark .fc-card.expanded{background:#1e3a5f22}
 
 /* ── LAYOUT ── */
 .sec-hd{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx2);margin:1.5rem 0 .5rem;display:flex;align-items:center;gap:8px}
+.sec-comment-btn{background:none;border:none;cursor:pointer;padding:2px 4px;border-radius:4px;color:var(--tx2);opacity:.45;transition:opacity .15s,color .15s;line-height:1;flex-shrink:0;margin-left:2px}
+.sec-comment-btn:hover{opacity:1;color:var(--blue)}
+.sec-comment-btn.has-note{opacity:.8;color:var(--blue)}
+.sec-comment-wrap{margin:-2px 0 .75rem;display:none}
+.sec-comment-wrap.open{display:block}
+.sec-comment-textarea{width:100%;font-family:var(--font);font-size:12px;color:var(--tx);background:var(--bg);border:var(--bdr);border-radius:var(--rm);padding:.5rem .75rem;resize:vertical;min-height:52px;max-height:160px;outline:none;line-height:1.55;transition:border-color .15s}
+.sec-comment-textarea:focus{border-color:var(--blue)}
+.sec-comment-textarea::placeholder{color:var(--tx2);opacity:.6}
 .sec-comment-btn{background:none;border:none;cursor:pointer;padding:2px 4px;border-radius:4px;color:var(--tx2);opacity:.45;transition:opacity .15s,color .15s;line-height:1;flex-shrink:0;margin-left:2px}
 .sec-comment-btn:hover{opacity:1;color:var(--blue)}
 .sec-comment-btn.has-note{opacity:.8;color:var(--blue)}
@@ -809,6 +823,51 @@ html.dark .db-card:hover{border-color:#4b5563}
 .db-empty-title{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:.375rem}
 .db-empty-sub{font-size:12px;line-height:1.6}
 .db-col-empty{text-align:center;padding:1.5rem .5rem;color:var(--tx2);font-size:11px;font-style:italic;opacity:.6}
+
+/* ── DEAL-BACKING ── */
+#view-dealback .wrap{max-width:none;padding:0 1.25rem}
+.db-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:1.25rem}
+.db-toolbar-stats{display:flex;gap:.75rem;flex-wrap:wrap;flex:1}
+.db-stat{display:flex;flex-direction:column}
+.db-stat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2)}
+.db-stat-val{font-size:15px;font-weight:700;color:var(--tx);line-height:1.2}
+.db-stat-sub{font-size:10px;color:var(--tx2)}
+.db-stat-divider{width:1px;background:var(--bdr);align-self:stretch;margin:0 .25rem}
+.db-reset-btn{font-size:11px;margin-left:auto;flex-shrink:0}
+.db-board{display:grid;grid-template-columns:minmax(220px,1.2fr) minmax(220px,1.2fr) minmax(220px,1.2fr) minmax(180px,.7fr);gap:10px;align-items:stretch;padding-bottom:2rem}
+.db-col{position:relative}
+.db-col-inner{border-radius:var(--rl);overflow:hidden;border:var(--bdr);background:var(--bg);height:100%;display:flex;flex-direction:column}
+.db-col-hdr{padding:.875rem 1rem .75rem;border-bottom:var(--bdr)}
+.db-col-accent{height:4px;margin:-1px -1px 0;border-radius:2px 2px 0 0}
+.db-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx2);margin-bottom:.375rem}
+.db-col-total{font-size:22px;font-weight:700;color:var(--tx);line-height:1;margin-bottom:.375rem}
+.db-col-meta{font-size:11px;color:var(--tx2);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.db-waterfall-band{background:var(--bg2);border-bottom:var(--bdr);padding:.625rem 1rem}
+.db-wf-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;font-size:11px}
+.db-wf-row:last-child{margin-bottom:0}
+.db-wf-swatch{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.db-wf-label{color:var(--tx2);flex:1}
+.db-wf-amount{font-weight:600;color:var(--tx)}
+.db-card-list{min-height:140px;padding:.625rem;display:flex;flex-direction:column;gap:6px;flex:1}
+.db-card-list.drag-over{background:rgba(26,86,219,.05);outline:2px dashed var(--blue);outline-offset:-3px;border-radius:4px}
+.db-card{background:var(--bg);border:var(--bdr);border-radius:var(--rm);padding:.75rem .875rem;cursor:grab;transition:box-shadow .15s,transform .12s,border-color .12s;user-select:none;position:relative}
+.db-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08);border-color:#d1d5db}
+.db-card:active{cursor:grabbing}
+.db-card.dragging{opacity:.35;transform:scale(.96)}
+.db-card-name{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.db-card-acv{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:4px}
+.db-card-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.db-card-owner{font-size:10px;color:var(--tx2)}
+.db-card-date{font-size:10px;color:var(--tx2)}
+.db-card-cat{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;border-radius:3px;flex-shrink:0}
+.db-moved-badge{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--amber)}
+.db-bench .db-col-inner{border-style:dashed}
+.db-bench .db-card{opacity:.72}
+.db-col-empty{text-align:center;padding:1.5rem .5rem;color:var(--tx2);font-size:11px;font-style:italic;opacity:.6}
+.db-empty{text-align:center;padding:3rem 1rem;color:var(--tx2)}
+.db-empty-icon{font-size:32px;margin-bottom:.75rem}
+.db-empty-title{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:.375rem}
+.db-empty-sub{font-size:12px;line-height:1.6}
 /* api key input in settings */
 .api-key-input{font-family:monospace;letter-spacing:.03em}
 </style>
@@ -993,6 +1052,14 @@ html.dark .db-card:hover{border-color:#4b5563}
       </div>
     </div>
     <div class="fc-cards" id="fc-cards"></div>
+    <div class="hero-actions">
+      <button class="hero-copy-btn" id="hero-copy-btn" onclick="copyHeroImage()" title="Copy forecast cards as image">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1"/><path d="M1 8V2a1 1 0 0 1 1-1h6"/></svg>
+        Copy image
+      </button>
+      <button class="hero-expand-all" id="hero-expand-all" onclick="toggleAllFcCards()">&#9660; expand all</button>
+      <span style="margin-left:auto;font-size:10px;color:var(--tx2);opacity:.5">Click a card to expand · click again to collapse</span>
+    </div>
     <div class="qbar" id="qbar"></div>
   </div>
 
@@ -1344,6 +1411,19 @@ html.dark .db-card:hover{border-color:#4b5563}
 </div>
 </div><!-- /view-dealback -->
 
+<!-- DEAL-BACKING VIEW -->
+<div id="view-dealback" class="view">
+<div class="wrap">
+  <div class="db-toolbar">
+    <div id="db-quota-pill" style="flex:1;min-width:0"></div>
+    <button class="btn db-reset-btn" onclick="resetDealBack()">Reset</button>
+  </div>
+  <div id="db-board-wrap">
+    <div class="db-empty"><div class="db-empty-icon">&#128200;</div><div class="db-empty-title">Deal-Backing</div><div class="db-empty-sub">Import your pipeline CSV, then open this module to build a deal-backed path to your forecast.</div></div>
+  </div>
+</div>
+</div><!-- /view-dealback -->
+
 <!-- SETTINGS VIEW -->
 <div id="view-settings" class="view">
 <div class="wrap">
@@ -1646,7 +1726,9 @@ html.dark .db-card:hover{border-color:#4b5563}
 <div id="pdf-view"><div class="pdf" id="pdf-content"></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
+
 // ══════════════════════════════════════════════════════
 // CORE UTILITIES
 // ══════════════════════════════════════════════════════
@@ -1676,20 +1758,141 @@ function switchView(view){
   if(view==='dealback')renderDealBack();
 }
 function toggleFcCard(el){
-  const wasExpanded=el.classList.contains('expanded');
-  // Collapse all
-  document.querySelectorAll('.fc-card').forEach(c=>{
-    c.classList.remove('expanded');
-    const hint=c.querySelector('.fc-expand-hint');
-    if(hint)hint.innerHTML='&#9660; breakdown';
-  });
-  if(!wasExpanded){
-    el.classList.add('expanded');
-    const hint=el.querySelector('.fc-expand-hint');
-    if(hint)hint.innerHTML='&#9650; less';
-  }
+  // Independent toggle — each card expands/collapses on its own
+  const isExpanded=el.classList.toggle('expanded');
+  const hint=el.querySelector('.fc-expand-hint');
+  if(hint)hint.innerHTML=isExpanded?'&#9650; less':'&#9660; breakdown';
+  _updateExpandAllBtn();
 }
 
+function _updateExpandAllBtn(){
+  const btn=$('hero-expand-all');
+  if(!btn)return;
+  const cards=document.querySelectorAll('.fc-card');
+  const allExpanded=[...cards].every(c=>c.classList.contains('expanded'));
+  btn.innerHTML=allExpanded?'&#9650; collapse all':'&#9660; expand all';
+}
+
+function toggleAllFcCards(){
+  const cards=document.querySelectorAll('.fc-card');
+  const allExpanded=[...cards].every(c=>c.classList.contains('expanded'));
+  cards.forEach(c=>{
+    c.classList.toggle('expanded',!allExpanded);
+    const hint=c.querySelector('.fc-expand-hint');
+    if(hint)hint.innerHTML=!allExpanded?'&#9650; less':'&#9660; breakdown';
+  });
+  _updateExpandAllBtn();
+}
+
+async function copyHeroImage(){
+  const btn=$('hero-copy-btn');
+  const cardsEl=$('fc-cards');
+  if(!cardsEl)return;
+  if(typeof html2canvas==='undefined'){
+    alert('Image library still loading — try again in a moment.');return;
+  }
+
+  // Visual: show "copying..." immediately so there's instant feedback
+  if(btn){
+    btn.style.opacity='.5';
+    btn.style.pointerEvents='none';
+  }
+
+  // Temporarily expand all cards for complete snapshot
+  const cards=[...document.querySelectorAll('.fc-card')];
+  const wasExpanded=cards.map(card=>card.classList.contains('expanded'));
+  const hints=cards.map(card=>card.querySelector('.fc-expand-hint'));
+  cards.forEach((card,i)=>{
+    card.classList.add('expanded');
+    if(hints[i])hints[i].style.visibility='hidden';
+  });
+
+  // Hide the actions bar so it doesn't appear in screenshot
+  const actionsBar=cardsEl.nextElementSibling;
+  const actionsWasVisible=actionsBar&&actionsBar.classList.contains('hero-actions');
+  if(actionsWasVisible)actionsBar.style.visibility='hidden';
+
+  // Wait two frames for reflow
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+  const restore=()=>{
+    cards.forEach((card,i)=>{
+      card.classList.toggle('expanded',wasExpanded[i]);
+      if(hints[i])hints[i].style.visibility='';
+      const h=card.querySelector('.fc-expand-hint');
+      if(h)h.innerHTML=wasExpanded[i]?'&#9650; less':'&#9660; breakdown';
+    });
+    if(actionsWasVisible)actionsBar.style.visibility='';
+    if(btn){btn.style.opacity='';btn.style.pointerEvents='';}
+  };
+
+  try{
+    const canvas=await html2canvas(cardsEl,{
+      backgroundColor:document.documentElement.classList.contains('dark')?'#111827':'#ffffff',
+      scale:2,            // retina
+      useCORS:false,
+      logging:false,
+      removeContainer:true,
+    });
+
+    restore();
+
+    // Try Clipboard API first
+    let copied=false;
+    if(navigator.clipboard&&typeof ClipboardItem!=='undefined'){
+      try{
+        await new Promise((res,rej)=>canvas.toBlob(async blob=>{
+          try{
+            await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+            res();
+          }catch(e){rej(e);}
+        },'image/png'));
+        copied=true;
+      }catch(e){
+        // Permission denied or not supported — fall through to download
+      }
+    }
+
+    if(copied){
+      // Success feedback
+      if(btn){
+        btn.classList.add('copied');
+        const svgCheck='<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,6 4,9 11,3"/></svg>';
+        btn.innerHTML=svgCheck+' Copied!';
+        setTimeout(()=>{
+          btn.classList.remove('copied');
+          const svgCopy='<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1"/><path d="M1 8V2a1 1 0 0 1 1-1h6"/></svg>';
+          btn.innerHTML=svgCopy+' Copy image';
+        },2500);
+      }
+    } else {
+      // Fallback: download as PNG
+      const link=document.createElement('a');
+      link.download='forecast-'+(($('quarter_lbl')||{}).value||'cards').replace(/\s+/g,'-')+'.png';
+      link.href=canvas.toDataURL('image/png');
+      link.click();
+      if(btn){
+        const svgDl='<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 1v7m-3-3 3 3 3-3M1 10h10"/></svg>';
+        btn.innerHTML=svgDl+' Downloaded';
+        setTimeout(()=>{
+          const svgCopy='<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1"/><path d="M1 8V2a1 1 0 0 1 1-1h6"/></svg>';
+          btn.innerHTML=svgCopy+' Copy image';
+        },2500);
+      }
+    }
+
+  }catch(err){
+    restore();
+    if(btn){
+      btn.innerHTML='⚠ Failed — try again';
+      setTimeout(()=>{
+        const svgCopy='<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1"/><path d="M1 8V2a1 1 0 0 1 1-1h6"/></svg>';
+        btn.innerHTML=svgCopy+' Copy image';
+        btn.style.opacity='';btn.style.pointerEvents='';
+      },2500);
+    }
+  }
+}
 function showSkeletonCards(){
   $('fc-cards').innerHTML=[1,2,3].map(()=>`
     <div class="fc-card-skeleton">
@@ -1908,86 +2111,58 @@ function populateForecastFromImport(agg,monthlyClosedByMonth){
   calc();
 }
 
+
 // ══════════════════════════════════════════════════════
 // SCOPE FILTER
 // ══════════════════════════════════════════════════════
-let scopeSelected=null; // null = all; Set of owner names = filtered
+let scopeSelected=null;
 
 function getScopeOwners(){
-  // Unique AE owners from imported data
   if(!importedData||!importedData.length)return[];
   return[...new Set(importedData.map(d=>d.f_owner||'Unknown'))].sort();
 }
-
 function buildScopeDropdown(){
   const owners=getScopeOwners();
   const container=$('scope-dd-items');
   if(!container)return;
-  if(!owners.length){
-    container.innerHTML='<div class="scope-dd-item" style="color:var(--tx2);font-style:italic">Import data to filter by AE</div>';
-    return;
-  }
+  if(!owners.length){container.innerHTML='<div class="scope-dd-item" style="color:var(--tx2);font-style:italic">Import data to filter by AE</div>';return;}
   container.innerHTML=owners.map(name=>{
     const checked=scopeSelected===null||scopeSelected.has(name);
     return`<label class="scope-dd-item"><input type="checkbox" class="scope-chk" value="${name}"${checked?' checked':''}><span>${name}</span></label>`;
   }).join('');
-  // Auto-apply on every checkbox change — no Apply button needed
-  container.querySelectorAll('.scope-chk').forEach(el=>{
-    el.addEventListener('change',applyScope);
-  });
+  container.querySelectorAll('.scope-chk').forEach(el=>{el.addEventListener('change',applyScope);});
 }
-
 function toggleScopeDropdown(){
-  const dd=$('scope-dropdown');
-  const btn=$('scope-btn');
+  const dd=$('scope-dropdown'),btn=$('scope-btn');
   if(!dd)return;
   const isOpen=dd.classList.toggle('open');
   if(btn)btn.classList.toggle('open',isOpen);
   if(isOpen)buildScopeDropdown();
 }
-
 function closeScopeDropdown(){
-  const dd=$('scope-dropdown');
-  const btn=$('scope-btn');
+  const dd=$('scope-dropdown'),btn=$('scope-btn');
   if(dd)dd.classList.remove('open');
   if(btn)btn.classList.remove('open');
 }
-
-function setScopeAll(){
-  document.querySelectorAll('.scope-chk').forEach(el=>el.checked=true);
-}
-function setScopeNone(){
-  document.querySelectorAll('.scope-chk').forEach(el=>el.checked=false);
-}
-
+function setScopeAll(){document.querySelectorAll('.scope-chk').forEach(el=>el.checked=true);}
+function setScopeNone(){document.querySelectorAll('.scope-chk').forEach(el=>el.checked=false);}
 function applyScope(){
   const checks=[...document.querySelectorAll('.scope-chk')];
   const owners=getScopeOwners();
   const checked=checks.filter(el=>el.checked).map(el=>el.value);
-  // If all checked or none checked → treat as no filter
-  if(checked.length===0||checked.length===owners.length){
-    scopeSelected=null;
-  } else {
-    scopeSelected=new Set(checked);
-  }
-  // Don't close — let user keep adjusting and see live updates
+  scopeSelected=(checked.length===0||checked.length===owners.length)?null:new Set(checked);
   updateScopeUI();
   applyScopeToForecast();
 }
-
 function clearScope(){
   scopeSelected=null;
   closeScopeDropdown();
   updateScopeUI();
   applyScopeToForecast();
-  // Rebuild so checkboxes show all-checked state
   buildScopeDropdown();
 }
-
 function updateScopeUI(){
-  const btn=$('scope-btn');
-  const badge=$('scope-badge');
-  const lbl=$('scope-btn-label');
+  const btn=$('scope-btn'),badge=$('scope-badge'),lbl=$('scope-btn-label');
   if(!btn)return;
   if(scopeSelected===null){
     btn.classList.remove('scoped');
@@ -2004,22 +2179,19 @@ function updateScopeUI(){
     }
   }
 }
-
 function applyScopeToForecast(){
   if(!importedData||!importedData.length)return;
-  const records=scopeSelected
-    ? importedData.filter(d=>scopeSelected.has(d.f_owner||'Unknown'))
-    : importedData;
+  const records=scopeSelected?importedData.filter(d=>scopeSelected.has(d.f_owner||'Unknown')):importedData;
   const agg=aggregateForecast(records);
   const monthly=calcMonthlyClosedBreakdown(records);
   populateForecastFromImport(agg,monthly);
 }
-
-// Close dropdown on outside click — but not on clicks inside it
 document.addEventListener('click',e=>{
   const sel=$('scope-selector');
   if(sel&&!sel.contains(e.target))closeScopeDropdown();
-},true); // capture phase so we see it before stopPropagation
+},true);
+const _scopeDd=$('scope-dropdown');
+if(_scopeDd)_scopeDd.addEventListener('click',e=>e.stopPropagation());
 
 function clearImport(){
   importedData=null;
@@ -2214,7 +2386,7 @@ function wizNext(){
     saveCatMap(wizState.catMap);
     const normalized=applyMapping(wizState.rawRecords,wizState.colMap,wizState.catMap);
     importedData=normalized;
-    scopeSelected=null; // reset scope on new import
+    scopeSelected=null;
     updateScopeUI();
     const agg=aggregateForecast(normalized);
     const mClosed=calcMonthlyClosedBreakdown(normalized);
@@ -2225,9 +2397,7 @@ function wizNext(){
       open:normalized.filter(r=>r.f_fc_cat_norm!=='closed'&&r.f_fc_cat_norm!=='omitted').length
     }};
     localStorage.setItem('last_import_meta',JSON.stringify(meta));
-    // Persist deal records so they survive page refresh
-    try{localStorage.setItem('last_import_data',JSON.stringify(normalized));}
-    catch(e){console.warn('Import data too large to cache:',e);}
+    try{localStorage.setItem('last_import_data',JSON.stringify(normalized));}catch(e){console.warn('Import data too large to cache:',e);}
     updateImportBadge(meta);
     // Step 2: wait for the browser to flush all DOM mutations from calc(),
     // then paint the green confirmation state in the next frame
@@ -2444,25 +2614,17 @@ function restoreImportMeta(){
     const meta=JSON.parse(localStorage.getItem('last_import_meta'));
     const data=JSON.parse(localStorage.getItem('last_import_data'));
     if(meta&&data&&data.length){
-      // Restore deal records into memory
       importedData=data;
-      scopeSelected=null;
-      updateScopeUI();
-      // Re-aggregate and repopulate forecast inputs
       const agg=aggregateForecast(data);
       const mClosed=calcMonthlyClosedBreakdown(data);
       populateForecastFromImport(agg,mClosed);
       updateImportBadge(meta);
-      // Show a subtle "restored" note in the badge
-      const badge=$('import-badge-text');
-      if(badge&&meta.filename)badge.textContent=meta.filename+' (restored)';
     } else if(meta){
       updateImportBadge(meta);
     } else {
       const tbDot=$('topbar-import-dot');if(tbDot)tbDot.classList.remove('has-data');
     }
   }catch(e){
-    // Corrupt data — clear silently
     localStorage.removeItem('last_import_data');
     const tbDot=$('topbar-import-dot');if(tbDot)tbDot.classList.remove('has-data');
   }
@@ -2562,16 +2724,9 @@ function getCurrentQuarterEnd(d){
 let qMode='current'; // 'current' | 'next'
 
 // Field IDs that are saved/restored per quarter mode
-// Conversion rates and C&C defaults are team-level settings — not per-quarter.
-// They live in app_settings and are applied by applyForecastDefaults(), not qmode state.
-const QMODE_FIELDS=[
-  // Core forecast inputs
-  'quota','closed','pipe_commit','pipe_prob','pipe_up','pipe_pipe','quarter_lbl',
-  // C&C — per-quarter planned activity, not team defaults
-  'cnc_opps','cnc_asp',
-  // Monthly breakdown — all rows (closed actuals + forecast splits)
-  ...['m1','m2','m3'].flatMap(m=>['closed','commit','prob','up'].map(k=>m+'_'+k)),
-];
+const QMODE_FIELDS=['quota','closed','pipe_commit','pipe_prob','pipe_up','pipe_pipe',
+  'r_commit','r_prob','r_up','r_pipe','r_cnc','cnc_opps','cnc_asp','quarter_lbl',
+  ...['m1','m2','m3'].flatMap(m=>['closed','commit','prob','up'].map(k=>m+'_'+k))];
 
 function saveQModeState(mode){
   if(!mode)return; // guard against empty mode
@@ -2585,13 +2740,7 @@ function restoreQModeState(mode){
     const saved=localStorage.getItem('qmode_state_'+mode);
     if(!saved)return false;
     const state=JSON.parse(saved);
-    QMODE_FIELDS.forEach(id=>{
-      const el=$(id);
-      if(el&&state[id]!==undefined){
-        el.value=state[id];
-        el._fromQmode=true; // flag so applyForecastDefaults doesn't overwrite
-      }
-    });
+    QMODE_FIELDS.forEach(id=>{const el=$(id);if(el&&state[id]!==undefined)el.value=state[id];});
     return true;
   }catch{return false;}
 }
@@ -2617,14 +2766,7 @@ function setQMode(mode){
     }
   }
   renderQStatusBar();
-  // Stash monthly + C&C values from restored state before calc() re-renders monthly
-  const monthlyStash={};
-  ['cnc_opps','cnc_asp',...['m1','m2','m3'].flatMap(m=>['closed','commit','prob','up'].map(k=>m+'_'+k))]
-    .forEach(id=>{const el=$(id);if(el)monthlyStash[id]=el.value;});
   calc();
-  // Re-apply stashed values after renderMonthly() has rebuilt the DOM
-  Object.entries(monthlyStash).forEach(([id,val])=>{const el=$(id);if(el&&val!==undefined&&val!=='')el.value=val;});
-  calc(); // recalc with restored monthly values
 }
 
 function renderQStatusBar(){
@@ -2672,26 +2814,16 @@ function saveSettings(){
   const s=getSettings();
   s.sfdcUrl=url.trim()||DEFAULT_SFDC_URL;
   if(fyEl)s.fyStart=fyEl.value;
-  // Forecast defaults — clamp to valid ranges
-  const clampInt=(id,min,max,fb)=>Math.min(max,Math.max(min,parseInt(($( id)||{}).value)||fb));
-  s.defRCommit = clampInt('def-r-commit',50,100,80);
-  s.defRProb   = clampInt('def-r-prob',30,95,75);
-  s.defRUp     = clampInt('def-r-up',10,80,50);
-  s.defRPipe   = clampInt('def-r-pipe',5,50,25);
-  s.defRCnc    = clampInt('def-r-cnc',5,50,10);
-  s.defCncOpps = clampInt('def-cnc-opps',1,9999,5);
-  s.defCncAsp  = Math.max(1000,parseInt(($('def-cnc-asp')||{}).value)||15000);
   localStorage.setItem('app_settings',JSON.stringify(s));
   const link=$('sfdc-report-link');
   if(link)link.href=s.sfdcUrl;
+  // Re-derive quarter label with new FY start
   const info=getFiscalQuarterInfo(qMode);
   const lbl=$('quarter_lbl');
   if(lbl&&!lbl._manuallyEdited)lbl.value=getFYLabel(info);
   renderQStatusBar();
-  // Show both saved messages (Integrations tab has two save buttons)
-  ['settings-saved-msg','settings-saved-msg-2'].forEach(id=>{
-    const msg=$(id);if(msg){msg.style.display='inline';setTimeout(()=>msg.style.display='none',2500);}
-  });
+  const msg=$('settings-saved-msg');
+  if(msg){msg.style.display='inline';setTimeout(()=>msg.style.display='none',2500);}
 }
 function loadSettingsPage(){
   const s=getSettings();
@@ -2699,17 +2831,6 @@ function loadSettingsPage(){
   if(urlEl)urlEl.value=s.sfdcUrl||DEFAULT_SFDC_URL;
   const fyEl=$('settings-fy-start');
   if(fyEl)fyEl.value=s.fyStart||'1';
-  // Forecast defaults
-  const fd=[
-    ['def-r-commit', s.defRCommit,  80],
-    ['def-r-prob',   s.defRProb,    75],
-    ['def-r-up',     s.defRUp,      50],
-    ['def-r-pipe',   s.defRPipe,    18],
-    ['def-r-cnc',    s.defRCnc,     18],
-    ['def-cnc-opps', s.defCncOpps,  5],
-    ['def-cnc-asp',  s.defCncAsp,   14000],
-  ];
-  fd.forEach(([id,val,fb])=>{const el=$(id);if(el)el.value=val!=null?val:fb;});
   loadInspectorSettings();
   renderUsageDashboard();
 }
@@ -2728,41 +2849,13 @@ function initSettings(){
   const s=getSettings();
   const link=$('sfdc-report-link');
   if(link)link.href=s.sfdcUrl||DEFAULT_SFDC_URL;
-  // Apply forecast defaults to inputs (only if no saved/URL state has already set them)
-  // We defer this to run after loadFromUrl — see init block below
-  // Track manual edits on quarter label
+  // Auto-populate quarter label on first load (if blank)
   const lbl=$('quarter_lbl');
   if(lbl&&!lbl.value){
     lbl.value=getFYLabel(getFiscalQuarterInfo('current'));
   }
+  // Track manual edits so we don't overwrite user's custom label
   if(lbl)lbl.addEventListener('input',()=>{lbl._manuallyEdited=true;});
-}
-
-function applyForecastDefaults(){
-  // Apply saved defaults to sliders + C&C inputs
-  // Called after loadFromUrl so URL params take precedence
-  const s=getSettings();
-  const map=[
-    ['r_commit', s.defRCommit,  80],
-    ['r_prob',   s.defRProb,    75],
-    ['r_up',     s.defRUp,      50],
-    ['r_pipe',   s.defRPipe,    18],
-    ['r_cnc',    s.defRCnc,     18],
-    ['cnc_opps', s.defCncOpps,  5],
-    ['cnc_asp',  s.defCncAsp,   14000],
-  ];
-  map.forEach(([id,val,fb])=>{
-    const el=$(id);
-    if(!el)return;
-    const v=val!=null?val:fb;
-    // URL params and restored qmode state take precedence
-    if(el._fromUrl||el._fromQmode)return;
-    if(id==='cnc_asp')el.value=Number(v).toLocaleString();
-    else el.value=v;
-    // Sync slider display spans
-    const outEl=$(id+'_out');
-    if(outEl&&el.type==='range')outEl.textContent=el.value+'%';
-  });
 }
 
 // ══════════════════════════════════════════════════════
@@ -2791,9 +2884,9 @@ function calc(){
   $('cnc-out').innerHTML=`
     <div class="cnc-res"><div class="cr-l">Qualified pipeline created</div><div class="cr-v" style="color:var(--blue)">${fmt(cnc_pipe)}</div><div class="cr-s">${Math.round(opps).toLocaleString()} opps × ${fmt(asp)} ASP</div></div>
     <div class="cnc-res"><div class="cr-l">Expected C&amp;C bookings</div><div class="cr-v" style="color:var(--green)">${fmt(cnc_rev)}</div><div class="cr-s">${fmt(cnc_pipe)} × ${pct(Math.round(rcnc*100))} C&amp;C rate</div></div>`;
-  const fc_commit=closed+bk_c+cnc_rev,fc_prob=fc_commit+bk_p,fc_up=fc_prob+bk_u,fc_full=fc_up+bk_pp;
-  $('cnc-note').innerHTML=`C&amp;C bookings of <strong>${fmt(cnc_rev)}</strong> included in all headline forecasts — Commit <strong>${fmt(fc_commit)}</strong> · Probable <strong>${fmt(fc_prob)}</strong> · Upside <strong>${fmt(fc_up)}</strong>`;
-  renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up,asp,rcnc);
+  const fc_commit=closed+bk_c,fc_prob=fc_commit+bk_p+cnc_rev,fc_up=fc_prob+bk_u,fc_full=fc_up+bk_pp;
+  $('cnc-note').innerHTML=`C&amp;C bookings of <strong>${fmt(cnc_rev)}</strong> included in Probable forecast and above — Probable <strong>${fmt(fc_prob)}</strong> · Upside <strong>${fmt(fc_up)}</strong>`;
+  renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up);
   renderMonthly(fc_commit,fc_prob,fc_up,quota);
   S={quota,closed,pc,pp,pu,pp2,rc,rp,ru,rpp,rcnc,bk_c,bk_p,bk_u,bk_pp,opps,asp,cnc_pipe,cnc_rev,fc_commit,fc_prob,fc_up,fc_full};
   // Persist current mode state so switching preserves values
@@ -2801,31 +2894,17 @@ function calc(){
 }
 
 let _prevFcValues={};
-function renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up,asp,rcnc){
-  // Opps-to-quota bridge: how many qualified opps (at C&C rate × ASP) close the gap?
-  const revenuePerOpp=asp>0&&rcnc>0?asp*rcnc:0;
-  const oppsNeeded=fc=>revenuePerOpp>0&&quota>fc?Math.ceil((quota-fc)/revenuePerOpp):0;
-  const bridgeHtml=fc=>{
-    const n=oppsNeeded(fc);
-    if(n===0)return'<div class="fc-cnc-bridge"><span class="bridge-on-track">&#10003; On track</span></div>';
-    return'<div class="fc-cnc-bridge"><span class="bridge-n">'+n+'</span><span>qualified opp'+(n!==1?'s':'')+' needed @ '+fmt(asp)+' ASP</span></div>';
-  };
-  const bridgeDetail=fc=>{
-    const n=oppsNeeded(fc);
-    const rev=revenuePerOpp>0?fmt(revenuePerOpp):'-';
-    if(n===0)return{l:'C&C opps to quota',v:'On track'};
-    return{l:'C&C opps to quota',v:n+' opp'+(n!==1?'s':'')};
-  };
+function renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up){
   const cards=[
     {id:'commit',tier:'Commit forecast',dot:'#1a56db',color:'#1a56db',fc:fc_commit,
-     detail:[{l:'Conversion rate',v:pct(Math.round(pv('r_commit')))},{l:'Open commit pipeline',v:fmt(pv('pipe_commit'))},{l:'Expected commit bookings',v:fmt(bk_c)},{l:'+ C&C bookings',v:fmt(cnc_rev)},bridgeDetail(fc_commit)],
-     rows:[{l:'Closed QTD',v:fmt(closed)},{l:'+ Commit bookings',v:fmt(bk_c)},{l:'+ C&C bookings',v:fmt(cnc_rev),cnc:true}],bridge:bridgeHtml(fc_commit)},
+     detail:[{l:'Conversion rate',v:pct(Math.round(pv('r_commit')))},{l:'Open commit pipeline',v:fmt(pv('pipe_commit'))},{l:'Expected commit bookings',v:fmt(bk_c)},{l:'+ C&C bookings',v:fmt(cnc_rev)}],
+     rows:[{l:'Closed QTD',v:fmt(closed)},{l:'+ Commit bookings',v:fmt(bk_c)}]},
     {id:'prob',tier:'Probable forecast',dot:'#0d7c3d',color:'#0d7c3d',fc:fc_prob,
-     detail:[{l:'Conversion rate',v:pct(Math.round(pv('r_prob')))},{l:'Open probable pipeline',v:fmt(pv('pipe_prob'))},{l:'Expected probable bookings',v:fmt(bk_p)},bridgeDetail(fc_prob)],
-     rows:[{l:'Commit FC',v:fmt(fc_commit)},{l:'+ Probable bookings',v:fmt(bk_p)}],bridge:bridgeHtml(fc_prob)},
+     detail:[{l:'Conversion rate',v:pct(Math.round(pv('r_prob')))},{l:'Open probable pipeline',v:fmt(pv('pipe_prob'))},{l:'Expected probable bookings',v:fmt(bk_p)}],
+     rows:[{l:'Commit FC',v:fmt(fc_commit)},{l:'+ Probable bookings',v:fmt(bk_p)},{l:'+ C&C bookings',v:fmt(cnc_rev),cnc:true}]},
     {id:'up',tier:'Upside forecast',dot:'#b45309',color:'#b45309',fc:fc_up,
-     detail:[{l:'Conversion rate',v:pct(Math.round(pv('r_up')))},{l:'Open upside pipeline',v:fmt(pv('pipe_up'))},{l:'Expected upside bookings',v:fmt(bk_u)},bridgeDetail(fc_up)],
-     rows:[{l:'Probable FC',v:fmt(fc_prob)},{l:'+ Upside bookings',v:fmt(bk_u)}],bridge:bridgeHtml(fc_up)},
+     detail:[{l:'Conversion rate',v:pct(Math.round(pv('r_up')))},{l:'Open upside pipeline',v:fmt(pv('pipe_up'))},{l:'Expected upside bookings',v:fmt(bk_u)}],
+     rows:[{l:'Probable FC',v:fmt(fc_prob)},{l:'+ Upside bookings',v:fmt(bk_u)}]},
   ];
   // Preserve expanded state across renders
   const expandedIds=new Set([...document.querySelectorAll('.fc-card.expanded')].map(el=>el.dataset.id));
@@ -2841,7 +2920,6 @@ function renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up,
       <div class="fc-amount${c.fc<quota?' danger':''} ${changed?'updated':''}" style="color:${ac}" onanimationend="this.classList.remove('updated')">${fmt(c.fc)}</div>
       <div class="fc-meta"><span style="font-size:21px;font-weight:600;color:${ac}">${ap}%</span><span style="font-size:12px;color:var(--tx2)">${c.fc>=quota?'on track':'gap: '+fmt(quota-c.fc)}</span></div>
       <div class="att-bar"><div class="att-fill" style="width:${cl(ap,0,100)}%;background:${c.dot}"></div></div>
-      ${c.bridge}
       <div class="bkdn">${rows}</div>
       <div class="fc-detail-panel">${detail}</div>
       <div class="fc-expand-hint">${isExpanded?'&#9650; less':'&#9660; breakdown'}</div>
@@ -2849,17 +2927,17 @@ function renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up,
   }).join('');
   const q=quota>0,wC=q?cl(closed/quota*100,0,100):0;
   const wBkC=q?cl(bk_c/quota*100,0,100-wC):0;
-  const wCnc=q?cl(cnc_rev/quota*100,0,100-wC-wBkC):0;
-  const wBkP=q?cl(bk_p/quota*100,0,100-wC-wBkC-wCnc):0;
-  const wBkU=q?cl(bk_u/quota*100,0,100-wC-wBkC-wCnc-wBkP):0;
+  const wBkP=q?cl(bk_p/quota*100,0,100-wC-wBkC):0;
+  const wCnc=q?cl(cnc_rev/quota*100,0,100-wC-wBkC-wBkP):0;
+  const wBkU=q?cl(bk_u/quota*100,0,100-wC-wBkC-wBkP-wCnc):0;
   $('qbar').innerHTML=`
     <span class="qbar-lbl">Quota: ${fmt(quota)}</span>
     <div class="qbar-track">
       <div class="qbar-seg" style="background:#1a56db;width:${wC}%;left:0"></div>
       <div class="qbar-seg" style="background:#93c5fd;width:${wBkC}%;left:${wC}%"></div>
-      <div class="qbar-seg" style="background:#34d399;width:${wCnc}%;left:${wC+wBkC}%"></div>
-      <div class="qbar-seg" style="background:#6ee7b7;width:${wBkP}%;left:${wC+wBkC+wCnc}%"></div>
-      <div class="qbar-seg" style="background:#fcd34d;width:${wBkU}%;left:${wC+wBkC+wCnc+wBkP}%"></div>
+      <div class="qbar-seg" style="background:#6ee7b7;width:${wBkP}%;left:${wC+wBkC}%"></div>
+      <div class="qbar-seg" style="background:#34d399;width:${wCnc}%;left:${wC+wBkC+wBkP}%"></div>
+      <div class="qbar-seg" style="background:#fcd34d;width:${wBkU}%;left:${wC+wBkC+wBkP+wCnc}%"></div>
     </div>
     <div class="qbar-leg">
       <span><span class="sw" style="background:#1a56db"></span>Closed</span>
@@ -2921,12 +2999,7 @@ function renderMonthly(fc_commit,fc_prob,fc_up,quota){
     <td style="color:var(--tx2);font-size:12px">${fmt(cq)}</td></tr>`;
   cats.forEach(c=>{
     const vals=ms.map(m=>getMv(m,c.key)),rt=vals.reduce((a,b)=>a+b,0),over=rt>c.qfc+.5;
-    // For past locked months, use closed actual as the effective value for linearity
-    const linVals=ms.map((m,i)=>{
-      if(pastFlags[i]&&!pastUnlocked[i])return getMv(m,'closed');
-      return getMv(m,c.key);
-    });
-    const linRt=linVals.reduce((a,b)=>a+b,0);
+    // For past months: show closed value read-only, styled as locked
     rows+=`<tr>
       <td style="color:${c.color};font-weight:600">${c.label}</td>
       ${ms.map((m,i)=>{
@@ -2934,18 +3007,16 @@ function renderMonthly(fc_commit,fc_prob,fc_up,quota){
           const closedVal=getMv(m,'closed');
           return `<td class="past-month-cell"><span class="past-month-val">${closedVal>0?fmt(closedVal):'—'}</span><button class="past-unlock-btn" onclick="unlockPastMonth(${i})" title="Click to override">&#9998;</button></td>`;
         }
-        // Bug fix 2: when freshly unlocked, default the input to the closed actual
-        const defVal=pastFlags[i]&&pastUnlocked[i]&&!vals[i]?getMv(m,'closed'):vals[i];
         const extraClass=pastFlags[i]&&pastUnlocked[i]?' past-unlocked':'';
-        return `<td${pastFlags[i]?' class="past-month-cell"':''}><input class="minput${extraClass}" type="text" id="${m}_${c.key}" value="${defVal||''}" placeholder="0" oninput="calc()"></td>`;
+        return `<td${pastFlags[i]?' class="past-month-cell"':''}><input class="minput${extraClass}" type="text" id="${m}_${c.key}" value="${vals[i]||''}" placeholder="0" oninput="calc()"></td>`;
       }).join('')}
       <td style="font-weight:600;color:${over?'var(--red)':'var(--tx)'}">${fmt(rt)}${overBadge(rt,c.qfc)}</td>
       <td>${varCell(rt,c.qfc)}</td>
       <td style="color:var(--tx2);font-size:12px">${fmt(c.qfc)}</td>
     </tr>
     <tr class="tr-lin"><td style="font-size:11px;padding-left:20px">linearity</td>
-      ${linVals.map((v,i)=>{const l=linPct(v,c.qfc);return`<td${pastFlags[i]?' class="past-month-cell"':''}><div class="lin-val">${l}%</div><div class="lin-bar"><div class="lin-fill" style="width:${cl(l,0,100)}%;background:${c.color}"></div></div></td>`;}).join('')}
-      <td colspan="3" style="font-size:11px;color:var(--tx2)">% of ${c.label.toLowerCase()} (${fmt(linRt)} effective)</td>
+      ${vals.map((v,i)=>{const l=linPct(v,c.qfc);return`<td${pastFlags[i]?' class="past-month-cell"':''}><div class="lin-val">${l}%</div><div class="lin-bar"><div class="lin-fill" style="width:${cl(l,0,100)}%;background:${c.color}"></div></div></td>`;}).join('')}
+      <td colspan="3" style="font-size:11px;color:var(--tx2)">% of ${c.label.toLowerCase()}</td>
     </tr>`;
   });
   const thStyle=i=>pastFlags[i]&&!pastUnlocked[i]?'background:var(--bg2);color:var(--tx2)':pastFlags[i]&&pastUnlocked[i]?'background:#fffbeb;color:var(--tx2)':'';
@@ -2999,50 +3070,16 @@ function showSaveMsg(txt){const m=$('save-msg');m.textContent=txt;m.style.displa
 const allIds=['quota','closed','pipe_commit','pipe_prob','pipe_up','pipe_pipe','r_commit','r_prob','r_up','r_pipe','r_cnc','cnc_opps','cnc_asp','mgr_name','mgr_team','quarter_lbl',
   ...['m1','m2','m3'].flatMap(m=>['closed','commit','prob','up'].map(k=>m+'_'+k))];
 
-function buildShareUrl(){
+function copyUrl(){
   const sp=new URLSearchParams();
   allIds.forEach(id=>{const el=$(id);if(el)sp.set(id,el.value);});
-  return location.href.split('?')[0]+'?'+sp.toString();
-}
-function copyUrl(){
-  const url=buildShareUrl();
-  const textEl=$('share-url-text');
-  if(textEl)textEl.textContent=url;
-  const overlay=$('share-overlay');
-  if(overlay)overlay.classList.remove('hidden');
-}
-function closeShareModal(){
-  const overlay=$('share-overlay');
-  if(overlay)overlay.classList.add('hidden');
-  // Reset copy button
-  const btn=$('share-copy-btn');
-  if(btn){btn.textContent='Copy';btn.classList.remove('copied');}
-}
-function copyShareUrl(){
-  const url=buildShareUrl();
-  navigator.clipboard.writeText(url).then(()=>{
-    const btn=$('share-copy-btn');
-    if(btn){btn.textContent='Copied ✓';btn.classList.add('copied');
-      setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2200);}
-  }).catch(()=>{
-    // Fallback: select the text for manual copy
-    const textEl=$('share-url-text');
-    if(textEl){const range=document.createRange();range.selectNode(textEl);window.getSelection().removeAllRanges();window.getSelection().addRange(range);}
-  });
-}
-function bookmarkUrl(){
-  const url=buildShareUrl();
-  history.replaceState(null,'',url);
-  const isMac=navigator.platform.toUpperCase().indexOf('MAC')>=0;
-  alert('Press '+(isMac?'Cmd+D':'Ctrl+D')+' to bookmark this page. The URL now contains your full forecast state.');
+  navigator.clipboard.writeText(location.href.split('?')[0]+'?'+sp.toString()).catch(()=>{});
+  showSaveMsg('URL copied — bookmark or share it');
 }
 function loadFromUrl(){
   const sp=new URLSearchParams(location.search);
   if(![...sp.keys()].length)return;
-  [...sp.entries()].forEach(([k,v])=>{
-    const el=$(k);
-    if(el){el.value=v;el._fromUrl=true;}  // flag so applyForecastDefaults skips
-  });
+  [...sp.entries()].forEach(([k,v])=>{const el=$(k);if(el)el.value=v;});
 }
 
 function printPdf(){
@@ -3058,8 +3095,8 @@ function printPdf(){
   const wBkP=q?cl(s.bk_p/s.quota*100,0,100-wC-wBkC-wCnc):0;
   const wBkU=q?cl(s.bk_u/s.quota*100,0,100-wC-wBkC-wCnc-wBkP):0;
   const kpis=[
-    {tier:'Commit forecast',accent:'#1a56db',fc:s.fc_commit,lines:[{l:'Closed QTD',v:fmt(s.closed)},{l:'+ Commit bookings',v:fmt(s.bk_c)},{l:'+ C&C bookings',v:fmt(s.cnc_rev),cnc:true}]},
-    {tier:'Probable forecast',accent:'#0d7c3d',fc:s.fc_prob,lines:[{l:'Commit FC',v:fmt(s.fc_commit)},{l:'+ Probable bookings',v:fmt(s.bk_p)}]},
+    {tier:'Commit forecast',accent:'#1a56db',fc:s.fc_commit,lines:[{l:'Closed QTD',v:fmt(s.closed)},{l:'+ Commit bookings',v:fmt(s.bk_c)}]},
+    {tier:'Probable forecast',accent:'#0d7c3d',fc:s.fc_prob,lines:[{l:'Commit FC',v:fmt(s.fc_commit)},{l:'+ Probable bookings',v:fmt(s.bk_p)},{l:'+ C&C bookings',v:fmt(s.cnc_rev),cnc:true}]},
     {tier:'Upside forecast',accent:'#b45309',fc:s.fc_up,lines:[{l:'Probable FC',v:fmt(s.fc_prob)},{l:'+ Upside bookings',v:fmt(s.bk_u)}]},
   ];
   const kpiHtml=kpis.map(k=>{
@@ -3077,7 +3114,7 @@ function printPdf(){
     <tr class="lin"><td>${c.label.replace(' forecast',' linearity')}</td>${vals.map(v=>`<td>${linPct(v,c.qfc)}%</td>`).join('')}<td colspan="3"></td></tr>`;
   }).join('');
   $('pdf-content').innerHTML=`
-    <div class="pdf-hdr"><div><div class="pdf-mark">MOAT</div><div class="pdf-name">${nm}${team?' — '+team:''}</div><div class="pdf-sub">${qtr} Forecast &nbsp;·&nbsp; Quota: ${fmt(s.quota)}</div></div><div class="pdf-hdr-r"><div class="pdf-date">As of ${dateStr}</div><div class="pdf-badge">Confidential</div></div></div>
+    <div class="pdf-hdr"><div><div class="pdf-mark">Remote</div><div class="pdf-name">${nm}${team?' — '+team:''}</div><div class="pdf-sub">${qtr} Forecast &nbsp;·&nbsp; Quota: ${fmt(s.quota)}</div></div><div class="pdf-hdr-r"><div class="pdf-date">As of ${dateStr}</div><div class="pdf-badge">Confidential</div></div></div>
     <div class="pdf-kpis">${kpiHtml}</div>
     <div class="pdf-body">
       <div class="pdf-qbar"><span class="pdf-qbar-lbl">Quota progress</span><div class="pdf-qbar-track"><div class="pdf-qbar-seg" style="background:#1a56db;width:${wC}%"></div><div class="pdf-qbar-seg" style="background:#93c5fd;width:${wBkC}%"></div><div class="pdf-qbar-seg" style="background:#34d399;width:${wCnc}%"></div><div class="pdf-qbar-seg" style="background:#6ee7b7;width:${wBkP}%"></div><div class="pdf-qbar-seg" style="background:#fcd34d;width:${wBkU}%"></div></div><div class="pdf-qbar-leg"><span><span class="pqsw" style="background:#1a56db"></span>Closed</span><span><span class="pqsw" style="background:#93c5fd"></span>Commit</span><span><span class="pqsw" style="background:#34d399"></span>C&amp;C</span><span><span class="pqsw" style="background:#6ee7b7"></span>Probable</span><span><span class="pqsw" style="background:#fcd34d"></span>Upside</span></div></div>
@@ -3097,13 +3134,7 @@ function printPdf(){
         <tbody><tr><td>Closed</td>${cv.map(v=>`<td>${v>0?fmt(v):'—'}</td>`).join('')}<td>${fmt(ct)}</td><td>${varStr(ct,s.closed)}</td><td style="color:#9ca3af">${fmt(s.closed)}</td></tr>${mRows}</tbody></table>
       </div>
     </div>
-    <div class="pdf-ftr"><div class="pdf-ftr-l">Manager's Forecast Calculator v2.6<span class="pdot"></span>MOAT</div><div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div></div>`;
-  document.body.setAttribute('data-printing','forecast');
-  const _cleanup=()=>{
-    document.body.removeAttribute('data-printing');
-    window.removeEventListener('afterprint',_cleanup);
-  };
-  window.addEventListener('afterprint',_cleanup);
+    <div class="pdf-ftr"><div class="pdf-ftr-l">Manager's Forecast Calculator v2.6<span class="pdot"></span>Remote</div><div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div></div>`;
   window.print();
 }
 
@@ -3150,8 +3181,7 @@ const CAT_BG={closed:'#f0fdf4',commit:'#eff6ff',probable:'#f0fdf4',upside:'#fffb
 // ══════════════════════════════════════════════════════
 
 // ── Inspector defaults ──
-const DEFAULT_SYSTEM_PROMPT='You are a sales manager assistant. Review opportunity data and produce a structured, Slack-ready inspection summary grouped by forecast category.\n\nRule-based flags are pre-computed and included with each deal. Your job is to add qualitative judgment on top:\n1. Assess next step quality: is it a concrete, future-dated action to be taken by the AE? Flag if it is vague, reactive, or missing a date.\n2. For Commit and Probable deals, assess MEDDPICC content quality — flag fields that are thin, generic, or inconsistent with other deal context.\n3. Identify deals needing executive attention.\n4. Do NOT re-flag rule-based issues already listed (close date, activity, FC/stage mismatch, empty fields). Focus on qualitative judgment only.\n\nOutput format — mirror this structure exactly:\n\nOne sentence observation about this AE pipeline health.\n\n[Pipeline action items for M/DD]\n\n*Commit*\n🔴 *Acme Corp*: next step vague (no date, waiting on prospect), champion thin\n🟡 *Beta Inc*: metrics generic (no quantified impact)\n\n*Probable*\n🟡 *Gamma Ltd*: next step not AE-owned (waiting on legal team)\n\nRules: bold category header per group, one line per flagged deal, opp name in *asterisks*, 🔴 for exec-attention only (past close, broken commit, missing champion or EB on commit), 🟡 for all other flags. Only include categories with flagged deals. No other prose or headers.';
-
+const DEFAULT_SYSTEM_PROMPT='You are a sales manager assistant. Review opportunity data and produce a structured, Slack-ready inspection summary grouped by forecast category.\n\nRule-based flags are pre-computed. Your job adds qualitative judgment:\n1. Assess next step quality: is it a concrete, future-dated action to be taken by the AE? Flag if vague, reactive, or missing a date.\n2. For Commit and Probable deals, assess MEDDPICC content quality — flag fields that are thin, generic, or inconsistent.\n3. Identify deals needing executive attention.\n4. Do NOT re-flag rule-based issues already listed. Focus on qualitative judgment only.\n\nOutput format — mirror this structure exactly:\n\nOne sentence observation about this AE pipeline health.\n\n[Pipeline action items for M/DD]\n\n*Commit*\n🔴 *Acme Corp*: next step vague (no date, waiting on prospect), champion thin\n🟡 *Beta Inc*: metrics generic (no quantified impact)\n\n*Probable*\n🟡 *Gamma Ltd*: next step not AE-owned (waiting on legal team)\n\nRules: bold category header per group, one line per flagged deal, opp name in *asterisks*, 🔴 for exec-attention only (past close, broken commit, missing champion or EB on commit), 🟡 for all other flags. Only include categories with flagged deals. No other prose or headers.';
 const DEFAULT_COACHING_FOCUS='Be concise and objective. Flag anything needing executive attention.';
 // Sonnet 4.5 pricing: $3/M input, $15/M output, $0.30/M cache read (90% discount)
 const COST_PER_INPUT_TOKEN=3/1000000;
@@ -3163,12 +3193,7 @@ function getInspectorSettings(){
 }
 function getApiKey(){return getInspectorSettings().apiKey||'';}
 function getSystemPrompt(){return getInspectorSettings().systemPrompt||DEFAULT_SYSTEM_PROMPT;}
-function getCoachingFocus(){
-  // Inline focus input takes precedence over Settings value
-  const inline=($('insp-focus-input')||{}).value||'';
-  if(inline.trim())return inline.trim();
-  return getInspectorSettings().coachingFocus||DEFAULT_COACHING_FOCUS;
-}
+function getCoachingFocus(){return getInspectorSettings().coachingFocus||DEFAULT_COACHING_FOCUS;}
 
 function saveInspectorSettings(){
   const s={
@@ -3203,9 +3228,6 @@ function switchSettingsTab(tab){
     el.classList.toggle('active',tabs[i]===tab);
   });
   if(tab==='inspector')renderUsageDashboard();
-  // Update nav sub-label
-  const subLbl=$('nav-settings-sub');
-  if(subLbl){const names={integrations:'Integrations',inspector:'Inspector',about:'About'};subLbl.textContent=names[tab]||'';}
 }
 
 // ── Usage tracking ──
@@ -3310,147 +3332,144 @@ function toggleApiKeyVisibility(){
 
 // ── Rule-based hygiene flags ──
 
-// Business-day counter (forward from a date, exclusive of start)
-function bizDaysFrom(from, to){
+function bizDaysFrom(from,to){
   let count=0;
-  const d=new Date(from); d.setDate(d.getDate()+1); d.setHours(0,0,0,0);
-  const end=new Date(to); end.setHours(23,59,59,999);
-  while(d<=end){ if(isWeekday(d)&&!isHoliday(d))count++; d.setDate(d.getDate()+1); }
+  const d=new Date(from);d.setDate(d.getDate()+1);d.setHours(0,0,0,0);
+  const end=new Date(to);end.setHours(23,59,59,999);
+  while(d<=end){if(isWeekday(d)&&!isHoliday(d))count++;d.setDate(d.getDate()+1);}
   return count;
 }
 
-// Stage → minimum expected FC category
-// Used to flag FC that is too conservative OR too aggressive
 const STAGE_MIN_FC={
-  'discovery':          'pipeline',   // must be at least pipeline
-  'qualification':      'pipeline',
-  'demo':               'upside',     // demo and above → at least upside
-  'solution design':    'upside',
-  'value proposition':  'upside',
-  'business case':      'upside',
-  'proposal':           'upside',
-  'negotiation':        'probable',
-  'legal & commercial': 'probable',
-  'contract review':    'probable',
-  'verbal commit':      'probable',
+  'discovery':'pipeline','qualification':'pipeline',
+  'demo':'upside','solution design':'upside','value proposition':'upside',
+  'business case':'upside','proposal':'upside',
+  'negotiation':'probable','legal & commercial':'probable',
+  'contract review':'probable','verbal commit':'probable',
 };
-
-// Stage → maximum expected FC category
 const STAGE_MAX_FC={
-  'discovery':          'pipeline',   // discovery should NOT be commit/probable/upside
-  'qualification':      'pipeline',
-  'demo':               'upside',
-  'solution design':    'upside',
-  'value proposition':  'upside',
-  'business case':      'probable',
-  'proposal':           'probable',
-  'negotiation':        'commit',
-  'legal & commercial': 'commit',
-  'contract review':    'commit',
-  'verbal commit':      'commit',
+  'discovery':'pipeline','qualification':'pipeline',
+  'demo':'upside','solution design':'upside','value proposition':'upside',
+  'business case':'probable','proposal':'probable',
+  'negotiation':'commit','legal & commercial':'commit',
+  'contract review':'commit','verbal commit':'commit',
 };
-
 const CAT_RANK={pipeline:0,upside:1,probable:2,commit:3};
 const MEDDPICC_FIELDS=[
-  {key:'f_metrics',      label:'Metrics (M)'},
-  {key:'f_econ_buyer',   label:'Economic Buyer (E)'},
-  {key:'f_dec_criteria', label:'Decision Criteria (DC)'},
-  {key:'f_dec_process',  label:'Decision Process (DP)'},
-  {key:'f_proc_process', label:'Procurement Process (PP)'},
-  {key:'f_implicated',   label:'Implicated Pain (I)'},
-  {key:'f_champion',     label:'Champion (C)'},
+  {key:'f_metrics',label:'Metrics (M)'},{key:'f_econ_buyer',label:'Economic Buyer (E)'},
+  {key:'f_dec_criteria',label:'Decision Criteria (DC)'},{key:'f_dec_process',label:'Decision Process (DP)'},
+  {key:'f_proc_process',label:'Procurement Process (PP)'},{key:'f_implicated',label:'Implicated Pain (I)'},
+  {key:'f_champion',label:'Champion (C)'},
 ];
-
-// Stages where MEDDPICC is expected to be incomplete — don't flag
 const EARLY_STAGES=['discovery','qualification','demo'];
+
+// Old STAGE_FC_MATRIX kept for backward compat reference
+const STAGE_FC_MATRIX={
+  // stage (lowercase) → allowed forecast categories
+  'discovery':          ['pipeline','upside'],
+  'qualification':      ['pipeline','upside'],
+  'solution design':    ['pipeline','upside','probable'],
+  'value proposition':  ['pipeline','upside','probable'],
+  'business case':      ['upside','probable','commit'],
+  'proposal':           ['upside','probable','commit'],
+  'negotiation':        ['probable','commit'],
+  'legal & commercial': ['probable','commit'],
+  'contract review':    ['probable','commit'],
+  'verbal commit':      ['commit'],
+};
+
+function parseNextStepDate(nextStep, closeDate){
+  if(!nextStep)return null;
+  const m=nextStep.match(/^(\d{1,2})\/(\d{1,2})/);
+  if(!m)return null;
+  const month=parseInt(m[1])-1,day=parseInt(m[2]);
+  // Infer year from close date if available
+  let year=new Date().getFullYear();
+  if(closeDate){
+    const cd=new Date(closeDate);
+    if(!isNaN(cd))year=cd.getFullYear();
+  }
+  return new Date(year,month,day);
+}
+
+// Vague/low-confidence next step patterns
+const VAGUE_NS_PATTERNS=[
+  /^follow\s*up/i,/^check\s*in/i,/^touch\s*base/i,/^reach\s*out/i,
+  /^circle\s*back/i,/^reconnect/i,/^ping/i,/^waiting/i,/^TBD/i,
+  /^to\s*be\s*(determined|confirmed|scheduled)/i,
+  /^next\s*(call|steps?|meeting|check)/i,
+  /^send\s*(email|follow)/i,/^email/i,
+];
+function isVagueNextStep(ns){
+  if(!ns||ns.trim().length<8)return true;
+  const stripped=ns.replace(/^\d{1,2}\/\d{1,2}\s*[-:]?\s*/,'').trim();
+  if(stripped.length<8)return true;
+  return VAGUE_NS_PATTERNS.some(p=>p.test(stripped));
+}
 
 function flagDeal(deal){
   const flags=[];
-  const now=new Date(); now.setHours(0,0,0,0);
+  const now=new Date();now.setHours(0,0,0,0);
   const cat=deal.f_fc_cat_norm||'pipeline';
   const stage=(deal.f_stage||'').toLowerCase().trim();
   const amt=deal.f_amount_num||0;
 
-  // ── 1. Close date ──
+  // 1. Close date
   if(!deal.f_close_date){
     flags.push({sev:'amber',text:'No close date'});
   } else {
-    const cd=new Date(deal.f_close_date);
+    const cd=new Date(deal.f_close_date);cd.setHours(0,0,0,0);
     if(!isNaN(cd)){
-      cd.setHours(0,0,0,0);
       const calDays=Math.floor((cd-now)/86400000);
-      const cdDay=cd.getDay(); // 0=Sun, 6=Sat
-
-      if(calDays<0){
-        flags.push({sev:'red',text:'Close date in the past'});
-      } else if(cdDay===0||cdDay===6){
-        flags.push({sev:'amber',text:'Close date lands on a weekend'});
-      } else {
+      const cdDay=cd.getDay();
+      if(calDays<0)flags.push({sev:'red',text:'Close date in the past'});
+      else if(cdDay===0||cdDay===6)flags.push({sev:'amber',text:'Close date lands on a weekend'});
+      else{
         const bizDays=bizDaysFrom(now,cd);
-        if(bizDays<=3){
-          flags.push({sev:'red',text:'Close date within 3 business days'});
-        } else if(stage.includes('discovery')&&bizDays<10){
+        if(bizDays<=3)flags.push({sev:'red',text:'Close date within 3 business days'});
+        else if(stage.includes('discovery')&&bizDays<10)
           flags.push({sev:'amber',text:'Discovery stage — close <10 business days away'});
-        }
       }
     }
   }
 
-  // ── 2. Forecast category vs stage alignment ──
+  // 2. FC vs stage alignment
   if(stage){
-    // Find the best matching stage key (substring match)
     const stageKey=Object.keys(STAGE_MAX_FC).find(k=>stage.includes(k));
     if(stageKey){
-      const minCat=STAGE_MIN_FC[stageKey];
-      const maxCat=STAGE_MAX_FC[stageKey];
-      const minRank=CAT_RANK[minCat]??0;
-      const maxRank=CAT_RANK[maxCat]??3;
+      const minRank=CAT_RANK[STAGE_MIN_FC[stageKey]]??0;
+      const maxRank=CAT_RANK[STAGE_MAX_FC[stageKey]]??3;
       const catRank=CAT_RANK[cat]??0;
-      if(catRank>maxRank){
-        // FC too aggressive for stage
-        flags.push({sev:'red',text:'FC too high for '+stageKey+' stage (max: '+maxCat+')'});
-      } else if(catRank<minRank){
-        // FC too conservative for stage
-        flags.push({sev:'amber',text:'FC too low for '+stageKey+' stage (min: '+minCat+')'});
-      }
+      if(catRank>maxRank)flags.push({sev:'red',text:'FC too high for '+stageKey+' stage (max: '+STAGE_MAX_FC[stageKey]+')'});
+      else if(catRank<minRank)flags.push({sev:'amber',text:'FC too low for '+stageKey+' stage (min: '+STAGE_MIN_FC[stageKey]+')'});
     }
   }
 
-  // ── 3. Next step ──
-  if(!deal.f_next_step||deal.f_next_step.trim()===''){
+  // 3. Next step
+  if(!deal.f_next_step||deal.f_next_step.trim()==='')
     flags.push({sev:['commit','probable'].includes(cat)?'red':'amber',text:'Next step empty'});
-  }
-  // (Qualitative next step assessment — is it a real future dated action? — handled by AI)
 
-  // ── 4. MEDDPICC — flag empty fields on Commit and Probable only ──
-  // Early-stage deals are not expected to have MEDDPICC complete
+  // 4. MEDDPICC — Commit/Probable only, not early stage
   const isEarlyStage=EARLY_STAGES.some(s=>stage.includes(s));
-  const checkMeddpicc=['commit','probable'].includes(cat)&&!isEarlyStage;
-  if(checkMeddpicc){
+  if(['commit','probable'].includes(cat)&&!isEarlyStage){
     MEDDPICC_FIELDS.forEach(f=>{
-      const val=(deal[f.key]||'').trim();
-      if(!val)flags.push({sev:'amber',text:f.label+' empty'});
+      if(!(deal[f.key]||'').trim())flags.push({sev:'amber',text:f.label+' empty'});
     });
   }
 
-  // ── 5. Last activity — >14 days for all stages ──
+  // 5. Last activity >14d
   if(deal.f_last_activity){
     const la=new Date(deal.f_last_activity);
     if(!isNaN(la)){
       const daysSince=Math.floor((now-la)/86400000);
-      if(daysSince>14)
-        flags.push({sev:'red',text:'No activity '+daysSince+'d'});
+      if(daysSince>14)flags.push({sev:'red',text:'No activity '+daysSince+'d'});
     }
-  } else {
-    flags.push({sev:'amber',text:'No activity date available'});
-  }
+  } else {flags.push({sev:'amber',text:'No activity date available'});}
 
-  // ── 6. Amount ──
+  // 6. Amount
   if(amt===0)flags.push({sev:'red',text:'Amount $0'});
-
   return flags;
 }
-
 
 function groupByRep(records){
   const map={};
@@ -3472,80 +3491,47 @@ function renderInspectorEmpty(msg){
   </div>`;
 }
 
-function renderRepBlock(owner, deals, aiHtml, aiMap){
+function renderRepBlock(owner, deals, aiHtml){
   const allFlags=deals.flatMap(d=>d._flags||[]);
   const redCount=allFlags.filter(f=>f.sev==='red').length;
   const amberCount=allFlags.filter(f=>f.sev==='amber').length;
   const totalAmt=deals.reduce((s,d)=>s+d.f_amount_num,0);
+  const catColors=CAT_COLORS,catBg=CAT_BG;
 
-  const sevClass=redCount>0?'sev-red':amberCount>0?'sev-amber':'sev-clean';
-  const pillsHtml=
-    (redCount>0?`<span class="insp-flag-pill red">&#9888; ${redCount} critical</span>`:'')
-    +(amberCount>0?`<span class="insp-flag-pill amber">&#9650; ${amberCount} warning${amberCount!==1?'s':''}</span>`:'')
-    +(redCount===0&&amberCount===0?`<span class="insp-flag-pill green">&#10003; Clean</span>`:'')
-    +`<span style="font-size:11px;color:var(--tx2);margin-left:4px">${deals.length} deals &middot; ${fmt(totalAmt)}</span>`;
+  const pillsHtml=`
+    ${redCount>0?`<span class="insp-flag-pill red">&#9888; ${redCount} critical</span>`:''}
+    ${amberCount>0?`<span class="insp-flag-pill amber">&#9650; ${amberCount} warning</span>`:''}
+    ${redCount===0&&amberCount===0?`<span class="insp-flag-pill green">&#10003; Clean</span>`:''}
+    <span style="font-size:11px;color:var(--tx2);margin-left:4px">${deals.length} deals &middot; ${fmt(totalAmt)}</span>`;
 
-  const CAT_ORDER=['commit','probable','upside','pipeline'];
-  const CAT_LABEL={commit:'Commit',probable:'Probable',upside:'Upside',pipeline:'Pipeline'};
-  const CAT_ACCENT={commit:'#1a56db',probable:'#0d7c3d',upside:'#b45309',pipeline:'#6b7280'};
-  const flagSort=d=>(d._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:f.sev==='amber'?1:0),0);
-
-  const catSections=CAT_ORDER.map(cat=>{
-    const catDeals=deals.filter(d=>d.f_fc_cat_norm===cat);
-    if(!catDeals.length)return'';
-    const catAmt=catDeals.reduce((s,d)=>s+d.f_amount_num,0);
-    const catRed=catDeals.flatMap(d=>d._flags||[]).filter(f=>f.sev==='red').length;
-    const catAmber=catDeals.flatMap(d=>d._flags||[]).filter(f=>f.sev==='amber').length;
-    const sorted=[...catDeals].sort((a,b)=>flagSort(b)-flagSort(a));
-
-    const rows=sorted.map(d=>{
-      const flags=d._flags||[];
-      const flagsHtml=flags.length
-        ?'<div class="insp-flags-cell">'+flags.map(f=>'<span class="insp-flag-tag '+f.sev+'">'+f.text+'</span>').join('')+'</div>'
-        :'<span style="font-size:10px;color:var(--green)">&#10003; clean</span>';
-      const cd=d.f_close_date?new Date(d.f_close_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
-      const nsShort=(d.f_next_step||'—').substring(0,60)+(d.f_next_step&&d.f_next_step.length>60?'…':'');
-      const hasRed=flags.some(f=>f.sev==='red');
-      // Bold deal name if AI flagged it
-      const nameKey=(d.f_opp_name||'').toLowerCase();
-      const aiTagged=aiMap&&[...aiMap.keys()].some(k=>nameKey.includes(k)||k.includes(nameKey.substring(0,20)));
-      const nameHtml=aiTagged
-        ?'<strong title="'+(d.f_opp_name||'')+'">'+( d.f_opp_name||'—')+'</strong>'
-          +'<span style="font-size:9px;color:#7c3aed;margin-left:4px" title="Flagged by AI">\u2736</span>'
-        :(d.f_opp_name||'—');
-      return '<tr'+(hasRed?' class="has-red" style="background:rgba(220,38,38,.04)"':' class="deal-row"')+'>'
-        +'<td class="insp-deal-name" title="'+(d.f_opp_name||'')+'">'+nameHtml+'</td>'
-        +'<td class="insp-deal-amount">'+fmt(d.f_amount_num)+'</td>'
-        +'<td style="color:var(--tx2);white-space:nowrap">'+cd+'</td>'
-        +'<td style="color:var(--tx2);max-width:200px" title="'+(d.f_next_step||'')+'">'+nsShort+'</td>'
-        +'<td>'+flagsHtml+'</td>'
-        +'</tr>';
-    }).join('');
-
-    const flagNote=
-      (catRed>0?`<span style="color:var(--red);font-weight:700;font-size:10px">&#9888; ${catRed} critical</span>`:'')
-      +(catAmber>0?`<span style="color:var(--amber);font-weight:600;font-size:10px;margin-left:6px">&#9650; ${catAmber}</span>`:'');
-
-    return '<div class="insp-cat-section">'
-      +'<div class="insp-cat-hdr">'
-        +'<div class="insp-cat-hdr-accent" style="background:'+CAT_ACCENT[cat]+'"></div>'
-        +'<span class="insp-cat-hdr-label" style="color:'+CAT_ACCENT[cat]+'">'+CAT_LABEL[cat]+'</span>'
-        +'<span class="insp-cat-hdr-stats">'+catDeals.length+' deal'+(catDeals.length!==1?'s':'')+' &middot; '+fmt(catAmt)+'</span>'
-        +flagNote
-      +'</div>'
-      +'<div style="overflow-x:auto">'
-        +'<table class="insp-deals-table">'
-          +'<thead><tr>'
-            +'<th>Deal</th><th>Amount</th><th>Close</th><th>Next step</th><th>Flags</th>'
-          +'</tr></thead>'
-          +'<tbody>'+rows+'</tbody>'
-        +'</table>'
-      +'</div>'
-    +'</div>';
+  // Sort: red-flagged first, then amber, then clean
+  const sortedDeals=[...deals].sort((a,b)=>{
+    const sa=(a._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:f.sev==='amber'?1:0),0);
+    const sb=(b._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:f.sev==='amber'?1:0),0);
+    return sb-sa;
+  });
+  const rows=sortedDeals.map(d=>{
+    const cat=d.f_fc_cat_norm||'unknown';
+    const flags=d._flags||[];
+    // ALL flags shown — no truncation
+    const flagsHtml=flags.length
+      ?'<div class="insp-flags-cell">'+flags.map(f=>'<span class="insp-flag-tag '+f.sev+'">'+f.text+'</span>').join('')+'</div>'
+      :'<span style="font-size:10px;color:var(--green)">&#10003; clean</span>';
+    const cd=d.f_close_date?new Date(d.f_close_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
+    const nsShort=(d.f_next_step||'—').substring(0,60)+(d.f_next_step&&d.f_next_step.length>60?'…':'');
+    const hasRed=flags.some(f=>f.sev==='red');
+    return '<tr'+(hasRed?' style="background:rgba(220,38,38,.04)"':'')+'>'
+      +'<td class="insp-deal-name" title="'+(d.f_opp_name||'')+'">'+(d.f_opp_name||'—')+'</td>'
+      +'<td><span class="insp-cat-pill" style="background:'+(catBg[cat]||'#f9fafb')+';color:'+(catColors[cat]||'#6b7280')+'">'+(cat)+'</span></td>'
+      +'<td class="insp-deal-amount">'+fmt(d.f_amount_num)+'</td>'
+      +'<td style="color:var(--tx2)">'+cd+'</td>'
+      +'<td style="color:var(--tx2);max-width:180px" title="'+(d.f_next_step||'')+'">'+nsShort+'</td>'
+      +'<td>'+flagsHtml+'</td>'
+      +'</tr>';
   }).join('');
 
   const id='rep_'+owner.replace(/\W/g,'_');
-  return `<div class="insp-rep-block ${sevClass}" id="${id}">
+  return `<div class="insp-rep-block" id="${id}">
     <div class="insp-rep-hdr" onclick="toggleRepBlock('${id}')">
       <span class="insp-rep-name">${owner}</span>
       <div class="insp-rep-pills">${pillsHtml}</div>
@@ -3553,87 +3539,52 @@ function renderRepBlock(owner, deals, aiHtml, aiMap){
     </div>
     <div class="insp-rep-body">
       ${aiHtml}
-      ${catSections}
+      <div style="overflow-x:auto">
+        <table class="insp-deals-table">
+          <thead><tr>
+            <th>Deal</th><th>Category</th><th>Amount</th><th>Close</th><th>Next step</th><th>Flags</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
     </div>
   </div>`;
 }
+
 function toggleRepBlock(id){
   const block=$(id);if(!block)return;
   block.classList.toggle('open');
 }
 
-function inspExpandAll(){
-  document.querySelectorAll('.insp-rep-block').forEach(b=>b.classList.add('open'));
-}
-function inspCollapseAll(){
-  document.querySelectorAll('.insp-rep-block').forEach(b=>b.classList.remove('open'));
-}
-
-let _flaggedOnly=false;
-function toggleFlaggedOnly(){
-  _flaggedOnly=!_flaggedOnly;
-  const btn=$('insp-flagged-only');
-  if(btn){
-    btn.textContent=_flaggedOnly?'Show all':'Flagged only';
-    btn.style.background=_flaggedOnly?'var(--amber)':'';
-    btn.style.color=_flaggedOnly?'#fff':'';
-    btn.style.borderColor=_flaggedOnly?'var(--amber)':'';
-  }
-  document.querySelectorAll('.insp-deals-table tbody tr').forEach(row=>{
-    if(_flaggedOnly){
-      // Hide rows with no flags (only have ✓ clean cell)
-      const hasFlags=row.querySelector('.insp-flag-tag');
-      row.style.display=hasFlags?'':'none';
-    } else {
-      row.style.display='';
-    }
-  });
-}
-
-function toggleInspFocus(){
-  const row=$('insp-focus-row');
-  const btn=$('insp-focus-toggle');
-  if(!row)return;
-  const isOpen=row.classList.toggle('open');
-  if(btn)btn.textContent=isOpen?'✕ Focus':'+ Focus';
-  if(isOpen){const inp=$('insp-focus-input');if(inp)inp.focus();}
-}
-
 // ── AI summary call ──
-async function fetchAISummary(owner, deals, apiKey, systemPrompt, coachingFocus, signal){
+async function fetchAISummary(owner, deals, apiKey, systemPrompt, coachingFocus){
   const trunc=(s,n)=>(s&&s.length>n)?s.substring(0,n)+'…':s||'';
   const blank='—';
+  const repDeals=deals.map(d=>{
+    const flags=(d._flags||[]).map(f=>f.text).join(', ')||'none';
+    // Rule-based flags + full MEDDPICC content for AI qualitative assessment
+    // Field lengths: next step 100, MEDDPICC fields 80 each (enough for quality judgment)
+    const meddpicc=[
+      'M:'+( trunc(d.f_metrics,80)||blank),
+      'E:'+(trunc(d.f_econ_buyer,80)||blank),
+      'DC:'+(trunc(d.f_dec_criteria,80)||blank),
+      'DP:'+(trunc(d.f_dec_process,80)||blank),
+      'PP:'+(trunc(d.f_proc_process,80)||blank),
+      'I:'+(trunc(d.f_implicated,80)||blank),
+      'C:'+(trunc(d.f_champion,80)||blank),
+    ].join(' | ');
+    return '- '+trunc(d.f_opp_name,40)+' | '+d.f_fc_cat_norm+' | '+fmt(d.f_amount_num)
+      +' | close '+(d.f_close_date||'?')+' | stage: '+(d.f_stage||'?')
+      +'\n  rule-flags: '+flags
+      +'\n  next-step: '+trunc(d.f_next_step,100)
+      +'\n  meddpicc: '+meddpicc;
+  }).join('\n');
 
   const today=new Date().toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
   const focusLine=coachingFocus?'\n\nAdditional focus: '+coachingFocus:'';
 
-  // Group deal data by FC category for cleaner AI output
-  const catOrder=['commit','probable','upside','pipeline'];
-  const grouped=catOrder.map(cat=>{
-    const catDeals=deals.filter(d=>d.f_fc_cat_norm===cat);
-    if(!catDeals.length)return null;
-    const catData=catDeals.map(d=>{
-      const flags=(d._flags||[]).map(f=>f.text).join(', ')||'none';
-      const meddpicc=[
-        'M:'+(trunc(d.f_metrics,80)||blank),
-        'E:'+(trunc(d.f_econ_buyer,80)||blank),
-        'DC:'+(trunc(d.f_dec_criteria,80)||blank),
-        'DP:'+(trunc(d.f_dec_process,80)||blank),
-        'PP:'+(trunc(d.f_proc_process,80)||blank),
-        'I:'+(trunc(d.f_implicated,80)||blank),
-        'C:'+(trunc(d.f_champion,80)||blank),
-      ].join(' | ');
-      return '  - '+trunc(d.f_opp_name,40)+' | '+fmt(d.f_amount_num)
-        +' | close '+(d.f_close_date||'?')+' | stage: '+(d.f_stage||'?')
-        +'\n    rule-flags: '+flags
-        +'\n    next-step: '+trunc(d.f_next_step,100)
-        +'\n    meddpicc: '+meddpicc;
-    }).join('\n');
-    return cat.toUpperCase()+':\n'+catData;
-  }).filter(Boolean).join('\n\n');
-
   const userMsg='Generate the inspection summary for '+owner+'. Today is '+today+'.\n\n'
-    +'DEAL DATA (grouped by forecast category):\n'+grouped+focusLine;
+    +'DEAL DATA:\n'+repDeals+focusLine;
 
   // Prompt caching: system prompt cached after first call in a run (90% discount on repeats)
   const body={
@@ -3649,7 +3600,6 @@ async function fetchAISummary(owner, deals, apiKey, systemPrompt, coachingFocus,
 
   const resp=await fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
-    signal:signal||null,
     headers:{
       'Content-Type':'application/json',
       'x-api-key':apiKey,
@@ -3675,18 +3625,8 @@ async function fetchAISummary(owner, deals, apiKey, systemPrompt, coachingFocus,
 
 // Last inspection result — persists in memory for export
 let lastInspectionResult=null; // {repsSorted, active, insights, runDate}
-let _inspAbortController=null; // current run's AbortController
 
 // ── Inspector sub-tab switching ──
-function stopInspector(){
-  if(_inspAbortController)_inspAbortController.abort();
-  const btn=$('insp-stop-btn');if(btn)btn.style.display='none';
-  const runBtn=$('inspector-run-btn');if(runBtn){runBtn.disabled=false;runBtn.style.opacity='1';}
-  clearProgress();
-  const status=$('inspector-status');
-  if(status)status.textContent=status.textContent.replace('…','— stopped');
-}
-
 function switchInspTab(tab){
   ['reps','insights'].forEach(t=>{
     const panel=$('insp-panel-'+t);if(panel)panel.classList.toggle('active',t===tab);
@@ -3767,8 +3707,31 @@ function renderInsightsCharts(repsSorted, active){
     +'</div>';
 }
 
+// Format AI text for Slack: normalise bullets and bold opp names
+function formatForSlack(text){
+  if(!text)return'';
+  const isCategoryHeader=l=>/^\*?(Commit|Probable|Upside|Pipeline)\*?[:\s]*$/i.test(l.trim());
+  return text.split('\n').map(line=>{
+    const cp=line.codePointAt(0);
+    const hasEmoji=cp===0x1F534||cp===0x1F7E1;
+    const hasBullet=line.startsWith('* ');
+    if(!hasEmoji&&!hasBullet)return line;
+    if(isCategoryHeader(line))return line;
+    let prefix='\u2022';
+    let rest=line;
+    if(hasEmoji){prefix=line.slice(0,2);rest=line.slice(2).trim();}
+    else if(hasBullet){rest=line.slice(2).trim();}
+    const colon=rest.indexOf(':');
+    if(colon<0)return prefix+' '+rest;
+    const rawName=rest.slice(0,colon).replace(/\*/g,'').trim();
+    const flags=rest.slice(colon+1).trim();
+    return prefix+' *'+rawName+'*: '+flags;
+  }).join('\n');
+}
+
 // ── Parse AI flags from structured summary output ──
 function parseAIFlags(text){
+  // Returns Map: lowercased opp name fragment → array of flag strings
   const map=new Map();
   if(!text)return map;
   const lines=text.split('\n');
@@ -3776,61 +3739,15 @@ function parseAIFlags(text){
   for(const line of lines){
     if(/\[Pipeline action items/i.test(line)){inItems=true;continue;}
     if(!inItems)continue;
-    // New format: 🔴/🟡 *Opp Name*: flags  (emoji = U+1F534 or U+1F7E1)
-    const cp=line.codePointAt(0);
-    if(cp===0x1F534||cp===0x1F7E1){
-      const rest=line.slice(2).trim(); // skip the 2-byte emoji
-      const colon=rest.indexOf(':');
-      if(colon<0)continue;
-      const rawName=rest.slice(0,colon).replace(/\*/g,'').trim();
-      const oppKey=rawName.replace(/\u2026.*$/,'').trim().toLowerCase();
-      const flags=rest.slice(colon+1).split(',').map(f=>f.trim()).filter(Boolean);
-      if(oppKey)map.set(oppKey,flags);
-      continue;
-    }
-    // Old format: * Opp name: flags
+    // Match bullet: * Opp name: flag1, flag2
     const m=line.match(/^\*\s+(.+?):\s*(.+)$/);
-    if(m){
-      const oppKey=m[1].replace(/\u2026.*$/,'').trim().toLowerCase();
-      const flags=m[2].split(',').map(f=>f.trim()).filter(Boolean);
-      map.set(oppKey,flags);
-    }
+    if(!m)continue;
+    const oppKey=m[1].replace(/\u2026.*$/,'').trim().toLowerCase();
+    const flags=m[2].split(',').map(f=>f.trim()).filter(Boolean);
+    map.set(oppKey,flags);
   }
   return map;
 }
-
-// Format AI text for Slack: normalise bullets and bold opp names
-// Handles all model output variants: emoji-prefixed, * bullet, or plain
-function formatForSlack(text){
-  if(!text)return'';
-  // Category headers like "*Commit*" or "Commit:" — pass through, already Slack-formatted
-  const isCategoryHeader=l=>/^\*?(Commit|Probable|Upside|Pipeline)\*?[:\s]*$/i.test(l.trim());
-  return text.split('\n').map(line=>{
-    const cp=line.codePointAt(0);
-    const hasEmoji=cp===0x1F534||cp===0x1F7E1; // 🔴 or 🟡
-    const hasBullet=line.startsWith('* ');
-    if(!hasEmoji&&!hasBullet)return line; // observation line, header, etc — pass through
-    if(isCategoryHeader(line))return line;
-    // Extract: prefix | opp name | flags
-    let prefix='\u2022'; // default bullet
-    let rest=line;
-    if(hasEmoji){
-      // Emoji takes 2 chars in JS string (surrogate pair)
-      prefix=line.slice(0,2);
-      rest=line.slice(2).trim();
-    } else if(hasBullet){
-      rest=line.slice(2).trim();
-    }
-    // Find the colon separating name from flags
-    const colon=rest.indexOf(':');
-    if(colon<0)return prefix+' '+rest; // no colon — just reformat bullet
-    const rawName=rest.slice(0,colon).replace(/\*/g,'').trim(); // strip any existing asterisks
-    const flags=rest.slice(colon+1).trim();
-    // Reassemble with guaranteed bold name
-    return prefix+' *'+rawName+'*: '+flags;
-  }).join('\n');
-}
-
 
 // Match a deal to an AI flag entry by fuzzy opp name
 function matchAIFlags(deal, aiMap){
@@ -3974,7 +3891,6 @@ async function runInspector(){
 
   // Hide insights section until this run completes
   // Reset tabs to reps view, hide charts/content
-  const actRowEl=$('insp-actions-row');if(actRowEl)actRowEl.classList.remove('visible');
   const tabsEl2=$('insp-tabs');if(tabsEl2)tabsEl2.style.display='none';
   switchInspTab('reps');
   const chartsEl=$('insights-charts');if(chartsEl)chartsEl.style.display='none';
@@ -3986,37 +3902,10 @@ async function runInspector(){
     apiKey
       ? `<div class="insp-ai-loading" id="ai_${owner.replace(/\W/g,'_')}"><div class="insp-ai-dot"></div><div class="insp-ai-dot"></div><div class="insp-ai-dot"></div><span>Generating AI summary…</span></div>`
       : ''
-    ,null
   )).join('');
 
-  // Show expand/collapse buttons, flagged-only toggle
-  ['insp-expand-all','insp-collapse-all','insp-flagged-only'].forEach(id=>{
-    const el=$(id);if(el)el.style.display='inline-flex';
-  });
-
-  // Team stats bar
-  const amberFlagsTotal=active.flatMap(d=>d._flags).filter(f=>f.sev==='amber').length;
-  const aesWithCritical=repsSorted.filter(([,deals])=>deals.flatMap(d=>d._flags||[]).some(f=>f.sev==='red')).length;
-  const totalPipe=active.reduce((s,d)=>s+d.f_amount_num,0);
-  const statsBar=$('insp-stats-bar');
-  if(statsBar){
-    statsBar.innerHTML=
-      '<div class="insp-stat-cell"><div class="insp-stat-val">'+repsSorted.length+'</div><div class="insp-stat-lbl">AEs</div></div>'
-      +'<div class="insp-stat-cell"><div class="insp-stat-val">'+active.length+'</div><div class="insp-stat-lbl">Active deals</div></div>'
-      +'<div class="insp-stat-cell"><div class="insp-stat-val">'+fmt(totalPipe)+'</div><div class="insp-stat-lbl">Total pipeline</div></div>'
-      +'<div class="insp-stat-cell"><div class="insp-stat-val" style="color:var(--red)">'+redFlags+'</div><div class="insp-stat-lbl">Critical flags</div></div>'
-      +'<div class="insp-stat-cell"><div class="insp-stat-val" style="color:var(--amber)">'+amberFlagsTotal+'</div><div class="insp-stat-lbl">Warnings</div></div>'
-      +'<div class="insp-stat-cell"><div class="insp-stat-val" style="color:var(--red)">'+aesWithCritical+'</div><div class="insp-stat-lbl">AEs w/ critical</div></div>';
-    statsBar.classList.add('visible');
-  }
-
-  // Auto-expand: all if ≤3 AEs, otherwise first only
-  if(repsSorted.length<=3){
-    repsSorted.forEach(([owner])=>{
-      const b=$('rep_'+owner.replace(/\W/g,'_'));
-      if(b)b.classList.add('open');
-    });
-  } else {
+  // Auto-expand first rep
+  if(repsSorted.length>0){
     const firstId='rep_'+repsSorted[0][0].replace(/\W/g,'_');
     const firstBlock=$(firstId);
     if(firstBlock)firstBlock.classList.add('open');
@@ -4036,10 +3925,7 @@ async function runInspector(){
   setProgress(0,totalSteps,'Starting AI summaries…');
 
   // AI summaries — sequential to avoid rate limits
-  _inspAbortController=new AbortController();
-  const {signal}=_inspAbortController;
   btn.disabled=true;btn.style.opacity='.6';
-  const stopBtn=$('insp-stop-btn');if(stopBtn)stopBtn.style.display='flex';
   let totalInput=0,totalOutput=0;
   for(const [owner,deals] of repsSorted){
     const loadingId='ai_'+owner.replace(/\W/g,'_');
@@ -4057,49 +3943,25 @@ async function runInspector(){
       }
     }
     try{
-      const result=await fetchAISummary(owner,deals,apiKey,getSystemPrompt(),getCoachingFocus(),signal);
+      const result=await fetchAISummary(owner,deals,apiKey,getSystemPrompt(),getCoachingFocus());
       const {text,inputTokens,outputTokens}=result;
       totalInput+=inputTokens;totalOutput+=outputTokens;
       const loadingEl=$(loadingId);
       if(loadingEl){
         const safeId=owner.replace(/\W/g,'_');
-        const slackText='*Pipeline coaching — '+owner+'*\n'+formatForSlack(text);
+        const slackText='*Pipeline coaching — '+owner+'*\n'+text;
         loadingEl.outerHTML='<div class="insp-ai-summary">'
           +'<div class="insp-ai-summary-lbl" style="justify-content:space-between">'
           +'<span>✨ AI coaching summary</span>'
           +'<button class="btn" onclick="copySlack(&quot;slk_'+safeId+'&quot;)" style="font-size:10px;padding:2px 8px">Copy for Slack</button>'
           +'</div>'
           +'<div id="slk_'+safeId+'" style="display:none">'+slackText+'</div>'
-          +formatForSlack(text).replace(/\n/g,'<br>').replace(/\*([^*\n]+)\*/g,'<strong>$1</strong>')+'</div>';
+          +text.replace(/\n/g,'<br>')+'</div>';
         const aiMap=parseAIFlags(text);
-        // Re-render the rep block with aiMap so deal names get bolded inline
-        if(aiMap.size){
-          injectAIFlagsIntoTable(owner,aiMap);
-          // Also update deal name bolding in category tables
-          const block=$('rep_'+owner.replace(/\W/g,'_'));
-          if(block){
-            const nameEls=block.querySelectorAll('.insp-deal-name');
-            nameEls.forEach(td=>{
-              const dealName=td.getAttribute('title')||'';
-              const nameKey=dealName.toLowerCase();
-              const matched=[...aiMap.keys()].some(k=>nameKey.includes(k)||k.includes(nameKey.substring(0,20)));
-              if(matched&&!td.querySelector('strong')){
-                td.innerHTML='<strong title="'+dealName+'">'+dealName+'</strong>'
-                  +'<span style="font-size:9px;color:#7c3aed;margin-left:4px" title="Flagged by AI">✶</span>';
-              }
-            });
-          }
-        }
+        if(aiMap.size)injectAIFlagsIntoTable(owner,aiMap);
       }
       if(repBlock){const badge=repBlock.querySelector('.rep-ai-badge');if(badge){badge.innerHTML='✨ done';badge.style.color='var(--green)';}}
     }catch(err){
-      if(err.name==='AbortError'){
-        // Stopped by user — mark remaining reps and break
-        const loadingEl=$(loadingId);
-        if(loadingEl)loadingEl.outerHTML='<div class="insp-ai-summary" style="color:var(--tx2);font-size:12px">Stopped.</div>';
-        if(repBlock){const badge=repBlock.querySelector('.rep-ai-badge');if(badge){badge.innerHTML='— stopped';badge.style.color='var(--tx2)';}}
-        break; // exit the for loop
-      }
       const loadingEl=$(loadingId);
       if(loadingEl)loadingEl.outerHTML='<div class="insp-ai-summary" style="color:var(--red);font-size:12px">AI summary unavailable: '+err.message+'</div>';
       if(repBlock){const badge=repBlock.querySelector('.rep-ai-badge');if(badge){badge.innerHTML='⚠ error';badge.style.color='var(--red)';}}
@@ -4135,8 +3997,6 @@ async function runInspector(){
   }
 
   btn.disabled=false;btn.style.opacity='1';
-  if(stopBtn)stopBtn.style.display='none';
-  _inspAbortController=null;
   clearProgress();
   logUsageRun(totalInput,totalOutput,repsSorted.length,active.length);
   const totalTok=totalInput+totalOutput;
@@ -4153,7 +4013,7 @@ async function runInspector(){
     quarter:$('quarter_lbl')&&$('quarter_lbl').value||''
   };
   // Show export buttons
-  const actRow=$('insp-actions-row');if(actRow)actRow.classList.add('visible');
+  document.querySelectorAll('.insp-export-btn').forEach(b=>b.classList.add('visible'));
 }
 
 
@@ -4166,161 +4026,103 @@ function exportInspectionPDF(){
   const {repsSorted,active,insights,runDate,managerName,quarter}=lastInspectionResult;
   const dateStr=runDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   const navy='#1a1a2e',coral='#E85D3A',blue='#1a56db',red='#dc2626',amber='#b45309',green='#0d7c3d';
-  const FONT='font-family:Arial,Helvetica,sans-serif;';
 
-  // Shared helpers
+  // Flag counts for summary
   const allFlags=active.flatMap(d=>d._flags||[]);
   const redCount=allFlags.filter(f=>f.sev==='red').length;
   const amberCount=allFlags.filter(f=>f.sev==='amber').length;
   const totalAmt=active.reduce((s,d)=>s+d.f_amount_num,0);
-  const CAT_ORDER=['commit','probable','upside','pipeline'];
-  const CAT_LABEL={commit:'Commit',probable:'Probable',upside:'Upside',pipeline:'Pipeline'};
-  const CAT_COLOR={commit:blue,probable:green,upside:amber,pipeline:'#6b7280'};
 
-  // ── Cover page ──
-  const coverHtml=
-    '<div style="'+FONT+'page-break-after:always;color:#111">'
-      +'<div style="background:'+navy+';padding:32px 36px 28px">'
-        +'<div style="font-size:8pt;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:'+coral+';margin-bottom:8px">MOAT</div>'
-        +'<div style="font-size:20pt;font-weight:700;color:#fff;margin-bottom:6px">Pipeline Inspection Report</div>'
-        +'<div style="font-size:10pt;color:#9ca3b8">'+managerName+(quarter?' · '+quarter:'')+'</div>'
-      +'</div>'
-      +'<div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:14px 36px;display:flex;gap:28px">'
-        +'<div><div style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">As of</div><div style="font-size:11pt;font-weight:600">'+dateStr+'</div></div>'
-        +'<div><div style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Active deals</div><div style="font-size:11pt;font-weight:600">'+active.length+'</div></div>'
-        +'<div><div style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Pipeline</div><div style="font-size:11pt;font-weight:600">'+fmt(totalAmt)+'</div></div>'
-        +'<div><div style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Critical flags</div><div style="font-size:11pt;font-weight:600;color:'+red+'">'+redCount+'</div></div>'
-        +'<div><div style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Warnings</div><div style="font-size:11pt;font-weight:600;color:'+amber+'">'+amberCount+'</div></div>'
-        +'<div><div style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">AEs</div><div style="font-size:11pt;font-weight:600">'+repsSorted.length+'</div></div>'
-      +'</div>'
-      // AE index table on cover
-      +'<div style="padding:20px 36px">'
-        +'<div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;border-bottom:1px solid #e5e7eb;padding-bottom:6px;margin-bottom:12px">AE Summary</div>'
-        +'<table style="width:100%;border-collapse:collapse;font-size:9pt">'
-          +'<thead><tr style="background:#f3f4f6">'
-            +'<th style="padding:6px 10px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">AE</th>'
-            +'<th style="padding:6px 10px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Deals</th>'
-            +'<th style="padding:6px 10px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Pipeline</th>'
-            +'<th style="padding:6px 10px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Critical</th>'
-            +'<th style="padding:6px 10px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Warnings</th>'
-          +'</tr></thead>'
-          +'<tbody>'+repsSorted.map(([owner,deals])=>{
-            const f=deals.flatMap(d=>d._flags||[]);
-            const rc=f.filter(x=>x.sev==='red').length;
-            const ac=f.filter(x=>x.sev==='amber').length;
-            const amt=deals.reduce((s,d)=>s+d.f_amount_num,0);
-            const sc=rc>0?red:ac>0?amber:green;
-            return '<tr style="border-bottom:1px solid #f3f4f6">'
-              +'<td style="padding:6px 10px;font-weight:600">'+owner+'</td>'
-              +'<td style="padding:6px 10px">'+deals.length+'</td>'
-              +'<td style="padding:6px 10px">'+fmt(amt)+'</td>'
-              +'<td style="padding:6px 10px;font-weight:700;color:'+sc+'">'+( rc>0?rc+' ⚠':( ac===0?'✓ Clean':'—'))+'</td>'
-              +'<td style="padding:6px 10px;color:'+amber+'">'+( ac>0?ac:'—')+'</td>'
-              +'</tr>';
-          }).join('')+'</tbody>'
-        +'</table>'
-      +'</div>'
-    +'</div>';
-
-  // ── Per-AE pages — each on its own page ──
-  const aePagesHtml=repsSorted.map(([owner,deals])=>{
+  // Per-rep sections
+  const repSections=repsSorted.map(([owner,deals])=>{
     const flags=deals.flatMap(d=>d._flags||[]);
     const rc=flags.filter(f=>f.sev==='red').length;
     const ac=flags.filter(f=>f.sev==='amber').length;
     const amt=deals.reduce((s,d)=>s+d.f_amount_num,0);
+    const statusColor=rc>0?red:ac>0?amber:green;
     const statusText=rc>0?rc+' critical':ac>0?ac+' warnings':'Clean';
 
-    // FC category summary grid
-    const catSummary=CAT_ORDER.map(cat=>{
-      const catDeals=deals.filter(d=>d.f_fc_cat_norm===cat);
-      if(!catDeals.length)return'';
-      const catAmt=catDeals.reduce((s,d)=>s+d.f_amount_num,0);
-      const catRed=catDeals.flatMap(d=>d._flags||[]).filter(f=>f.sev==='red').length;
-      return'<div style="padding:8px 10px;border-left:3px solid '+CAT_COLOR[cat]+';background:#fafafa;border-radius:0 4px 4px 0">'
-        +'<div style="font-size:7.5pt;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:'+CAT_COLOR[cat]+';margin-bottom:3px">'+CAT_LABEL[cat]+'</div>'
-        +'<div style="font-size:11pt;font-weight:700;color:#111">'+fmt(catAmt)+'</div>'
-        +'<div style="font-size:8pt;color:#6b7280">'+catDeals.length+' deal'+(catDeals.length!==1?'s':'')+(catRed>0?' · <span style="color:'+red+'">'+catRed+' ⚠</span>':'')+'</div>'
-      +'</div>';
-    }).filter(Boolean).join('');
-
-    // Deal rows sorted by flag severity
     const sorted=[...deals].sort((a,b)=>{
       const sa=(a._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:1),0);
       const sb=(b._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:1),0);
       return sb-sa;
     });
+
     const dealRows=sorted.map(d=>{
       const allDealFlags=d._flags||[];
-      const flagStr=allDealFlags.map(f=>'<span style="font-size:8pt;background:'+(f.sev==='red'?'#fee2e2':'#fef3c7')+';color:'+(f.sev==='red'?red:amber)+';padding:1px 5px;border-radius:3px;margin-right:3px;white-space:nowrap">'+f.text+'</span>').join('');
+      const flagStr=allDealFlags.map(f=>'<span style="font-size:8pt;background:'+(f.sev==='red'?'#fee2e2':'#fef3c7')+';color:'+(f.sev==='red'?red:amber)+';padding:1px 5px;border-radius:3px;margin-right:3px">'+f.text+'</span>').join('');
       const cd=d.f_close_date?new Date(d.f_close_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
-      const ns=(d.f_next_step||'—').substring(0,65)+(d.f_next_step&&d.f_next_step.length>65?'…':'');
+      const ns=(d.f_next_step||'—').substring(0,70)+(d.f_next_step&&d.f_next_step.length>70?'…':'');
       const rowBg=allDealFlags.some(f=>f.sev==='red')?'#fff8f8':'';
-      const catDot=CAT_COLOR[d.f_fc_cat_norm]||'#9ca3af';
-      return '<tr style="background:'+rowBg+';border-bottom:1px solid #f3f4f6">'
-        +'<td style="padding:5px 8px;font-weight:600;font-size:9pt;max-width:140px;word-break:break-word">'+(d.f_opp_name||'—')+'</td>'
-        +'<td style="padding:5px 8px;font-size:9pt;white-space:nowrap">'
-          +'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+catDot+';margin-right:4px;vertical-align:middle"></span>'
-          +fmt(d.f_amount_num)+'</td>'
+      return '<tr style="background:'+rowBg+'">'
+        +'<td style="padding:5px 8px;font-weight:600;font-size:9pt;max-width:160px;word-break:break-word">'+(d.f_opp_name||'—')+'</td>'
+        +'<td style="padding:5px 8px;font-size:9pt;white-space:nowrap">'+fmt(d.f_amount_num)+'</td>'
         +'<td style="padding:5px 8px;font-size:9pt;white-space:nowrap">'+cd+'</td>'
-        +'<td style="padding:5px 8px;font-size:9pt;color:#374151">'+ns+'</td>'
+        +'<td style="padding:5px 8px;font-size:9pt">'+ns+'</td>'
         +'<td style="padding:5px 8px">'+flagStr+'</td>'
         +'</tr>';
     }).join('');
 
-    // AI summary text scraped from rendered DOM
+    // AI summary text
     const aiEl=document.querySelector('#rep_'+owner.replace(/\W/g,'_')+' .insp-ai-summary');
     const aiText=aiEl?aiEl.innerText.replace(/^✨ AI coaching summary\n?/,'').replace(/Copy for Slack$/,'').trim():'';
 
-    // Each AE = its own page
-    return '<div style="'+FONT+'page-break-before:always;page-break-after:auto;color:#111">'
-      // AE header
-      +'<div style="background:'+navy+';padding:12px 18px;margin-bottom:10px;display:flex;align-items:center;gap:12px">'
-        +'<div style="font-size:13pt;font-weight:700;color:#fff;flex:1">'+owner+'</div>'
-        +'<div style="font-size:9pt;font-weight:700;color:'+(rc>0?'#fca5a5':ac>0?'#fde68a':'#86efac')+'">'+statusText+'</div>'
-        +'<div style="font-size:9pt;color:#9ca3b8">'+deals.length+' deals · '+fmt(amt)+'</div>'
+    return '<div style="margin-bottom:24px;page-break-inside:avoid">'
+      +'<div style="display:flex;align-items:center;gap:10px;background:#f9fafb;border-left:4px solid '+statusColor+';padding:10px 14px;margin-bottom:8px">'
+        +'<div style="font-size:12pt;font-weight:700;color:#111;flex:1">'+owner+'</div>'
+        +'<div style="font-size:9pt;font-weight:700;color:'+statusColor+'">'+statusText+'</div>'
+        +'<div style="font-size:9pt;color:#6b7280">'+deals.length+' deals · '+fmt(amt)+'</div>'
       +'</div>'
-      // Category grid
-      +(catSummary?'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">'+catSummary+'</div>':'')
-      // AI summary
-      +(aiText?'<div style="font-size:9pt;color:#374151;background:#f0f9ff;border:1px solid #bfdbfe;border-radius:4px;padding:10px 12px;margin-bottom:10px;line-height:1.6">'+aiText+'</div>':'')
-      // Deal table
+      +(aiText?'<div style="font-size:9pt;color:#374151;background:#f0f9ff;border:1px solid #bfdbfe;border-radius:4px;padding:10px 12px;margin-bottom:8px;line-height:1.6">'+aiText+'</div>':'')
       +'<table style="width:100%;border-collapse:collapse;font-size:9pt">'
         +'<thead><tr style="background:#f3f4f6">'
-          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb">Deal</th>'
-          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb">Amount</th>'
-          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb">Close</th>'
-          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb">Next step</th>'
-          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb">Flags</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Deal</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Amount</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Close</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Next step</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Flags</th>'
         +'</tr></thead>'
         +'<tbody>'+dealRows+'</tbody>'
       +'</table>'
     +'</div>';
   }).join('');
 
-  // ── Manager insights page ──
-  const insightsHtml=insights
-    ?'<div style="'+FONT+'page-break-before:always;color:#111;padding-top:4px">'
+  const insightsSection=insights
+    ?'<div style="margin-top:24px;page-break-before:always">'
       +'<div style="font-size:11pt;font-weight:700;color:'+navy+';border-bottom:2px solid '+coral+';padding-bottom:6px;margin-bottom:14px">Manager Insights</div>'
       +'<div style="font-size:10pt;color:#374151;line-height:1.7">'+insights.split('\n').join('<br>')+'</div>'
     +'</div>':'' ;
 
-  // ── Footer — repeated via @page if supported, fallback inline ──
-  const footerHtml=
-    '<div style="'+FONT+'margin-top:32px;border-top:1px solid #e5e7eb;padding:8px 0;font-size:8pt;color:#9ca3af;display:flex;justify-content:space-between">'
-      +'<span>MOAT · Pipeline Inspector</span>'
+  const html='<div style="font-family:Arial,Helvetica,sans-serif;color:#111;max-width:900px">'
+    // Header
+    +'<div style="background:'+navy+';padding:24px 32px;margin-bottom:0">'
+      +'<div style="font-size:8pt;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:'+coral+';margin-bottom:6px">Remote</div>'
+      +'<div style="font-size:18pt;font-weight:700;color:#fff;margin-bottom:4px">Pipeline Inspection Report</div>'
+      +'<div style="font-size:9pt;color:#9ca3b8">'+managerName+(quarter?' · '+quarter:'')+'</div>'
+    +'</div>'
+    +'<div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:10px 32px;display:flex;gap:24px;margin-bottom:20px">'
+      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">As of</span><br><span style="font-size:10pt;font-weight:600">'+dateStr+'</span></div>'
+      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Active deals</span><br><span style="font-size:10pt;font-weight:600">'+active.length+'</span></div>'
+      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Pipeline</span><br><span style="font-size:10pt;font-weight:600">'+fmt(totalAmt)+'</span></div>'
+      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Critical flags</span><br><span style="font-size:10pt;font-weight:600;color:'+red+'">'+redCount+'</span></div>'
+      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Warnings</span><br><span style="font-size:10pt;font-weight:600;color:'+amber+'">'+amberCount+'</span></div>'
+    +'</div>'
+    +'<div style="padding:0 32px">'
+      +'<div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;margin-bottom:12px;border-bottom:1px solid #e5e7eb;padding-bottom:6px">Per-AE Breakdown</div>'
+      +repSections
+      +insightsSection
+    +'</div>'
+    +'<div style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:10px 32px;margin-top:24px;font-size:8pt;color:#9ca3af;display:flex;justify-content:space-between">'
+      +'<span>Remote · Pipeline Inspector</span>'
       +'<span>Generated '+dateStr+'</span>'
-    +'</div>';
-
-  const html=coverHtml+aePagesHtml+insightsHtml+footerHtml;
+    +'</div>'
+  +'</div>';
 
   const printArea=$('insp-print-area');
   printArea.innerHTML=html;
-  document.body.setAttribute('data-printing','inspector');
-  const cleanup=()=>{
-    document.body.removeAttribute('data-printing');
-    printArea.innerHTML='';
-    window.removeEventListener('afterprint',cleanup);
-  };
+  printArea.style.display='block';
+  // Use afterprint event for reliable cleanup
+  const cleanup=()=>{printArea.style.display='none';window.removeEventListener('afterprint',cleanup);};
   window.addEventListener('afterprint',cleanup);
   window.print();
 }
@@ -4403,283 +4205,25 @@ function exportInspectionXLSX(){
 }
 
 // ══════════════════════════════════════════════════════
-// DEAL-BACKING MODULE
-// ══════════════════════════════════════════════════════
-
-// State: map of deal id → column ('bench','commit','probable','upside')
-let dbState={}; // {dealId: colKey}
-let dbDeals=[]; // snapshot of deals when module was last loaded
-let dbDragId=null;
-
-const DB_COLS=[
-  {key:'bench',    label:'Bench',    accent:'#9ca3af', sub:'Not counting this quarter'},
-  {key:'commit',   label:'Commit',   accent:'#1a56db', sub:'High confidence — counting on it'},
-  {key:'probable', label:'Probable', accent:'#0d7c3d', sub:'Strong intent — likely closes'},
-  {key:'upside',   label:'Upside',   accent:'#b45309', sub:'Possible — needs things to break right'},
-];
-
-const CAT_PILL_STYLE={
-  commit:   'background:#dbeafe;color:#1a56db',
-  probable: 'background:#dcfce7;color:#0d7c3d',
-  upside:   'background:#fef3c7;color:#b45309',
-  pipeline: 'background:#f3f4f6;color:#6b7280',
-  bench:    'background:#f3f4f6;color:#6b7280',
-};
-
-function dbGetDeals(){
-  if(!importedData||!importedData.length)return[];
-  return importedData
-    .filter(d=>d.f_fc_cat_norm!=='omitted')
-    .map((d,i)=>({
-      id:'db_'+i,
-      name:d.f_opp_name||'Unknown',
-      acv:d.f_amount_num||0,
-      owner:d.f_owner||'',
-      cat:d.f_fc_cat_norm||'pipeline',
-      closeDate:d.f_close_date||'',
-      closed:d.f_fc_cat_norm==='closed', // locked — not draggable
-    }));
-}
-
-function dbGetDefaultCol(deal){
-  const map={closed:'closed',commit:'commit',probable:'probable',upside:'upside',pipeline:'upside'};
-  return map[deal.cat]||'upside';
-}
-
-function resetDealBack(){
-  dbState={};
-  renderDealBack();
-}
-
-function renderDealBack(){
-  const wrap=$('db-board-wrap');
-  const toolbarEl=$('db-toolbar-inner');
-  if(!wrap)return;
-  const deals=dbGetDeals();
-  dbDeals=deals;
-
-  if(!deals.length){
-    wrap.innerHTML='<div class="db-empty"><div class="db-empty-icon">&#128200;</div><div class="db-empty-title">Deal-Backing</div><div class="db-empty-sub">Import your pipeline CSV, then open this module to build a deal-backed path to your forecast.</div></div>';
-    const p=$("db-quota-pill");if(p)p.textContent='Import pipeline data to begin';
-    return;
-  }
-
-  // Init state
-  deals.forEach(d=>{if(!(d.id in dbState))dbState[d.id]=dbGetDefaultCol(d);});
-
-  // Totals per bucket
-  const tot={bench:0,closed:0,commit:0,probable:0,upside:0};
-  const cnt={bench:0,closed:0,commit:0,probable:0,upside:0};
-  deals.forEach(d=>{const k=dbState[d.id];tot[k]=(tot[k]||0)+d.acv;cnt[k]=(cnt[k]||0)+1;});
-
-  // Cumulative (additive waterfall)
-  const closedAmt=tot.closed; // closed won anchors every forecast tier
-  const cumC=closedAmt+tot.commit;
-  const cumP=closedAmt+tot.commit+tot.probable;
-  const cumU=closedAmt+tot.commit+tot.probable+tot.upside;
-
-  const quota=S?S.quota:0;
-
-  // Toolbar stats
-  const pill=$("db-quota-pill");
-  if(pill){
-    pill.innerHTML=
-      '<div class="db-toolbar-stats">'+
-      (quota>0?'<div class="db-stat"><span class="db-stat-lbl">Quota</span><span class="db-stat-val">'+fmt(quota)+'</span></div><div class="db-stat-divider"></div>':'') +
-      '<div class="db-stat"><span class="db-stat-lbl">Closed Won</span><span class="db-stat-val" style="color:#059669">'+fmt(closedAmt)+'</span><span class="db-stat-sub">'+cnt.closed+' deals</span></div>'+
-      '<div class="db-stat-divider"></div>'+
-      '<div class="db-stat"><span class="db-stat-lbl">Commit FC</span><span class="db-stat-val">'+fmt(cumC)+'</span></div>'+
-      '<div class="db-stat-divider"></div>'+
-      '<div class="db-stat"><span class="db-stat-lbl">Probable FC</span><span class="db-stat-val">'+fmt(cumP)+'</span></div>'+
-      '<div class="db-stat-divider"></div>'+
-      '<div class="db-stat"><span class="db-stat-lbl">Upside FC</span><span class="db-stat-val">'+fmt(cumU)+'</span></div>'+
-      '<div class="db-stat-divider"></div>'+
-      '<div class="db-stat"><span class="db-stat-lbl">Benched</span><span class="db-stat-val" style="color:var(--tx2)">'+fmt(tot.bench)+'</span><span class="db-stat-sub" style="color:var(--tx2)">'+cnt.bench+' deals</span></div>'+
-      '</div>';
-  }
-
-
-  // Waterfall composition band data
-  // Shows what accumulates into each forecast total
-  const closedRow={label:'Closed won',amt:closedAmt,color:'#059669'};
-  const wfBands={
-    commit:[
-      closedRow,
-      {label:'+ Commit deals',amt:tot.commit,color:'#1a56db'},
-    ],
-    probable:[
-      closedRow,
-      {label:'+ Commit deals',amt:tot.commit,color:'#1a56db'},
-      {label:'+ Probable deals',amt:tot.probable,color:'#0d7c3d'},
-    ],
-    upside:[
-      closedRow,
-      {label:'+ Commit deals',amt:tot.commit,color:'#1a56db'},
-      {label:'+ Probable deals',amt:tot.probable,color:'#0d7c3d'},
-      {label:'+ Upside deals',amt:tot.upside,color:'#b45309'},
-    ],
-  };
-  const cumTotals={commit:cumC,probable:cumP,upside:cumU};
-
-  const makeCard=(d)=>{
-    const moved=!d.closed&&dbGetDefaultCol(d)!==dbState[d.id];
-    const cd=d.closeDate?new Date(d.closeDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
-    const draggable=!d.closed;
-    return'<div class="db-card'+(d.closed?' db-card-closed':'')+'" '+(draggable?'draggable="true"':'') +' data-id="'+d.id+'" '+
-      (draggable?'ondragstart="dbDragStart(event,'+"'"+d.id+"'"+')" ondragend="dbDragEnd(event)"':'') +'>'+
-      (moved?'<div class="db-moved-badge" title="Moved from original category"></div>':'') +
-      '<div class="db-card-name" title="'+d.name+'">'+d.name.substring(0,32)+(d.name.length>32?'…':'')+'</div>'+
-      '<div class="db-card-acv">'+fmt(d.acv)+'</div>'+
-      '<div class="db-card-meta">'+
-        (d.owner?'<span class="db-card-owner">'+d.owner+'</span>':'') +
-        (cd?'<span class="db-card-date">&#128197; '+cd+'</span>':'') +
-        '<span class="db-card-cat" style="'+CAT_PILL_STYLE[d.cat]+'">'+d.cat+'</span>'+
-      '</div>'+
-    '</div>';
-  };
-
-  // Bench column (separate, narrower)
-  const benchDeals=deals.filter(d=>dbState[d.id]==='bench').sort((a,b)=>b.acv-a.acv);
-  const benchHtml='<div class="db-col db-bench">'+
-    '<div class="db-col-inner" data-col="bench" ondragover="dbDragOver(event,\'bench\')" ondragleave="dbDragLeave(event)" ondrop="dbDrop(event,\'bench\')">'+
-      '<div class="db-col-accent" style="background:#9ca3af"></div>'+
-      '<div class="db-col-hdr">'+
-        '<div class="db-col-title" style="color:#6b7280">Bench</div>'+
-        '<div class="db-col-total" style="color:var(--tx2)">'+fmt(tot.bench)+'</div>'+
-        '<div class="db-col-meta">'+cnt.bench+' deal'+(cnt.bench!==1?'s':'')+' not counting</div>'+
-      '</div>'+
-      '<div class="db-card-list" id="db-list-bench" '+
-        'ondragover="dbDragOver(event,\'bench\')" '+
-        'ondragleave="dbDragLeave(event)" '+
-        'ondrop="dbDrop(event,\'bench\')">'+
-        (benchDeals.length?benchDeals.map(makeCard).join(''):'<div class="db-col-empty">Drag deals here to park them</div>')+
-      '</div>'+
-    '</div>'+
-  '</div>';
-
-  // Forecast columns (commit, probable, upside)
-  const fcCols=[
-    {key:'commit',  label:'Commit',   accent:'#1a56db', cum:cumC, sub:'Counting on these to close'},
-    {key:'probable',label:'Probable', accent:'#0d7c3d', cum:cumP, sub:'Strong intent — likely closes'},
-    {key:'upside',  label:'Upside',   accent:'#b45309', cum:cumU, sub:'Possible if things break right'},
-  ];
-
-  const fcHtml=fcCols.map((col)=>{
-    const colDeals=deals.filter(d=>dbState[d.id]===col.key).sort((a,b)=>b.acv-a.acv);
-    const band=wfBands[col.key];
-    const cumTotal=cumTotals[col.key];
-
-    // Waterfall composition band
-    const bandRows=band.map(row=>
-      '<div class="db-wf-row">'+
-        '<div class="db-wf-swatch" style="background:'+row.color+'"></div>'+
-        '<span class="db-wf-label">'+row.label+'</span>'+
-        '<span class="db-wf-amount">'+fmt(row.amt)+'</span>'+
-      '</div>'
-    ).join('');
-    const bandHtml='<div class="db-waterfall-band">'+
-      bandRows+
-
-    '</div>';
-
-    // vs MV delta for headline
-    const mvDelta=(()=>{
-      if(!col.mv)return'';
-      const d=cumTotal-col.mv,p=Math.round(Math.abs(d)/col.mv*100);
-      if(Math.abs(d)<1)return'<span style="font-size:11px;font-weight:600;color:var(--tx2)">=&nbsp;MV</span>';
-      const cls=d>0?'over':'under';
-      return'<span class="db-col-vs '+cls+'" style="font-size:11px">'+( d>0?'+':'-')+fmt(Math.abs(d))+'</span>';
-    })();
-    return'<div class="db-col">'+
-      '<div class="db-col-inner">'+
-        '<div class="db-col-accent" style="background:'+col.accent+'"></div>'+
-        '<div class="db-col-hdr">'+
-          '<div class="db-col-title">'+col.label+' Forecast</div>'+
-          '<div class="db-col-total" style="color:'+col.accent+'">'+fmt(cumTotal)+'</div>'+
-          '<div class="db-col-meta">'+
-            '<span style="opacity:.65">'+colDeals.length+' '+col.label.toLowerCase()+' deal'+(colDeals.length!==1?'s':'')+' &nbsp;·&nbsp; '+fmt(tot[col.key])+'</span>'+
-          '</div>'+
-        '</div>'+
-        bandHtml+
-        '<div class="db-card-list" id="db-list-'+col.key+'" '+
-          'ondragover="dbDragOver(event,\''+(col.key)+'\')" '+
-          'ondragleave="dbDragLeave(event)" '+
-          'ondrop="dbDrop(event,\''+(col.key)+'\')">'+
-          (colDeals.length?colDeals.map(makeCard).join(''):'<div class="db-col-empty">Drop deals here</div>')+
-        '</div>'+
-      '</div>'+
-    '</div>';
-  }).join('');
-
-  wrap.innerHTML='<div class="db-board">'+fcHtml+benchHtml+'</div>';
-}
-
-// ── Drag and drop ──
-function dbDragStart(e,id){
-  dbDragId=id;
-  e.dataTransfer.effectAllowed='move';
-  setTimeout(()=>{
-    const el=document.querySelector('.db-card[data-id="'+id+'"]');
-    if(el)el.classList.add('dragging');
-  },0);
-}
-function dbDragEnd(e){
-  document.querySelectorAll('.db-card.dragging').forEach(el=>el.classList.remove('dragging'));
-  document.querySelectorAll('.db-card-list.drag-over').forEach(el=>el.classList.remove('drag-over'));
-}
-function dbDragOver(e,col){
-  e.preventDefault();
-  e.stopPropagation();
-  e.dataTransfer.dropEffect='move';
-  // Highlight only the card list, not the whole column
-  document.querySelectorAll('.db-card-list.drag-over').forEach(el=>el.classList.remove('drag-over'));
-  const list=$('db-list-'+col);
-  if(list)list.classList.add('drag-over');
-}
-function dbDragLeave(e){
-  // Only clear if leaving the column entirely (not moving between child elements)
-  const col=e.currentTarget.dataset&&e.currentTarget.dataset.col;
-  if(col&&!e.currentTarget.contains(e.relatedTarget)){
-    const list=$('db-list-'+col);
-    if(list)list.classList.remove('drag-over');
-  }
-}
-function dbDrop(e,col){
-  e.preventDefault();
-  const list=$('db-list-'+col);
-  if(list)list.classList.remove('drag-over');
-  if(!dbDragId)return;
-  dbState[dbDragId]=col;
-  dbDragId=null;
-  renderDealBack();
-}
-
-// ══════════════════════════════════════════════════════
 // SECTION COMMENTS
 // ══════════════════════════════════════════════════════
 const SEC_COMMENT_KEYS=['qi','cr','cnc'];
-
 function toggleSecComment(key){
   const wrap=document.getElementById('scw-'+key);
-  const btn=document.getElementById('scb-'+key);
   const ta=document.getElementById('sct-'+key);
   if(!wrap)return;
   const isOpen=wrap.classList.toggle('open');
   if(isOpen&&ta){ta.focus();ta.selectionStart=ta.value.length;}
-  // Update button state
   _updateSecCommentBtn(key);
 }
-
 function saveSecComment(key){
   const ta=document.getElementById('sct-'+key);
   if(!ta)return;
-  const val=ta.value;
   const stored=JSON.parse(localStorage.getItem('sec_comments')||'{}');
-  if(val.trim()){stored[key]=val;}else{delete stored[key];}
+  if(ta.value.trim()){stored[key]=ta.value;}else{delete stored[key];}
   localStorage.setItem('sec_comments',JSON.stringify(stored));
   _updateSecCommentBtn(key);
 }
-
 function _updateSecCommentBtn(key){
   const btn=document.getElementById('scb-'+key);
   const ta=document.getElementById('sct-'+key);
@@ -4688,7 +4232,6 @@ function _updateSecCommentBtn(key){
   btn.classList.toggle('has-note',hasNote);
   btn.title=hasNote?'Edit note':'Add note';
 }
-
 function loadSecComments(){
   try{
     const stored=JSON.parse(localStorage.getItem('sec_comments')||'{}');
@@ -4696,7 +4239,6 @@ function loadSecComments(){
       const ta=document.getElementById('sct-'+key);
       if(ta&&stored[key]){
         ta.value=stored[key];
-        // Auto-open if note exists
         const wrap=document.getElementById('scw-'+key);
         if(wrap)wrap.classList.add('open');
         _updateSecCommentBtn(key);
@@ -4705,19 +4247,188 @@ function loadSecComments(){
   }catch{}
 }
 
+
+// ══════════════════════════════════════════════════════
+// DEAL-BACKING MODULE
+// ══════════════════════════════════════════════════════
+let dbState={};
+let dbDeals=[];
+let dbDragId=null;
+
+const DB_COLS=[
+  {key:'commit',  label:'Commit',  accent:'#1a56db',sub:'Counting on these to close'},
+  {key:'probable',label:'Probable',accent:'#0d7c3d',sub:'Strong intent — likely closes'},
+  {key:'upside',  label:'Upside',  accent:'#b45309',sub:'Possible if things break right'},
+  {key:'bench',   label:'Bench',   accent:'#9ca3af',sub:'Not counting this quarter'},
+];
+const CAT_PILL_STYLE={
+  commit:'background:#dbeafe;color:#1a56db',probable:'background:#dcfce7;color:#0d7c3d',
+  upside:'background:#fef3c7;color:#b45309',pipeline:'background:#f3f4f6;color:#6b7280',
+  bench:'background:#f3f4f6;color:#6b7280',
+};
+
+function dbGetDeals(){
+  if(!importedData||!importedData.length)return[];
+  return importedData.filter(d=>d.f_fc_cat_norm!=='omitted').map((d,i)=>({
+    id:'db_'+i,name:d.f_opp_name||'Unknown',acv:d.f_amount_num||0,
+    owner:d.f_owner||'',cat:d.f_fc_cat_norm||'pipeline',
+    closeDate:d.f_close_date||'',closed:d.f_fc_cat_norm==='closed',
+  }));
+}
+function dbGetDefaultCol(deal){
+  const map={closed:'closed',commit:'commit',probable:'probable',upside:'upside',pipeline:'upside'};
+  return map[deal.cat]||'upside';
+}
+function resetDealBack(){dbState={};renderDealBack();}
+
+function renderDealBack(){
+  const wrap=$('db-board-wrap');
+  if(!wrap)return;
+  const deals=dbGetDeals();
+  dbDeals=deals;
+  if(!deals.length){
+    wrap.innerHTML='<div class="db-empty"><div class="db-empty-icon">&#128200;</div><div class="db-empty-title">Deal-Backing</div><div class="db-empty-sub">Import your pipeline CSV to begin.</div></div>';
+    const p=$('db-quota-pill');if(p)p.textContent='Import pipeline data to begin';
+    return;
+  }
+  deals.forEach(d=>{if(!(d.id in dbState))dbState[d.id]=dbGetDefaultCol(d);});
+
+  const tot={bench:0,commit:0,probable:0,upside:0};
+  const cnt={bench:0,commit:0,probable:0,upside:0};
+  deals.forEach(d=>{if(!d.closed){const k=dbState[d.id];tot[k]=(tot[k]||0)+d.acv;cnt[k]=(cnt[k]||0)+1;}});
+
+  const closedAmt=deals.filter(d=>d.closed).reduce((s,d)=>s+d.acv,0);
+  const cnt_closed=deals.filter(d=>d.closed).length;
+  const cumC=closedAmt+tot.commit;
+  const cumP=closedAmt+tot.commit+tot.probable;
+  const cumU=closedAmt+tot.commit+tot.probable+tot.upside;
+  const quota=S?S.quota:0;
+
+  const pill=$('db-quota-pill');
+  if(pill){
+    const q=quota>0?'Quota: <strong>'+fmt(quota)+'</strong> &nbsp;·&nbsp; ':'';
+    pill.innerHTML=
+      '<div class="db-toolbar-stats">'
+      +(quota>0?'<div class="db-stat"><span class="db-stat-lbl">Quota</span><span class="db-stat-val">'+fmt(quota)+'</span></div><div class="db-stat-divider"></div>':'')
+      +'<div class="db-stat"><span class="db-stat-lbl">Closed Won</span><span class="db-stat-val" style="color:#059669">'+fmt(closedAmt)+'</span></div>'
+      +'<div class="db-stat-divider"></div>'
+      +'<div class="db-stat"><span class="db-stat-lbl">Commit FC</span><span class="db-stat-val">'+fmt(cumC)+'</span></div>'
+      +'<div class="db-stat-divider"></div>'
+      +'<div class="db-stat"><span class="db-stat-lbl">Probable FC</span><span class="db-stat-val">'+fmt(cumP)+'</span></div>'
+      +'<div class="db-stat-divider"></div>'
+      +'<div class="db-stat"><span class="db-stat-lbl">Upside FC</span><span class="db-stat-val">'+fmt(cumU)+'</span></div>'
+      +'<div class="db-stat-divider"></div>'
+      +'<div class="db-stat"><span class="db-stat-lbl">Benched</span><span class="db-stat-val" style="color:var(--tx2)">'+fmt(tot.bench)+'</span></div>'
+      +'</div>';
+  }
+
+  const closedRow={label:'Closed won',amt:closedAmt,color:'#059669'};
+  const wfBands={
+    commit:[closedRow,{label:'+ Commit deals',amt:tot.commit,color:'#1a56db'}],
+    probable:[closedRow,{label:'+ Commit deals',amt:tot.commit,color:'#1a56db'},{label:'+ Probable deals',amt:tot.probable,color:'#0d7c3d'}],
+    upside:[closedRow,{label:'+ Commit deals',amt:tot.commit,color:'#1a56db'},{label:'+ Probable deals',amt:tot.probable,color:'#0d7c3d'},{label:'+ Upside deals',amt:tot.upside,color:'#b45309'}],
+  };
+  const cumTotals={commit:cumC,probable:cumP,upside:cumU};
+
+  const makeCard=d=>{
+    const moved=!d.closed&&dbGetDefaultCol(d)!==dbState[d.id];
+    const cd=d.closeDate?new Date(d.closeDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+    const openTag=d.closed
+      ?'<div class="db-card db-card-closed" data-id="'+d.id+'">'
+      :'<div class="db-card" draggable="true" data-id="'+d.id+'" '
+        +'ondragstart="dbDragStart(event,&quot;'+d.id+'&quot;)" '
+        +'ondragend="dbDragEnd(event)">';
+    return openTag
+      +(moved?'<div class="db-moved-badge" title="Moved"></div>':'')
+      +'<div class="db-card-name" title="'+d.name+'">'+d.name.substring(0,32)+(d.name.length>32?'…':'')+'</div>'
+      +'<div class="db-card-acv">'+fmt(d.acv)+'</div>'
+      +'<div class="db-card-meta">'
+        +(d.owner?'<span class="db-card-owner">'+d.owner+'</span>':'')
+        +(cd?'<span class="db-card-date">&#128197; '+cd+'</span>':'')
+        +'<span class="db-card-cat" style="'+( CAT_PILL_STYLE[d.cat]||'')+'">'+d.cat+'</span>'
+      +'</div>'
+    +'</div>';
+  };
+;
+
+  const fcCols=[
+    {key:'commit',  label:'Commit',  accent:'#1a56db',cum:cumC, sub:'Counting on these to close'},
+    {key:'probable',label:'Probable',accent:'#0d7c3d',cum:cumP, sub:'Strong intent — likely closes'},
+    {key:'upside',  label:'Upside',  accent:'#b45309',cum:cumU, sub:'Possible if things break right'},
+  ];
+
+  const fcHtml=fcCols.map(col=>{
+    const colDeals=deals.filter(d=>!d.closed&&dbState[d.id]===col.key).sort((a,b)=>b.acv-a.acv);
+    const band=wfBands[col.key];
+    const bandRows=band.map(row=>'<div class="db-wf-row"><div class="db-wf-swatch" style="background:'+row.color+'"></div><span class="db-wf-label">'+row.label+'</span><span class="db-wf-amount">'+fmt(row.amt)+'</span></div>').join('');
+    const bandHtml='<div class="db-waterfall-band">'+bandRows+'</div>';
+    return'<div class="db-col">'
+      +'<div class="db-col-inner" data-col="'+col.key+'" ondragover="dbDragOver(event,&quot;'+col.key+'&quot;)" ondragleave="dbDragLeave(event)" ondrop="dbDrop(event,&quot;'+col.key+'&quot;)">'
+        +'<div class="db-col-accent" style="background:'+col.accent+'"></div>'
+        +'<div class="db-col-hdr">'
+          +'<div class="db-col-title">'+col.label+' Forecast</div>'
+          +'<div class="db-col-total" style="color:'+col.accent+'">'+fmt(col.cum)+'</div>'
+          +'<div class="db-col-meta">'+colDeals.length+' '+col.label.toLowerCase()+' deal'+(colDeals.length!==1?'s':'')+' &nbsp;·&nbsp; <span style="opacity:.7">'+fmt(tot[col.key])+'</span></div>'
+        +'</div>'
+        +bandHtml
+        +'<div class="db-card-list" id="db-list-'+col.key+'">'
+          +(colDeals.length?colDeals.map(makeCard).join(''):'<div class="db-col-empty">Drop deals here</div>')
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+
+  const benchDeals=deals.filter(d=>!d.closed&&dbState[d.id]==='bench').sort((a,b)=>b.acv-a.acv);
+  const benchHtml='<div class="db-col db-bench">'
+    +'<div class="db-col-inner" data-col="bench" ondragover="dbDragOver(event,&quot;bench&quot;)" ondragleave="dbDragLeave(event)" ondrop="dbDrop(event,&quot;bench&quot;)">'
+      +'<div class="db-col-accent" style="background:#9ca3af"></div>'
+      +'<div class="db-col-hdr">'
+        +'<div class="db-col-title" style="color:#6b7280">Bench</div>'
+        +'<div class="db-col-total" style="color:var(--tx2)">'+fmt(tot.bench)+'</div>'
+        +'<div class="db-col-meta">'+cnt.bench+' deal'+(cnt.bench!==1?'s':'')+' not counting</div>'
+      +'</div>'
+      +'<div class="db-card-list" id="db-list-bench">'
+        +(benchDeals.length?benchDeals.map(makeCard).join(''):'<div class="db-col-empty">Drag deals here to park them</div>')
+      +'</div>'
+    +'</div>'
+  +'</div>';
+
+  wrap.innerHTML='<div class="db-board">'+fcHtml+benchHtml+'</div>';
+}
+
+function dbDragStart(e,id){
+  dbDragId=id;e.dataTransfer.effectAllowed='move';
+  setTimeout(()=>{const el=document.querySelector('.db-card[data-id="'+id+'"]');if(el)el.classList.add('dragging');},0);
+}
+function dbDragEnd(){
+  document.querySelectorAll('.db-card.dragging').forEach(el=>el.classList.remove('dragging'));
+  document.querySelectorAll('.db-card-list.drag-over').forEach(el=>el.classList.remove('drag-over'));
+}
+function dbDragOver(e,col){
+  e.preventDefault();e.stopPropagation();e.dataTransfer.dropEffect='move';
+  document.querySelectorAll('.db-card-list.drag-over').forEach(el=>el.classList.remove('drag-over'));
+  const list=$('db-list-'+col);if(list)list.classList.add('drag-over');
+}
+function dbDragLeave(e){
+  const col=e.currentTarget.dataset&&e.currentTarget.dataset.col;
+  if(col&&!e.currentTarget.contains(e.relatedTarget)){const list=$('db-list-'+col);if(list)list.classList.remove('drag-over');}
+}
+function dbDrop(e,col){
+  e.preventDefault();
+  const list=$('db-list-'+col);if(list)list.classList.remove('drag-over');
+  if(!dbDragId)return;
+  dbState[dbDragId]=col;dbDragId=null;renderDealBack();
+}
+
 // ══════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════
 $('r_cnc').addEventListener('input',function(){$('r_cnc_out').textContent=this.value+'%';calc();});
 ['r_commit','r_prob','r_up','r_pipe'].forEach(id=>$(id).addEventListener('input',function(){$(id+'_out').textContent=this.value+'%';calc();}));
 document.querySelectorAll('input[type=text]:not(.minput)').forEach(el=>el.addEventListener('input',calc));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeShareModal();}});
 initTheme();
 initQE();
 loadSecComments();
-// Prevent dropdown internal clicks from triggering outside-click handler
-const _scopeDd=$('scope-dropdown');
-if(_scopeDd)_scopeDd.addEventListener('click',e=>e.stopPropagation());
 initSettings();
 // Show skeleton immediately while state loads
 showSkeletonCards();
@@ -4726,8 +4437,6 @@ loadFromUrl(); // URL params take precedence over saved state
 if(![...new URLSearchParams(location.search).keys()].length){
   restoreQModeState(qMode);
 }
-// Apply saved forecast defaults (only affects fields still at HTML defaults)
-applyForecastDefaults();
 // Sync slider display values after any state restore
 ['r_commit','r_prob','r_up','r_pipe','r_cnc'].forEach(id=>{
   const el=$(id);if(el)$(id+'_out').textContent=el.value+'%';
@@ -4737,8 +4446,10 @@ renderQStatusBar();
 // Restore rail expanded state
 if(localStorage.getItem('rail_expanded')==='1')openSidebar();
 calc();
+nSidebar();
+calc();
 </script>
 <!-- Inspector print area — lives at body level to avoid view display:none -->
-<div id="insp-print-area" style="display:none;background:#fff"></div>
+<div id="insp-print-area" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:#fff;overflow:auto"></div>
 </body>
 </html>
