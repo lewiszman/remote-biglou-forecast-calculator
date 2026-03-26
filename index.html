@@ -43,11 +43,9 @@ html.dark .rep-rollup-hdr{background:#1e3a5f;border-color:#1a56db}
 html.dark .rrc-mgr{background:#1e3a5f}
 html.dark .minput{background:#1f2937;border-color:#4b5563;color:#f9fafb}
 /* import chip/drawer/settings dark */
-html.dark .import-chip{background:var(--bg2);border-color:#374151}
-html.dark .import-chip:hover{background:#1e3a5f;border-color:var(--blue);color:#93c5fd}
+html.dark html.dark .import-chip:hover{background:#1e3a5f;border-color:var(--blue);color:#93c5fd}
 html.dark .import-chip.has-data{background:#1e3a5f;border-color:#3b82f6;color:#93c5fd}
-html.dark .import-drawer{background:#111827;border-top-color:#374151}
-html.dark .import-zone-inner:hover{background:#111827!important}
+html.dark html.dark .import-zone-inner:hover{background:#111827!important}
 html.dark #import-card .import-zone-inner:hover{background:#111827}
 html.dark .settings-section{background:var(--bg);border-color:#374151}
 html.dark .settings-row{border-color:#374151}
@@ -344,7 +342,6 @@ html.dark .past-unlocked{background:#3d2b0a!important;border-color:#92400e!impor
 .btn:hover{background:var(--bg2)}
 .btn-primary{background:var(--blue);border-color:var(--blue);color:#fff}
 .btn-primary:hover{background:var(--blue-dk);border-color:var(--blue-dk)}
-.btn-outline-blue{border-color:var(--blue);color:var(--blue)}
 .btn-outline-blue:hover{background:#eff6ff}
 .ver{font-size:11px;color:var(--tx2);margin-left:auto}
 
@@ -372,10 +369,6 @@ html.dark .import-zone-inner:hover{background:#111827}
 /* ── IMPORT ZONE ── */
 .import-zone{border:1.5px dashed #d1d5db;border-radius:var(--rl);background:var(--bg);padding:2rem 1.5rem;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;position:relative}
 .import-zone:hover,.import-zone.drag-over{border-color:var(--blue);background:#f8fbff}
-.import-icon{font-size:28px;margin-bottom:.75rem;display:block}
-.import-title{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:.25rem}
-.import-sub{font-size:12px;color:var(--tx2);margin-bottom:.875rem}
-.import-actions{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
 #file-input{display:none}
 .import-badge{display:inline-flex;align-items:center;gap:5px;background:#eff6ff;border:1px solid #bfdbfe;color:var(--blue);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
 .import-badge-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0}
@@ -463,7 +456,6 @@ html.dark .changelog-ver-badge.current{background:#1e3a5f;border-color:#3b82f6;c
 .wiz-map-row:hover{background:var(--bg2);margin:0 -.5rem;padding:.5rem;border-radius:var(--rm)}
 .wiz-field-name{font-size:13px;font-weight:600;color:var(--tx)}
 .wiz-field-desc{font-size:11px;color:var(--tx2);margin-top:1px}
-.wiz-field-req{font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.04em}
 .wiz-map-select{width:100%;font-size:13px}
 .wiz-val-section{margin-bottom:1.25rem}
 .wiz-val-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center;padding:.5rem 0;border-bottom:var(--bdr)}
@@ -666,7 +658,6 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
 .insp-cat-hdr-accent{width:3px;height:14px;border-radius:2px;flex-shrink:0}
 .insp-cat-hdr-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
 .insp-cat-hdr-stats{font-size:11px;color:var(--tx2);flex:1}
-.insp-cat-hdr-flag{font-size:10px;font-weight:700}
 /* Coaching focus inline */
 .insp-focus-row{display:none;align-items:center;gap:8px;padding:.5rem 0;flex-wrap:wrap}
 .insp-focus-row.open{display:flex}
@@ -744,7 +735,6 @@ html.dark .insp-flag-pill.green{background:#052e16;color:#86efac}
 .insp-deals-table tr:hover td{background:var(--bg2)}
 .insp-deal-name{font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .insp-deal-amount{font-weight:600;color:var(--tx);white-space:nowrap}
-.insp-cat-pill{font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;white-space:nowrap}
 .insp-flags-cell{display:flex;flex-wrap:wrap;gap:3px;max-width:280px}
 .insp-flag-tag{font-size:10px;padding:1px 6px;border-radius:4px;white-space:nowrap}
 .insp-flag-tag.red{background:#fee2e2;color:#b91c1c}
@@ -776,9 +766,6 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
 .db-col{position:relative}
 .db-col-inner{border-radius:var(--rl);overflow:hidden;border:var(--bdr);background:var(--bg);height:100%;display:flex;flex-direction:column}
 /* waterfall: each forecast col gets a left connector showing prior tier flows in */
-.db-wf-connector{height:4px;display:flex;margin-bottom:-1px;position:relative}
-.db-wf-seg{flex:1;opacity:.35}
-.db-wf-arrow{position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent}
 /* column header */
 .db-col-hdr{padding:.875rem 1rem .75rem;border-bottom:var(--bdr)}
 .db-col-accent{height:4px;margin:-1px -1px 0;border-radius:2px 2px 0 0}
@@ -795,11 +782,7 @@ html.dark .insp-flag-tag.ai{background:#2e1065;color:#c4b5fd;border-color:#4c1d9
 .db-wf-swatch{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 .db-wf-label{color:var(--tx2);flex:1}
 .db-wf-amount{font-weight:600;color:var(--tx)}
-.db-wf-total-row{display:flex;justify-content:space-between;align-items:baseline;padding-top:.375rem;margin-top:.375rem;border-top:1px solid rgba(0,0,0,.07)}
-html.dark .db-wf-total-row{border-top-color:rgba(255,255,255,.08)}
-.db-wf-total-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2)}
-.db-wf-total-val{font-size:13px;font-weight:700;color:var(--tx)}
-/* card list */
+html.dark /* card list */
 .db-card-list{min-height:140px;padding:.625rem .625rem;display:flex;flex-direction:column;gap:6px;flex:1}
 .db-card-list.drag-over{background:rgba(26,86,219,.05);outline:2px dashed var(--blue);outline-offset:-3px;border-radius:4px}
 /* deal card */
@@ -3167,7 +3150,7 @@ const CAT_BG={closed:'#f0fdf4',commit:'#eff6ff',probable:'#f0fdf4',upside:'#fffb
 // ══════════════════════════════════════════════════════
 
 // ── Inspector defaults ──
-const DEFAULT_SYSTEM_PROMPT='You are a sales manager assistant. Review opportunity data and produce a structured, Slack-ready inspection summary grouped by forecast category.\n\nYour job is to:\n1. Confirm or contextualise the rule-based flags\n2. Assess stage alignment from deal context (next step, MEDDPICC content) — not just field values\n3. Assess MEDDPICC content quality — but only flag MEDDPICC gaps on Commit and Probable deals. For Upside, Pipeline, or deals in Discovery/Qualification stage, MEDDPICC is expected to be incomplete; do not flag it.\n4. Identify deals needing executive attention\n\nDo NOT flag or comment on forecast category (FC) assignments. FC is managed separately.\n\nOutput format — mirror this structure exactly:\\n\\nOne sentence observation about this AE pipeline health.\\n\\n[Pipeline action items for M/DD]\\n\\n*Commit*\\n🔴 *Acme Corp*: past close date, no next step\\n🟡 *Beta Inc*: champion thin, no activity 18d\\n\\n*Probable*\\n🟡 *Gamma Ltd*: next step vague, stale 14d\\n\\nRules: bold category header per group, one line per flagged deal, opp name in *asterisks*, 🔴 for exec-attention only (past close/broken commit/missing champion or EB on commit), 🟡 for all other flags. Only include categories with flagged deals. No other prose or headers.';
+const DEFAULT_SYSTEM_PROMPT='You are a sales manager assistant. Review opportunity data and produce a structured, Slack-ready inspection summary grouped by forecast category.\n\nRule-based flags are pre-computed and included with each deal. Your job is to add qualitative judgment on top:\n1. Assess next step quality: is it a concrete, future-dated action to be taken by the AE? Flag if it is vague, reactive, or missing a date.\n2. For Commit and Probable deals, assess MEDDPICC content quality — flag fields that are thin, generic, or inconsistent with other deal context.\n3. Identify deals needing executive attention.\n4. Do NOT re-flag rule-based issues already listed (close date, activity, FC/stage mismatch, empty fields). Focus on qualitative judgment only.\n\nOutput format — mirror this structure exactly:\n\nOne sentence observation about this AE pipeline health.\n\n[Pipeline action items for M/DD]\n\n*Commit*\n🔴 *Acme Corp*: next step vague (no date, waiting on prospect), champion thin\n🟡 *Beta Inc*: metrics generic (no quantified impact)\n\n*Probable*\n🟡 *Gamma Ltd*: next step not AE-owned (waiting on legal team)\n\nRules: bold category header per group, one line per flagged deal, opp name in *asterisks*, 🔴 for exec-attention only (past close, broken commit, missing champion or EB on commit), 🟡 for all other flags. Only include categories with flagged deals. No other prose or headers.';
 
 const DEFAULT_COACHING_FOCUS='Be concise and objective. Flag anything needing executive attention.';
 // Sonnet 4.5 pricing: $3/M input, $15/M output, $0.30/M cache read (90% discount)
@@ -3326,111 +3309,148 @@ function toggleApiKeyVisibility(){
 }
 
 // ── Rule-based hygiene flags ──
-const STAGE_FC_MATRIX={
-  // stage (lowercase) → allowed forecast categories
-  'discovery':          ['pipeline','upside'],
-  'qualification':      ['pipeline','upside'],
-  'solution design':    ['pipeline','upside','probable'],
-  'value proposition':  ['pipeline','upside','probable'],
-  'business case':      ['upside','probable','commit'],
-  'proposal':           ['upside','probable','commit'],
-  'negotiation':        ['probable','commit'],
-  'legal & commercial': ['probable','commit'],
-  'contract review':    ['probable','commit'],
-  'verbal commit':      ['commit'],
+
+// Business-day counter (forward from a date, exclusive of start)
+function bizDaysFrom(from, to){
+  let count=0;
+  const d=new Date(from); d.setDate(d.getDate()+1); d.setHours(0,0,0,0);
+  const end=new Date(to); end.setHours(23,59,59,999);
+  while(d<=end){ if(isWeekday(d)&&!isHoliday(d))count++; d.setDate(d.getDate()+1); }
+  return count;
+}
+
+// Stage → minimum expected FC category
+// Used to flag FC that is too conservative OR too aggressive
+const STAGE_MIN_FC={
+  'discovery':          'pipeline',   // must be at least pipeline
+  'qualification':      'pipeline',
+  'demo':               'upside',     // demo and above → at least upside
+  'solution design':    'upside',
+  'value proposition':  'upside',
+  'business case':      'upside',
+  'proposal':           'upside',
+  'negotiation':        'probable',
+  'legal & commercial': 'probable',
+  'contract review':    'probable',
+  'verbal commit':      'probable',
 };
 
-function parseNextStepDate(nextStep, closeDate){
-  if(!nextStep)return null;
-  const m=nextStep.match(/^(\d{1,2})\/(\d{1,2})/);
-  if(!m)return null;
-  const month=parseInt(m[1])-1,day=parseInt(m[2]);
-  // Infer year from close date if available
-  let year=new Date().getFullYear();
-  if(closeDate){
-    const cd=new Date(closeDate);
-    if(!isNaN(cd))year=cd.getFullYear();
-  }
-  return new Date(year,month,day);
-}
+// Stage → maximum expected FC category
+const STAGE_MAX_FC={
+  'discovery':          'pipeline',   // discovery should NOT be commit/probable/upside
+  'qualification':      'pipeline',
+  'demo':               'upside',
+  'solution design':    'upside',
+  'value proposition':  'upside',
+  'business case':      'probable',
+  'proposal':           'probable',
+  'negotiation':        'commit',
+  'legal & commercial': 'commit',
+  'contract review':    'commit',
+  'verbal commit':      'commit',
+};
 
-// Vague/low-confidence next step patterns
-const VAGUE_NS_PATTERNS=[
-  /^follow\s*up/i,/^check\s*in/i,/^touch\s*base/i,/^reach\s*out/i,
-  /^circle\s*back/i,/^reconnect/i,/^ping/i,/^waiting/i,/^TBD/i,
-  /^to\s*be\s*(determined|confirmed|scheduled)/i,
-  /^next\s*(call|steps?|meeting|check)/i,
-  /^send\s*(email|follow)/i,/^email/i,
+const CAT_RANK={pipeline:0,upside:1,probable:2,commit:3};
+const MEDDPICC_FIELDS=[
+  {key:'f_metrics',      label:'Metrics (M)'},
+  {key:'f_econ_buyer',   label:'Economic Buyer (E)'},
+  {key:'f_dec_criteria', label:'Decision Criteria (DC)'},
+  {key:'f_dec_process',  label:'Decision Process (DP)'},
+  {key:'f_proc_process', label:'Procurement Process (PP)'},
+  {key:'f_implicated',   label:'Implicated Pain (I)'},
+  {key:'f_champion',     label:'Champion (C)'},
 ];
-function isVagueNextStep(ns){
-  if(!ns||ns.trim().length<8)return true;
-  const stripped=ns.replace(/^\d{1,2}\/\d{1,2}\s*[-:]?\s*/,'').trim();
-  if(stripped.length<8)return true;
-  return VAGUE_NS_PATTERNS.some(p=>p.test(stripped));
-}
+
+// Stages where MEDDPICC is expected to be incomplete — don't flag
+const EARLY_STAGES=['discovery','qualification','demo'];
 
 function flagDeal(deal){
   const flags=[];
-  const now=new Date();now.setHours(0,0,0,0);
-  const cat=deal.f_fc_cat_norm||'';
+  const now=new Date(); now.setHours(0,0,0,0);
+  const cat=deal.f_fc_cat_norm||'pipeline';
   const stage=(deal.f_stage||'').toLowerCase().trim();
   const amt=deal.f_amount_num||0;
-  // Proposal-or-later stages for tighter activity threshold
-  const lateStages=['proposal','negotiation','legal & commercial','contract review','verbal commit','business case'];
-  const isLate=lateStages.some(s=>stage.includes(s));
 
-  // Close date
+  // ── 1. Close date ──
   if(!deal.f_close_date){
     flags.push({sev:'amber',text:'No close date'});
   } else {
     const cd=new Date(deal.f_close_date);
     if(!isNaN(cd)){
-      const daysToClose=Math.floor((cd-now)/86400000);
-      if(daysToClose<0&&cat!=='closed')
-        flags.push({sev:'red',text:'Close date passed'});
-      else if(daysToClose<=14&&!['commit'].includes(cat))
-        flags.push({sev:'amber',text:'Close <14d, not commit — advance or re-date'});
+      cd.setHours(0,0,0,0);
+      const calDays=Math.floor((cd-now)/86400000);
+      const cdDay=cd.getDay(); // 0=Sun, 6=Sat
+
+      if(calDays<0){
+        flags.push({sev:'red',text:'Close date in the past'});
+      } else if(cdDay===0||cdDay===6){
+        flags.push({sev:'amber',text:'Close date lands on a weekend'});
+      } else {
+        const bizDays=bizDaysFrom(now,cd);
+        if(bizDays<=3){
+          flags.push({sev:'red',text:'Close date within 3 business days'});
+        } else if(stage.includes('discovery')&&bizDays<10){
+          flags.push({sev:'amber',text:'Discovery stage — close <10 business days away'});
+        }
+      }
     }
   }
 
-  // Next step — date + vagueness
-  if(!deal.f_next_step||deal.f_next_step.trim()===''){
-    flags.push({sev:['commit','probable'].includes(cat)?'red':'amber',text:'No next step'});
-  } else {
-    const nsDate=parseNextStepDate(deal.f_next_step,deal.f_close_date);
-    if(!nsDate)
-      flags.push({sev:'amber',text:'Next step missing date'});
-    else if(nsDate<now)
-      flags.push({sev:'red',text:'Next step past due'});
-    if(isVagueNextStep(deal.f_next_step))
-      flags.push({sev:'amber',text:'Next step vague/low confidence'});
+  // ── 2. Forecast category vs stage alignment ──
+  if(stage){
+    // Find the best matching stage key (substring match)
+    const stageKey=Object.keys(STAGE_MAX_FC).find(k=>stage.includes(k));
+    if(stageKey){
+      const minCat=STAGE_MIN_FC[stageKey];
+      const maxCat=STAGE_MAX_FC[stageKey];
+      const minRank=CAT_RANK[minCat]??0;
+      const maxRank=CAT_RANK[maxCat]??3;
+      const catRank=CAT_RANK[cat]??0;
+      if(catRank>maxRank){
+        // FC too aggressive for stage
+        flags.push({sev:'red',text:'FC too high for '+stageKey+' stage (max: '+maxCat+')'});
+      } else if(catRank<minRank){
+        // FC too conservative for stage
+        flags.push({sev:'amber',text:'FC too low for '+stageKey+' stage (min: '+minCat+')'});
+      }
+    }
   }
 
-  // Last activity — 14d for late stage, 30d otherwise
+  // ── 3. Next step ──
+  if(!deal.f_next_step||deal.f_next_step.trim()===''){
+    flags.push({sev:['commit','probable'].includes(cat)?'red':'amber',text:'Next step empty'});
+  }
+  // (Qualitative next step assessment — is it a real future dated action? — handled by AI)
+
+  // ── 4. MEDDPICC — flag empty fields on Commit and Probable only ──
+  // Early-stage deals are not expected to have MEDDPICC complete
+  const isEarlyStage=EARLY_STAGES.some(s=>stage.includes(s));
+  const checkMeddpicc=['commit','probable'].includes(cat)&&!isEarlyStage;
+  if(checkMeddpicc){
+    MEDDPICC_FIELDS.forEach(f=>{
+      const val=(deal[f.key]||'').trim();
+      if(!val)flags.push({sev:'amber',text:f.label+' empty'});
+    });
+  }
+
+  // ── 5. Last activity — >14 days for all stages ──
   if(deal.f_last_activity){
     const la=new Date(deal.f_last_activity);
     if(!isNaN(la)){
       const daysSince=Math.floor((now-la)/86400000);
-      const redThresh=isLate?14:30;
-      const amberThresh=isLate?7:14;
-      if(daysSince>redThresh)
-        flags.push({sev:'red',text:'No activity '+daysSince+'d'+(isLate?' (late stage)':'')});
-      else if(daysSince>amberThresh)
-        flags.push({sev:'amber',text:'Quiet '+daysSince+'d'});
+      if(daysSince>14)
+        flags.push({sev:'red',text:'No activity '+daysSince+'d'});
     }
   } else {
-    flags.push({sev:'amber',text:'No activity data'});
+    flags.push({sev:'amber',text:'No activity date available'});
   }
 
-  // Stage/FC alignment and MEDDPICC quality → handled by AI (qualitative)
-  // Rules only catch structural issues; content quality requires reading comprehension
-
-  // Amount suspect
+  // ── 6. Amount ──
   if(amt===0)flags.push({sev:'red',text:'Amount $0'});
-  else if(amt%10000===0&&amt>=50000)flags.push({sev:'amber',text:'Amount suspiciously round'});
 
   return flags;
 }
+
 
 function groupByRep(records){
   const map={};
