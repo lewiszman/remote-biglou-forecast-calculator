@@ -202,6 +202,11 @@ html.dark .scope-badge{background:#431407;color:#fdba74;border-color:#9a3412}
 @keyframes num-pop{0%{transform:scale(1)}40%{transform:scale(1.04)}100%{transform:scale(1)}}
 .fc-amount.updated{animation:num-pop .3s ease-out}
 .fc-meta{display:flex;align-items:baseline;gap:6px;margin-bottom:.5rem}
+.prob-upside-toggle{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:2px 8px 2px 6px;border-radius:20px;border:1px solid var(--bdr2,#e5e7eb);background:var(--bg);color:var(--tx2);cursor:pointer;transition:background .15s,border-color .15s,color .15s;user-select:none;margin-top:5px;white-space:nowrap;line-height:1.4}
+.prob-upside-toggle:hover{border-color:#d1d5db;color:var(--tx)}
+.prob-upside-toggle.active{background:#fff7ed;border-color:#fed7aa;color:#b45309}
+.prob-upside-toggle .put-dot{width:7px;height:7px;border-radius:50%;background:#d1d5db;transition:background .15s;flex-shrink:0}
+.prob-upside-toggle.active .put-dot{background:#b45309}
 .att-bar{height:3px;border-radius:2px;background:#e5e7eb;overflow:hidden;margin-bottom:.75rem}
 /* skeleton */
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
@@ -234,6 +239,7 @@ html.dark .fc-card.expanded{background:#1e3a5f22}
 .fc-cnc-bridge .bridge-n{font-size:13px;font-weight:700;color:var(--tx)}
 .fc-cnc-bridge .bridge-on-track{font-size:11px;font-weight:600;color:var(--green)}
 .bk-row .bv{font-weight:600;color:var(--tx)}
+.bk-upside .bv{color:#b45309!important}
 .bk-cnc{border-top:var(--bdr);margin-top:3px;padding-top:4px}
 .bk-cnc .bv{color:var(--green)}
 .qbar{background:var(--bg2);border-top:var(--bdr);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
@@ -2884,43 +2890,58 @@ function calc(){
   $('cnc-out').innerHTML=`
     <div class="cnc-res"><div class="cr-l">Qualified pipeline created</div><div class="cr-v" style="color:var(--blue)">${fmt(cnc_pipe)}</div><div class="cr-s">${Math.round(opps).toLocaleString()} opps × ${fmt(asp)} ASP</div></div>
     <div class="cnc-res"><div class="cr-l">Expected C&amp;C bookings</div><div class="cr-v" style="color:var(--green)">${fmt(cnc_rev)}</div><div class="cr-s">${fmt(cnc_pipe)} × ${pct(Math.round(rcnc*100))} C&amp;C rate</div></div>`;
-  const fc_commit=closed+bk_c,fc_prob=fc_commit+bk_p+cnc_rev,fc_up=fc_prob+bk_u,fc_full=fc_up+bk_pp;
+  const bk_u_in_prob=_probIncludesUpside?bk_u*0.5:0;
+  const fc_commit=closed+bk_c,fc_prob=fc_commit+bk_p+cnc_rev+bk_u_in_prob,fc_up=fc_prob+(bk_u-bk_u_in_prob),fc_full=fc_up+bk_pp;
   $('cnc-note').innerHTML=`C&amp;C bookings of <strong>${fmt(cnc_rev)}</strong> included in Probable forecast and above — Probable <strong>${fmt(fc_prob)}</strong> · Upside <strong>${fmt(fc_up)}</strong>`;
-  renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up);
+  renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up,bk_u_in_prob);
   renderMonthly(fc_commit,fc_prob,fc_up,quota);
-  S={quota,closed,pc,pp,pu,pp2,rc,rp,ru,rpp,rcnc,bk_c,bk_p,bk_u,bk_pp,opps,asp,cnc_pipe,cnc_rev,fc_commit,fc_prob,fc_up,fc_full};
+  S={quota,closed,pc,pp,pu,pp2,rc,rp,ru,rpp,rcnc,bk_c,bk_p,bk_u,bk_pp,bk_u_in_prob,opps,asp,cnc_pipe,cnc_rev,fc_commit,fc_prob,fc_up,fc_full};
   // Persist current mode state so switching preserves values
   saveQModeState(qMode);
 }
 
 let _prevFcValues={};
-function renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up){
+let _probIncludesUpside=JSON.parse(localStorage.getItem('prob_includes_upside')||'false');
+
+function toggleProbUpside(){
+  _probIncludesUpside=!_probIncludesUpside;
+  localStorage.setItem('prob_includes_upside',JSON.stringify(_probIncludesUpside));
+  calc();
+}
+function renderHero(quota,closed,bk_c,bk_p,bk_u,cnc_rev,fc_commit,fc_prob,fc_up,bk_u_in_prob){
   const cards=[
     {id:'commit',tier:'Commit forecast',dot:'#1a56db',color:'#1a56db',fc:fc_commit,
      detail:[{l:'Conversion rate',v:pct(Math.round(pv('r_commit')))},{l:'Open commit pipeline',v:fmt(pv('pipe_commit'))},{l:'Expected commit bookings',v:fmt(bk_c)},{l:'+ C&C bookings',v:fmt(cnc_rev)}],
      rows:[{l:'Closed QTD',v:fmt(closed)},{l:'+ Commit bookings',v:fmt(bk_c)}]},
     {id:'prob',tier:'Probable forecast',dot:'#0d7c3d',color:'#0d7c3d',fc:fc_prob,
-     detail:[{l:'Conversion rate',v:pct(Math.round(pv('r_prob')))},{l:'Open probable pipeline',v:fmt(pv('pipe_prob'))},{l:'Expected probable bookings',v:fmt(bk_p)}],
-     rows:[{l:'Commit FC',v:fmt(fc_commit)},{l:'+ Probable bookings',v:fmt(bk_p)},{l:'+ C&C bookings',v:fmt(cnc_rev),cnc:true}]},
+     detail:[{l:'Conversion rate',v:pct(Math.round(pv('r_prob')))},{l:'Open probable pipeline',v:fmt(pv('pipe_prob'))},{l:'Expected probable bookings',v:fmt(bk_p)},
+             ...( bk_u_in_prob>0?[{l:'+ ½ Upside bookings',v:fmt(bk_u_in_prob),upside:true}]:[])],
+     rows:[{l:'Commit FC',v:fmt(fc_commit)},{l:'+ Probable bookings',v:fmt(bk_p)},{l:'+ C&C bookings',v:fmt(cnc_rev),cnc:true},
+           ...( bk_u_in_prob>0?[{l:'+ ½ Upside bookings',v:fmt(bk_u_in_prob),upside:true}]:[])],
+     toggleHtml:'<div class="prob-upside-toggle'+(_probIncludesUpside?' active':'')+'" onclick="event.stopPropagation();toggleProbUpside()" title="Include 50% of Upside bookings in Probable forecast"><span class="put-dot"></span>'+(  _probIncludesUpside?'½ Upside included':'+ ½ Upside?')+'</div>'},
     {id:'up',tier:'Upside forecast',dot:'#b45309',color:'#b45309',fc:fc_up,
-     detail:[{l:'Conversion rate',v:pct(Math.round(pv('r_up')))},{l:'Open upside pipeline',v:fmt(pv('pipe_up'))},{l:'Expected upside bookings',v:fmt(bk_u)}],
-     rows:[{l:'Probable FC',v:fmt(fc_prob)},{l:'+ Upside bookings',v:fmt(bk_u)}]},
+     detail:[{l:'Conversion rate',v:pct(Math.round(pv('r_up')))},{l:'Open upside pipeline',v:fmt(pv('pipe_up'))},{l:'Expected upside bookings',v:fmt(bk_u)},
+             ...( bk_u_in_prob>0?[{l:'(½ already in Probable)',v:''}]:[])],
+     rows:[{l:'Probable FC',v:fmt(fc_prob)},
+           {l:bk_u_in_prob>0?'+ remaining ½ Upside':'+ Upside bookings',v:fmt(bk_u-bk_u_in_prob)}]},
   ];
   // Preserve expanded state across renders
   const expandedIds=new Set([...document.querySelectorAll('.fc-card.expanded')].map(el=>el.dataset.id));
   $('fc-cards').innerHTML=cards.map(c=>{
     const ap=attPct(c.fc,quota),ac=attVar(c.fc,quota);
-    const rows=c.rows.map(r=>`<div class="bk-row${r.cnc?' bk-cnc':''}"><span>${r.l}</span><span class="bv">${r.v}</span></div>`).join('');
+
     const detail=c.detail.map(r=>`<div class="fc-detail-row"><span>${r.l}</span><span class="fc-dv">${r.v}</span></div>`).join('');
     const isExpanded=expandedIds.has(c.id);
     const changed=_prevFcValues[c.id]!==undefined&&_prevFcValues[c.id]!==c.fc;
     _prevFcValues[c.id]=c.fc;
+    const rowsHtml=c.rows.map(r=>`<div class="bk-row${r.cnc?' bk-cnc':''}${r.upside?' bk-upside':''}"><span>${r.l}</span><span class="bv">${r.v}</span></div>`).join('');
     return `<div class="fc-card${isExpanded?' expanded':''}" data-id="${c.id}" onclick="toggleFcCard(this)">
       <div class="fc-tier"><span class="fc-dot" style="background:${c.dot}"></span><span style="color:${c.color}">${c.tier}</span></div>
       <div class="fc-amount${c.fc<quota?' danger':''} ${changed?'updated':''}" style="color:${ac}" onanimationend="this.classList.remove('updated')">${fmt(c.fc)}</div>
       <div class="fc-meta"><span style="font-size:21px;font-weight:600;color:${ac}">${ap}%</span><span style="font-size:12px;color:var(--tx2)">${c.fc>=quota?'on track':'gap: '+fmt(quota-c.fc)}</span></div>
       <div class="att-bar"><div class="att-fill" style="width:${cl(ap,0,100)}%;background:${c.dot}"></div></div>
-      <div class="bkdn">${rows}</div>
+      ${c.toggleHtml||''}
+      <div class="bkdn">${rowsHtml}</div>
       <div class="fc-detail-panel">${detail}</div>
       <div class="fc-expand-hint">${isExpanded?'&#9650; less':'&#9660; breakdown'}</div>
     </div>`;
