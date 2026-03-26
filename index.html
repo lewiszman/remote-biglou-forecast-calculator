@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forecast Calculator v2.6</title>
+<title>MOAT — Manager's Forecast Calculator v2.7</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1193,7 +1193,7 @@ html.dark .db-card:hover{border-color:#4b5563}
     <button class="btn" onclick="exportXlsx()">Download Excel</button>
     <button class="btn" onclick="printPdf()">Download PDF</button>
     <span id="save-msg" style="font-size:12px;color:var(--green)"></span>
-    <span class="ver">v2.6</span>
+    <span class="ver">v2.7</span>
     <button class="qe-toggle" onclick="toggleQE()" id="qe-btn">
       <div class="qe-track"><div class="qe-thumb"></div></div>
       <span id="qe-lbl">Q-End Mode</span>
@@ -1600,7 +1600,7 @@ html.dark .db-card:hover{border-color:#4b5563}
       <div class="settings-about-grid">
         <div class="settings-about-item">
           <div class="settings-about-lbl">Version</div>
-          <div class="settings-about-val">v2.6</div>
+          <div class="settings-about-val">v2.7</div>
         </div>
         <div class="settings-about-item">
           <div class="settings-about-lbl">Product</div>
@@ -1621,29 +1621,28 @@ html.dark .db-card:hover{border-color:#4b5563}
       <div class="settings-section-hdr">Version history</div>
       <div class="changelog-entry">
         <div class="changelog-ver">
-          <span class="changelog-ver-badge current">v2.6</span>
+          <span class="changelog-ver-badge current">v2.7</span>
           <span class="changelog-ver-date">Mar 2026</span>
         </div>
         <ul class="changelog-items">
-          <li><strong>Pipeline Inspector — AI summaries</strong> &mdash; per-rep coaching summaries via Anthropic API with structured action items, FC rationale in flags, AI flags injected as chips into deal table</li>
-          <li><strong>Pipeline Inspector — manager insights</strong> &mdash; team-level tab with flag frequency chart, AE risk score chart, and AI-generated coaching themes</li>
-          <li><strong>Pipeline Inspector — export</strong> &mdash; PDF (branded, print-ready) and Excel (summary, deal detail, AE summaries) available after each run</li>
-          <li><strong>Pipeline Inspector — progress &amp; status</strong> &mdash; progress bar with per-AE labels, rep header badges showing generating/done/error</li>
-          <li><strong>API usage dashboard</strong> &mdash; tokens and cost by today/week/month/quarter, avg per opp and per AE, recent run history</li>
-          <li><strong>Inspector settings</strong> &mdash; system prompt and coaching focus with defaults and reset; tabbed settings page</li>
-          <li><strong>Prompt caching</strong> &mdash; system prompt cached across rep calls (90% token discount on repeats)</li>
-          <li><strong>Code audit</strong> &mdash; dead code removed, duplicate CSS cleaned, app-body ID fix, qmode guard, hoisted constants</li>
-        </ul>
-      </div>
-      <div class="changelog-entry">
-        <div class="changelog-ver">
-          <span class="changelog-ver-badge current">v2.6</span>
-          <span class="changelog-ver-date">Mar 2026</span>
-        </div>
-        <ul class="changelog-items">
-          <li><strong>Pipeline Inspector</strong> &mdash; per-rep hygiene flags (close date, next step, activity, stage/FC mismatch, MEDDPICC gaps), deal table, AI coaching summaries via Anthropic API</li>
-          <li><strong>API key setting</strong> &mdash; Anthropic key stored in browser, used only for inspector AI summaries</li>
-          <li><strong>UX</strong> &mdash; persistent rail nav, FC card expand, skeleton loading, micro-animations, topbar import indicator</li>
+          <li><strong>Forecast arithmetic</strong> &mdash; Commit = Closed + Commit; Probable = Commit FC + Probable + C&amp;C; Upside = Probable FC + Upside</li>
+          <li><strong>½ Upside toggle</strong> &mdash; Probable card pill to include 50% of Upside bookings in Probable FC; Upside FC always reflects 100% of Upside in total; persists across sessions</li>
+          <li><strong>Hero cards — multi-expand</strong> &mdash; each card expands and collapses independently; expand all / collapse all button; click-again to collapse</li>
+          <li><strong>Hero cards — copy image</strong> &mdash; Copy image button captures all three cards as a PNG via html2canvas; clipboard write with download fallback</li>
+          <li><strong>Section comments</strong> &mdash; pencil icon on Quarterly inputs, Conversion rate assumptions, and C&amp;C sections; free-form note persisted to localStorage; auto-opens on load if note exists</li>
+          <li><strong>Pipeline Inspector — redesigned flags</strong> &mdash; close date (past / weekend / &lt;3 biz days / discovery &lt;10 biz days); FC vs stage alignment by min/max category; next step empty; MEDDPICC field-level gaps on Commit/Probable; last activity &gt;14d</li>
+          <li><strong>Pipeline Inspector — AI next step quality</strong> &mdash; AI assesses whether next step is a concrete, future-dated, AE-owned action; no re-flagging of rule-based issues</li>
+          <li><strong>Pipeline Inspector — deal grouping</strong> &mdash; deals grouped by FC category within each rep block (Commit → Probable → Upside → Pipeline) with coloured section headers</li>
+          <li><strong>Pipeline Inspector — team stats bar</strong> &mdash; AEs, active deals, total pipeline, critical flags, warnings, AEs with critical — appears immediately after each run</li>
+          <li><strong>Pipeline Inspector — toolbar</strong> &mdash; expand all / collapse all, flagged-only toggle, inline AI coaching focus input</li>
+          <li><strong>Pipeline Inspector — rep severity accents</strong> &mdash; 3px left border per rep block: red / amber / green based on worst flag</li>
+          <li><strong>Pipeline Inspector — AI deal bolding</strong> &mdash; deal names flagged by AI summary are bolded with ✦ marker in the deal table</li>
+          <li><strong>PDF export — fixed</strong> &mdash; consolidated @media print block; data-printing attribute switches between Manager View and Inspector PDFs; no blank pages; per-AE page breaks reliable across browsers</li>
+          <li><strong>Inspector PDF — rebuilt</strong> &mdash; flat page structure (no max-width wrapper); cover page with AE index table; each AE on its own page; Manager Insights on its own page</li>
+          <li><strong>AE scope filter</strong> &mdash; multi-select AE filter in hero header; scopes all forecast inputs to selected reps; clears on import</li>
+          <li><strong>Import persistence</strong> &mdash; last import data cached in localStorage; restores pipeline fields on reload</li>
+          <li><strong>Deal-Backing module</strong> &mdash; Kanban board with Commit / Probable / Upside / Bench columns; drag-and-drop; waterfall composition bands per column; cumulative FC headlines; toolbar stat bar</li>
+          <li><strong>Code audit</strong> &mdash; 16 dead CSS classes removed; consolidated print CSS; syntax validated; false-positive audit checks resolved</li>
         </ul>
       </div>
       <div class="changelog-entry">
@@ -3155,7 +3154,13 @@ function printPdf(){
         <tbody><tr><td>Closed</td>${cv.map(v=>`<td>${v>0?fmt(v):'—'}</td>`).join('')}<td>${fmt(ct)}</td><td>${varStr(ct,s.closed)}</td><td style="color:#9ca3af">${fmt(s.closed)}</td></tr>${mRows}</tbody></table>
       </div>
     </div>
-    <div class="pdf-ftr"><div class="pdf-ftr-l">Manager's Forecast Calculator v2.6<span class="pdot"></span>Remote</div><div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div></div>`;
+    <div class="pdf-ftr"><div class="pdf-ftr-l">Manager's Forecast Calculator v2.7<span class="pdot"></span>Remote</div><div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div></div>`;
+  document.body.setAttribute('data-printing','forecast');
+  const _cleanup=()=>{
+    document.body.removeAttribute('data-printing');
+    window.removeEventListener('afterprint',_cleanup);
+  };
+  window.addEventListener('afterprint',_cleanup);
   window.print();
 }
 
@@ -4141,9 +4146,12 @@ function exportInspectionPDF(){
 
   const printArea=$('insp-print-area');
   printArea.innerHTML=html;
-  printArea.style.display='block';
-  // Use afterprint event for reliable cleanup
-  const cleanup=()=>{printArea.style.display='none';window.removeEventListener('afterprint',cleanup);};
+  document.body.setAttribute('data-printing','inspector');
+  const cleanup=()=>{
+    document.body.removeAttribute('data-printing');
+    printArea.innerHTML='';
+    window.removeEventListener('afterprint',cleanup);
+  };
   window.addEventListener('afterprint',cleanup);
   window.print();
 }
@@ -4471,6 +4479,6 @@ nSidebar();
 calc();
 </script>
 <!-- Inspector print area — lives at body level to avoid view display:none -->
-<div id="insp-print-area" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:#fff;overflow:auto"></div>
+<div id="insp-print-area" style="display:none;background:#fff"></div>
 </body>
 </html>
