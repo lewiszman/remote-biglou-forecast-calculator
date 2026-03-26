@@ -242,6 +242,14 @@ html.dark .fc-card.expanded{background:#1e3a5f22}
 
 /* ── LAYOUT ── */
 .sec-hd{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx2);margin:1.5rem 0 .5rem;display:flex;align-items:center;gap:8px}
+.sec-comment-btn{background:none;border:none;cursor:pointer;padding:2px 4px;border-radius:4px;color:var(--tx2);opacity:.45;transition:opacity .15s,color .15s;line-height:1;flex-shrink:0;margin-left:2px}
+.sec-comment-btn:hover{opacity:1;color:var(--blue)}
+.sec-comment-btn.has-note{opacity:.8;color:var(--blue)}
+.sec-comment-wrap{margin:-2px 0 .75rem;display:none}
+.sec-comment-wrap.open{display:block}
+.sec-comment-textarea{width:100%;font-family:var(--font);font-size:12px;color:var(--tx);background:var(--bg);border:var(--bdr);border-radius:var(--rm);padding:.5rem .75rem;resize:vertical;min-height:52px;max-height:160px;outline:none;line-height:1.55;transition:border-color .15s}
+.sec-comment-textarea:focus{border-color:var(--blue)}
+.sec-comment-textarea::placeholder{color:var(--tx2);opacity:.6}
 .sec-hd::before{content:'';display:block;width:3px;height:12px;background:var(--coral);border-radius:2px;flex-shrink:0}
 .card{background:var(--bg);border:var(--bdr);border-radius:var(--rl);overflow:hidden}
 
@@ -530,13 +538,18 @@ html.dark .rrc-ae-total .rrc-val{color:#6ee7b7}
 
 /* ── PDF PRINT ── */
 @media print{
-  body{margin:0;padding:0;background:#fff}
-  .topbar,.sidebar,.sidebar-overlay,.app-body{display:none}
-  #pdf-view{display:block!important}
-  @page{size:letter;margin:0}
+  @page{size:letter;margin:14mm 16mm}
+  html,body{margin:0!important;padding:0!important;background:#fff!important}
+  /* Hide everything by default when printing */
+  .topbar,.sidebar,.sidebar-overlay,.app-body,
+  #pdf-view,#insp-print-area{display:none!important}
+  /* Manager View print */
+  body[data-printing="forecast"] #pdf-view{display:block!important}
+  /* Inspector print */
+  body[data-printing="inspector"] #insp-print-area{display:block!important;position:static!important;margin:0!important;padding:0!important}
 }
 #pdf-view{display:none}
-.pdf{font-family:Arial,Helvetica,sans-serif;font-size:9pt;color:#111;width:100%;min-height:100vh;display:flex;flex-direction:column}
+.pdf{font-family:Arial,Helvetica,sans-serif;font-size:9pt;color:#111;width:100%}
 .pdf-hdr{background:#1a1a2e;padding:28px 36px 24px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
 .pdf-mark{font-size:8pt;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#E85D3A;margin-bottom:8px}
 .pdf-name{font-size:19pt;font-weight:700;color:#fff;margin:0 0 3px;line-height:1.1}
@@ -630,12 +643,7 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
 .share-bookmark-btn:hover{background:var(--bg2);color:var(--tx)}
 .share-note{font-size:11px;color:var(--tx2);margin-top:.875rem;line-height:1.5}
 /* Inspector print stylesheet */
-@media print{
-  html,body{margin:0!important;padding:0!important;background:#fff!important}
-  .topbar,.sidebar,.app-body,#pdf-view,.sidebar-overlay{display:none!important}
-  #insp-print-area{display:block!important;position:static!important;margin:0!important;padding:0!important}
-  @page{size:letter;margin:12mm 14mm}
-}
+
 .inspector-run-btn{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;padding:7px 16px}
 /* Team stats bar */
 .insp-stats-bar{display:none;align-items:center;gap:0;background:var(--bg);border:var(--bdr);border-radius:var(--rm);margin-bottom:.875rem;overflow:hidden}
@@ -1006,7 +1014,10 @@ html.dark .db-card:hover{border-color:#4b5563}
   </div>
 
   <!-- QUARTERLY INPUTS -->
-  <div class="sec-hd">Quarterly inputs</div>
+  <div class="sec-hd">Quarterly inputs<button class="sec-comment-btn" id="scb-qi" onclick="toggleSecComment('qi')" title="Add note"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 1.5l2 2-6 6H2.5v-2l6-6z"/><line x1="7" y1="3" x2="9" y2="5"/></svg></button></div>
+  <div class="sec-comment-wrap" id="scw-qi">
+    <textarea class="sec-comment-textarea" id="sct-qi" placeholder="e.g. Q3 FY26 — team at 70% of quota pace, 2 AEs ramping" oninput="saveSecComment('qi')" rows="2"></textarea>
+  </div>
   <div class="card">
     <div class="irow irow-2">
       <div>
@@ -1058,7 +1069,10 @@ html.dark .db-card:hover{border-color:#4b5563}
   </div>
 
   <!-- CONVERSION RATES -->
-  <div class="sec-hd">Conversion rate assumptions</div>
+  <div class="sec-hd">Conversion rate assumptions<button class="sec-comment-btn" id="scb-cr" onclick="toggleSecComment('cr')" title="Add note"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 1.5l2 2-6 6H2.5v-2l6-6z"/><line x1="7" y1="3" x2="9" y2="5"/></svg></button></div>
+  <div class="sec-comment-wrap" id="scw-cr">
+    <textarea class="sec-comment-textarea" id="sct-cr" placeholder="e.g. Commit rate lowered to 75% — two deals slipped last quarter" oninput="saveSecComment('cr')" rows="2"></textarea>
+  </div>
   <div class="card">
     <div class="crow"><div class="ilbl">Commit <span class="pill pc">commit</span></div><div class="cright"><input type="range" id="r_commit" min="50" max="100" value="80" step="1"><span class="cval" id="r_commit_out">80%</span></div></div>
     <div class="crow"><div class="ilbl">Probable <span class="pill pp">probable</span></div><div class="cright"><input type="range" id="r_prob" min="30" max="95" value="75" step="1"><span class="cval" id="r_prob_out">75%</span></div></div>
@@ -1068,7 +1082,10 @@ html.dark .db-card:hover{border-color:#4b5563}
   </div>
 
   <!-- C&C -->
-  <div class="sec-hd">Create &amp; close what-if</div>
+  <div class="sec-hd">Create &amp; close what-if<button class="sec-comment-btn" id="scb-cnc" onclick="toggleSecComment('cnc')" title="Add note"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 1.5l2 2-6 6H2.5v-2l6-6z"/><line x1="7" y1="3" x2="9" y2="5"/></svg></button></div>
+  <div class="sec-comment-wrap" id="scw-cnc">
+    <textarea class="sec-comment-textarea" id="sct-cnc" placeholder="e.g. ASP reflects SMB segment only — mid-market deals excluded" oninput="saveSecComment('cnc')" rows="2"></textarea>
+  </div>
   <div class="card">
     <div class="cnc-inputs">
       <div class="cnc-fld"><label>Qualified opps to create</label><div class="frow"><input type="text" id="cnc_opps" value="5" style="width:80px;font-size:16px"></div></div>
@@ -3098,6 +3115,12 @@ function printPdf(){
       </div>
     </div>
     <div class="pdf-ftr"><div class="pdf-ftr-l">Manager's Forecast Calculator v2.6<span class="pdot"></span>MOAT</div><div class="pdf-ftr-r">${nm}${team?' — '+team:''}<span class="pdot"></span>${qtr}<span class="pdot"></span>${dateStr}</div></div>`;
+  document.body.setAttribute('data-printing','forecast');
+  const _cleanup=()=>{
+    document.body.removeAttribute('data-printing');
+    window.removeEventListener('afterprint',_cleanup);
+  };
+  window.addEventListener('afterprint',_cleanup);
   window.print();
 }
 
@@ -4243,9 +4266,12 @@ function exportInspectionPDF(){
 
   const printArea=$('insp-print-area');
   printArea.innerHTML=html;
-  printArea.style.display='block';
-  // Use afterprint event for reliable cleanup
-  const cleanup=()=>{printArea.style.display='none';window.removeEventListener('afterprint',cleanup);};
+  document.body.setAttribute('data-printing','inspector');
+  const cleanup=()=>{
+    document.body.removeAttribute('data-printing');
+    printArea.innerHTML='';
+    window.removeEventListener('afterprint',cleanup);
+  };
   window.addEventListener('afterprint',cleanup);
   window.print();
 }
@@ -4578,6 +4604,58 @@ function dbDrop(e,col){
   dbDragId=null;
   renderDealBack();
 }
+
+// ══════════════════════════════════════════════════════
+// SECTION COMMENTS
+// ══════════════════════════════════════════════════════
+const SEC_COMMENT_KEYS=['qi','cr','cnc'];
+
+function toggleSecComment(key){
+  const wrap=document.getElementById('scw-'+key);
+  const btn=document.getElementById('scb-'+key);
+  const ta=document.getElementById('sct-'+key);
+  if(!wrap)return;
+  const isOpen=wrap.classList.toggle('open');
+  if(isOpen&&ta){ta.focus();ta.selectionStart=ta.value.length;}
+  // Update button state
+  _updateSecCommentBtn(key);
+}
+
+function saveSecComment(key){
+  const ta=document.getElementById('sct-'+key);
+  if(!ta)return;
+  const val=ta.value;
+  const stored=JSON.parse(localStorage.getItem('sec_comments')||'{}');
+  if(val.trim()){stored[key]=val;}else{delete stored[key];}
+  localStorage.setItem('sec_comments',JSON.stringify(stored));
+  _updateSecCommentBtn(key);
+}
+
+function _updateSecCommentBtn(key){
+  const btn=document.getElementById('scb-'+key);
+  const ta=document.getElementById('sct-'+key);
+  if(!btn)return;
+  const hasNote=ta&&ta.value.trim().length>0;
+  btn.classList.toggle('has-note',hasNote);
+  btn.title=hasNote?'Edit note':'Add note';
+}
+
+function loadSecComments(){
+  try{
+    const stored=JSON.parse(localStorage.getItem('sec_comments')||'{}');
+    SEC_COMMENT_KEYS.forEach(key=>{
+      const ta=document.getElementById('sct-'+key);
+      if(ta&&stored[key]){
+        ta.value=stored[key];
+        // Auto-open if note exists
+        const wrap=document.getElementById('scw-'+key);
+        if(wrap)wrap.classList.add('open');
+        _updateSecCommentBtn(key);
+      }
+    });
+  }catch{}
+}
+
 // ══════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════
@@ -4587,6 +4665,7 @@ document.querySelectorAll('input[type=text]:not(.minput)').forEach(el=>el.addEve
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeShareModal();}});
 initTheme();
 initQE();
+loadSecComments();
 // Prevent dropdown internal clicks from triggering outside-click handler
 const _scopeDd=$('scope-dropdown');
 if(_scopeDd)_scopeDd.addEventListener('click',e=>e.stopPropagation());
@@ -4611,6 +4690,6 @@ if(localStorage.getItem('rail_expanded')==='1')openSidebar();
 calc();
 </script>
 <!-- Inspector print area — lives at body level to avoid view display:none -->
-<div id="insp-print-area" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:#fff;overflow:auto"></div>
+<div id="insp-print-area" style="display:none;background:#fff"></div>
 </body>
 </html>
