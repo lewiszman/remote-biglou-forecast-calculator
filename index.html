@@ -4166,27 +4166,71 @@ function exportInspectionPDF(){
   const {repsSorted,active,insights,runDate,managerName,quarter}=lastInspectionResult;
   const dateStr=runDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   const navy='#1a1a2e',coral='#E85D3A',blue='#1a56db',red='#dc2626',amber='#b45309',green='#0d7c3d';
+  const FONT='font-family:Arial,Helvetica,sans-serif;';
 
-  // Flag counts for summary
+  // Shared helpers
   const allFlags=active.flatMap(d=>d._flags||[]);
   const redCount=allFlags.filter(f=>f.sev==='red').length;
   const amberCount=allFlags.filter(f=>f.sev==='amber').length;
   const totalAmt=active.reduce((s,d)=>s+d.f_amount_num,0);
-
-  // Per-rep sections — each AE on its own page
   const CAT_ORDER=['commit','probable','upside','pipeline'];
   const CAT_LABEL={commit:'Commit',probable:'Probable',upside:'Upside',pipeline:'Pipeline'};
   const CAT_COLOR={commit:blue,probable:green,upside:amber,pipeline:'#6b7280'};
 
-  const repSections=repsSorted.map(([owner,deals],repIdx)=>{
+  // ── Cover page ──
+  const coverHtml=
+    '<div style="'+FONT+'page-break-after:always;color:#111">'
+      +'<div style="background:'+navy+';padding:32px 36px 28px">'
+        +'<div style="font-size:8pt;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:'+coral+';margin-bottom:8px">MOAT</div>'
+        +'<div style="font-size:20pt;font-weight:700;color:#fff;margin-bottom:6px">Pipeline Inspection Report</div>'
+        +'<div style="font-size:10pt;color:#9ca3b8">'+managerName+(quarter?' · '+quarter:'')+'</div>'
+      +'</div>'
+      +'<div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:14px 36px;display:flex;gap:28px">'
+        +'<div><div style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">As of</div><div style="font-size:11pt;font-weight:600">'+dateStr+'</div></div>'
+        +'<div><div style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Active deals</div><div style="font-size:11pt;font-weight:600">'+active.length+'</div></div>'
+        +'<div><div style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Pipeline</div><div style="font-size:11pt;font-weight:600">'+fmt(totalAmt)+'</div></div>'
+        +'<div><div style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Critical flags</div><div style="font-size:11pt;font-weight:600;color:'+red+'">'+redCount+'</div></div>'
+        +'<div><div style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Warnings</div><div style="font-size:11pt;font-weight:600;color:'+amber+'">'+amberCount+'</div></div>'
+        +'<div><div style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">AEs</div><div style="font-size:11pt;font-weight:600">'+repsSorted.length+'</div></div>'
+      +'</div>'
+      // AE index table on cover
+      +'<div style="padding:20px 36px">'
+        +'<div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;border-bottom:1px solid #e5e7eb;padding-bottom:6px;margin-bottom:12px">AE Summary</div>'
+        +'<table style="width:100%;border-collapse:collapse;font-size:9pt">'
+          +'<thead><tr style="background:#f3f4f6">'
+            +'<th style="padding:6px 10px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">AE</th>'
+            +'<th style="padding:6px 10px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Deals</th>'
+            +'<th style="padding:6px 10px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Pipeline</th>'
+            +'<th style="padding:6px 10px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Critical</th>'
+            +'<th style="padding:6px 10px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Warnings</th>'
+          +'</tr></thead>'
+          +'<tbody>'+repsSorted.map(([owner,deals])=>{
+            const f=deals.flatMap(d=>d._flags||[]);
+            const rc=f.filter(x=>x.sev==='red').length;
+            const ac=f.filter(x=>x.sev==='amber').length;
+            const amt=deals.reduce((s,d)=>s+d.f_amount_num,0);
+            const sc=rc>0?red:ac>0?amber:green;
+            return '<tr style="border-bottom:1px solid #f3f4f6">'
+              +'<td style="padding:6px 10px;font-weight:600">'+owner+'</td>'
+              +'<td style="padding:6px 10px">'+deals.length+'</td>'
+              +'<td style="padding:6px 10px">'+fmt(amt)+'</td>'
+              +'<td style="padding:6px 10px;font-weight:700;color:'+sc+'">'+( rc>0?rc+' ⚠':( ac===0?'✓ Clean':'—'))+'</td>'
+              +'<td style="padding:6px 10px;color:'+amber+'">'+( ac>0?ac:'—')+'</td>'
+              +'</tr>';
+          }).join('')+'</tbody>'
+        +'</table>'
+      +'</div>'
+    +'</div>';
+
+  // ── Per-AE pages — each on its own page ──
+  const aePagesHtml=repsSorted.map(([owner,deals])=>{
     const flags=deals.flatMap(d=>d._flags||[]);
     const rc=flags.filter(f=>f.sev==='red').length;
     const ac=flags.filter(f=>f.sev==='amber').length;
     const amt=deals.reduce((s,d)=>s+d.f_amount_num,0);
-    const statusColor=rc>0?red:ac>0?amber:green;
     const statusText=rc>0?rc+' critical':ac>0?ac+' warnings':'Clean';
 
-    // FC category summary — one cell per category with deals
+    // FC category summary grid
     const catSummary=CAT_ORDER.map(cat=>{
       const catDeals=deals.filter(d=>d.f_fc_cat_norm===cat);
       if(!catDeals.length)return'';
@@ -4199,90 +4243,75 @@ function exportInspectionPDF(){
       +'</div>';
     }).filter(Boolean).join('');
 
+    // Deal rows sorted by flag severity
     const sorted=[...deals].sort((a,b)=>{
       const sa=(a._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:1),0);
       const sb=(b._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:1),0);
       return sb-sa;
     });
-
     const dealRows=sorted.map(d=>{
       const allDealFlags=d._flags||[];
-      const flagStr=allDealFlags.map(f=>'<span style="font-size:8pt;background:'+(f.sev==='red'?'#fee2e2':'#fef3c7')+';color:'+(f.sev==='red'?red:amber)+';padding:1px 5px;border-radius:3px;margin-right:3px">'+f.text+'</span>').join('');
+      const flagStr=allDealFlags.map(f=>'<span style="font-size:8pt;background:'+(f.sev==='red'?'#fee2e2':'#fef3c7')+';color:'+(f.sev==='red'?red:amber)+';padding:1px 5px;border-radius:3px;margin-right:3px;white-space:nowrap">'+f.text+'</span>').join('');
       const cd=d.f_close_date?new Date(d.f_close_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
-      const ns=(d.f_next_step||'—').substring(0,70)+(d.f_next_step&&d.f_next_step.length>70?'…':'');
+      const ns=(d.f_next_step||'—').substring(0,65)+(d.f_next_step&&d.f_next_step.length>65?'…':'');
       const rowBg=allDealFlags.some(f=>f.sev==='red')?'#fff8f8':'';
       const catDot=CAT_COLOR[d.f_fc_cat_norm]||'#9ca3af';
-      return '<tr style="background:'+rowBg+'">'
-        +'<td style="padding:5px 8px;font-weight:600;font-size:9pt;max-width:150px;word-break:break-word">'+(d.f_opp_name||'—')+'</td>'
+      return '<tr style="background:'+rowBg+';border-bottom:1px solid #f3f4f6">'
+        +'<td style="padding:5px 8px;font-weight:600;font-size:9pt;max-width:140px;word-break:break-word">'+(d.f_opp_name||'—')+'</td>'
         +'<td style="padding:5px 8px;font-size:9pt;white-space:nowrap">'
           +'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+catDot+';margin-right:4px;vertical-align:middle"></span>'
           +fmt(d.f_amount_num)+'</td>'
         +'<td style="padding:5px 8px;font-size:9pt;white-space:nowrap">'+cd+'</td>'
-        +'<td style="padding:5px 8px;font-size:9pt">'+ns+'</td>'
+        +'<td style="padding:5px 8px;font-size:9pt;color:#374151">'+ns+'</td>'
         +'<td style="padding:5px 8px">'+flagStr+'</td>'
         +'</tr>';
     }).join('');
 
+    // AI summary text scraped from rendered DOM
     const aiEl=document.querySelector('#rep_'+owner.replace(/\W/g,'_')+' .insp-ai-summary');
     const aiText=aiEl?aiEl.innerText.replace(/^✨ AI coaching summary\n?/,'').replace(/Copy for Slack$/,'').trim():'';
 
-    // First AE follows the cover on the same print; each subsequent AE gets a new page
-    const pageBreak=repIdx===0?'':'page-break-before:always;';
-    return '<div style="'+pageBreak+'padding-top:2px">'
-      // AE header bar
-      +'<div style="display:flex;align-items:center;gap:10px;background:'+navy+';padding:12px 16px;margin-bottom:10px;border-radius:4px">'
+    // Each AE = its own page
+    return '<div style="'+FONT+'page-break-before:always;page-break-after:auto;color:#111">'
+      // AE header
+      +'<div style="background:'+navy+';padding:12px 18px;margin-bottom:10px;display:flex;align-items:center;gap:12px">'
         +'<div style="font-size:13pt;font-weight:700;color:#fff;flex:1">'+owner+'</div>'
         +'<div style="font-size:9pt;font-weight:700;color:'+(rc>0?'#fca5a5':ac>0?'#fde68a':'#86efac')+'">'+statusText+'</div>'
         +'<div style="font-size:9pt;color:#9ca3b8">'+deals.length+' deals · '+fmt(amt)+'</div>'
       +'</div>'
-      // FC category summary
-      +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">'+catSummary+'</div>'
-      // AI coaching summary
+      // Category grid
+      +(catSummary?'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">'+catSummary+'</div>':'')
+      // AI summary
       +(aiText?'<div style="font-size:9pt;color:#374151;background:#f0f9ff;border:1px solid #bfdbfe;border-radius:4px;padding:10px 12px;margin-bottom:10px;line-height:1.6">'+aiText+'</div>':'')
       // Deal table
       +'<table style="width:100%;border-collapse:collapse;font-size:9pt">'
         +'<thead><tr style="background:#f3f4f6">'
-          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Deal</th>'
-          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Amount</th>'
-          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Close</th>'
-          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Next step</th>'
-          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Flags</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb">Deal</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb">Amount</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb">Close</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb">Next step</th>'
+          +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb">Flags</th>'
         +'</tr></thead>'
         +'<tbody>'+dealRows+'</tbody>'
       +'</table>'
     +'</div>';
   }).join('');
 
-  const insightsSection=insights
-    ?'<div style="margin-top:24px;page-break-before:always">'
+  // ── Manager insights page ──
+  const insightsHtml=insights
+    ?'<div style="'+FONT+'page-break-before:always;color:#111;padding-top:4px">'
       +'<div style="font-size:11pt;font-weight:700;color:'+navy+';border-bottom:2px solid '+coral+';padding-bottom:6px;margin-bottom:14px">Manager Insights</div>'
       +'<div style="font-size:10pt;color:#374151;line-height:1.7">'+insights.split('\n').join('<br>')+'</div>'
     +'</div>':'' ;
 
-  const html='<div style="font-family:Arial,Helvetica,sans-serif;color:#111;max-width:900px">'
-    // Header
-    +'<div style="background:'+navy+';padding:24px 32px;margin-bottom:0">'
-      +'<div style="font-size:8pt;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:'+coral+';margin-bottom:6px">MOAT</div>'
-      +'<div style="font-size:18pt;font-weight:700;color:#fff;margin-bottom:4px">Pipeline Inspection Report</div>'
-      +'<div style="font-size:9pt;color:#9ca3b8">'+managerName+(quarter?' · '+quarter:'')+'</div>'
-    +'</div>'
-    +'<div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:10px 32px;display:flex;gap:24px;margin-bottom:20px">'
-      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">As of</span><br><span style="font-size:10pt;font-weight:600">'+dateStr+'</span></div>'
-      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Active deals</span><br><span style="font-size:10pt;font-weight:600">'+active.length+'</span></div>'
-      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Pipeline</span><br><span style="font-size:10pt;font-weight:600">'+fmt(totalAmt)+'</span></div>'
-      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Critical flags</span><br><span style="font-size:10pt;font-weight:600;color:'+red+'">'+redCount+'</span></div>'
-      +'<div><span style="font-size:8pt;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Warnings</span><br><span style="font-size:10pt;font-weight:600;color:'+amber+'">'+amberCount+'</span></div>'
-    +'</div>'
-    +'<div style="padding:0 32px">'
-      +'<div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;margin-bottom:12px;border-bottom:1px solid #e5e7eb;padding-bottom:6px">Per-AE Breakdown</div>'
-      +repSections
-      +insightsSection
-    +'</div>'
-    +'<div style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:10px 32px;margin-top:24px;font-size:8pt;color:#9ca3af;display:flex;justify-content:space-between">'
+  // ── Footer — repeated via @page if supported, fallback inline ──
+  const footerHtml=
+    '<div style="'+FONT+'margin-top:32px;border-top:1px solid #e5e7eb;padding:8px 0;font-size:8pt;color:#9ca3af;display:flex;justify-content:space-between">'
       +'<span>MOAT · Pipeline Inspector</span>'
       +'<span>Generated '+dateStr+'</span>'
-    +'</div>'
-  +'</div>';
+    +'</div>';
+
+  const html=coverHtml+aePagesHtml+insightsHtml+footerHtml;
 
   const printArea=$('insp-print-area');
   printArea.innerHTML=html;
