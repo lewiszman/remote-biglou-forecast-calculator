@@ -631,10 +631,39 @@ table.ptbl tr.lin td:first-child{font-size:7pt;color:#9ca3af;padding-left:18px;f
 .share-note{font-size:11px;color:var(--tx2);margin-top:.875rem;line-height:1.5}
 /* Inspector print stylesheet */
 @media print{
-  .topbar,.sidebar,.app-body{display:none!important}
-  #insp-print-area{display:block!important;position:static!important}
+  html,body{margin:0!important;padding:0!important;background:#fff!important}
+  .topbar,.sidebar,.app-body,#pdf-view,.sidebar-overlay{display:none!important}
+  #insp-print-area{display:block!important;position:static!important;margin:0!important;padding:0!important}
+  @page{size:letter;margin:12mm 14mm}
 }
 .inspector-run-btn{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;padding:7px 16px}
+/* Team stats bar */
+.insp-stats-bar{display:none;align-items:center;gap:0;background:var(--bg);border:var(--bdr);border-radius:var(--rm);margin-bottom:.875rem;overflow:hidden}
+.insp-stats-bar.visible{display:flex}
+.insp-stat-cell{flex:1;padding:.625rem 1rem;border-right:var(--bdr);text-align:center;min-width:0}
+.insp-stat-cell:last-child{border-right:none}
+.insp-stat-val{font-size:17px;font-weight:700;color:var(--tx);line-height:1.1}
+.insp-stat-lbl{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+/* Expand/collapse + flagged toggle in toolbar */
+.insp-toolbar-right{display:flex;align-items:center;gap:6px;margin-left:auto}
+/* Rep block severity accent */
+.insp-rep-block{background:var(--bg);border:var(--bdr);border-left-width:3px;border-left-color:transparent;border-radius:var(--rl);overflow:hidden;margin-bottom:.75rem;transition:border-left-color .15s}
+.insp-rep-block.sev-red{border-left-color:var(--red)}
+.insp-rep-block.sev-amber{border-left-color:var(--amber)}
+.insp-rep-block.sev-clean{border-left-color:var(--green)}
+/* Category section within rep body */
+.insp-cat-section{border-bottom:var(--bdr)}
+.insp-cat-section:last-child{border-bottom:none}
+.insp-cat-hdr{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--bg2);border-bottom:var(--bdr)}
+.insp-cat-hdr-accent{width:3px;height:14px;border-radius:2px;flex-shrink:0}
+.insp-cat-hdr-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.insp-cat-hdr-stats{font-size:11px;color:var(--tx2);flex:1}
+.insp-cat-hdr-flag{font-size:10px;font-weight:700}
+/* Coaching focus inline */
+.insp-focus-row{display:none;align-items:center;gap:8px;padding:.5rem 0;flex-wrap:wrap}
+.insp-focus-row.open{display:flex}
+.insp-focus-input{font-family:var(--font);font-size:12px;border:var(--bdr);border-radius:var(--rm);padding:5px 10px;background:var(--bg);color:var(--tx);outline:none;flex:1;min-width:200px;transition:border-color .15s}
+.insp-focus-input:focus{border-color:var(--blue)}
 .insp-stop-btn{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--red);border-color:var(--red)}
 .insp-stop-btn:hover{background:#fee2e2}
 .inspector-run-btn svg{flex-shrink:0}
@@ -1232,7 +1261,20 @@ html.dark .db-card:hover{border-color:#4b5563}
     </button>
     <span class="inspector-status" id="inspector-status">Import pipeline data to inspect</span>
     <span class="inspector-token-count" id="inspector-token-count" style="display:none"></span>
+    <div class="insp-toolbar-right">
+      <button class="btn" id="insp-focus-toggle" onclick="toggleInspFocus()" style="font-size:11px" title="Add coaching focus for AI">+ Focus</button>
+      <button class="btn" id="insp-expand-all" onclick="inspExpandAll()" style="font-size:11px;display:none">Expand all</button>
+      <button class="btn" id="insp-collapse-all" onclick="inspCollapseAll()" style="font-size:11px;display:none">Collapse all</button>
+      <button class="btn" id="insp-flagged-only" onclick="toggleFlaggedOnly()" style="font-size:11px;display:none">Flagged only</button>
+    </div>
   </div>
+  <div class="insp-focus-row" id="insp-focus-row">
+    <label style="font-size:11px;font-weight:600;color:var(--tx2);white-space:nowrap">AI focus:</label>
+    <input class="insp-focus-input" id="insp-focus-input" type="text" placeholder="e.g. Focus on EOQ close risk — 10 selling days left">
+    <button class="btn" style="font-size:11px" onclick="toggleInspFocus()">Done</button>
+  </div>
+  <!-- Team stats bar — shown after run -->
+  <div class="insp-stats-bar" id="insp-stats-bar"></div>
   <div class="insp-actions-row" id="insp-actions-row">
     <span class="insp-actions-lbl">Export last run</span>
     <div class="insp-export-group">
@@ -3115,7 +3157,12 @@ function getInspectorSettings(){
 }
 function getApiKey(){return getInspectorSettings().apiKey||'';}
 function getSystemPrompt(){return getInspectorSettings().systemPrompt||DEFAULT_SYSTEM_PROMPT;}
-function getCoachingFocus(){return getInspectorSettings().coachingFocus||DEFAULT_COACHING_FOCUS;}
+function getCoachingFocus(){
+  // Inline focus input takes precedence over Settings value
+  const inline=($('insp-focus-input')||{}).value||'';
+  if(inline.trim())return inline.trim();
+  return getInspectorSettings().coachingFocus||DEFAULT_COACHING_FOCUS;
+}
 
 function saveInspectorSettings(){
   const s={
@@ -3382,47 +3429,80 @@ function renderInspectorEmpty(msg){
   </div>`;
 }
 
-function renderRepBlock(owner, deals, aiHtml){
+function renderRepBlock(owner, deals, aiHtml, aiMap){
   const allFlags=deals.flatMap(d=>d._flags||[]);
   const redCount=allFlags.filter(f=>f.sev==='red').length;
   const amberCount=allFlags.filter(f=>f.sev==='amber').length;
   const totalAmt=deals.reduce((s,d)=>s+d.f_amount_num,0);
-  const catColors=CAT_COLORS,catBg=CAT_BG;
 
-  const pillsHtml=`
-    ${redCount>0?`<span class="insp-flag-pill red">&#9888; ${redCount} critical</span>`:''}
-    ${amberCount>0?`<span class="insp-flag-pill amber">&#9650; ${amberCount} warning</span>`:''}
-    ${redCount===0&&amberCount===0?`<span class="insp-flag-pill green">&#10003; Clean</span>`:''}
-    <span style="font-size:11px;color:var(--tx2);margin-left:4px">${deals.length} deals &middot; ${fmt(totalAmt)}</span>`;
+  const sevClass=redCount>0?'sev-red':amberCount>0?'sev-amber':'sev-clean';
+  const pillsHtml=
+    (redCount>0?`<span class="insp-flag-pill red">&#9888; ${redCount} critical</span>`:'')
+    +(amberCount>0?`<span class="insp-flag-pill amber">&#9650; ${amberCount} warning${amberCount!==1?'s':''}</span>`:'')
+    +(redCount===0&&amberCount===0?`<span class="insp-flag-pill green">&#10003; Clean</span>`:'')
+    +`<span style="font-size:11px;color:var(--tx2);margin-left:4px">${deals.length} deals &middot; ${fmt(totalAmt)}</span>`;
 
-  // Sort: red-flagged first, then amber, then clean
-  const sortedDeals=[...deals].sort((a,b)=>{
-    const sa=(a._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:f.sev==='amber'?1:0),0);
-    const sb=(b._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:f.sev==='amber'?1:0),0);
-    return sb-sa;
-  });
-  const rows=sortedDeals.map(d=>{
-    const cat=d.f_fc_cat_norm||'unknown';
-    const flags=d._flags||[];
-    // ALL flags shown — no truncation
-    const flagsHtml=flags.length
-      ?'<div class="insp-flags-cell">'+flags.map(f=>'<span class="insp-flag-tag '+f.sev+'">'+f.text+'</span>').join('')+'</div>'
-      :'<span style="font-size:10px;color:var(--green)">&#10003; clean</span>';
-    const cd=d.f_close_date?new Date(d.f_close_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
-    const nsShort=(d.f_next_step||'—').substring(0,60)+(d.f_next_step&&d.f_next_step.length>60?'…':'');
-    const hasRed=flags.some(f=>f.sev==='red');
-    return '<tr'+(hasRed?' style="background:rgba(220,38,38,.04)"':'')+'>'
-      +'<td class="insp-deal-name" title="'+(d.f_opp_name||'')+'">'+(d.f_opp_name||'—')+'</td>'
-      +'<td><span class="insp-cat-pill" style="background:'+(catBg[cat]||'#f9fafb')+';color:'+(catColors[cat]||'#6b7280')+'">'+(cat)+'</span></td>'
-      +'<td class="insp-deal-amount">'+fmt(d.f_amount_num)+'</td>'
-      +'<td style="color:var(--tx2)">'+cd+'</td>'
-      +'<td style="color:var(--tx2);max-width:180px" title="'+(d.f_next_step||'')+'">'+nsShort+'</td>'
-      +'<td>'+flagsHtml+'</td>'
-      +'</tr>';
+  const CAT_ORDER=['commit','probable','upside','pipeline'];
+  const CAT_LABEL={commit:'Commit',probable:'Probable',upside:'Upside',pipeline:'Pipeline'};
+  const CAT_ACCENT={commit:'#1a56db',probable:'#0d7c3d',upside:'#b45309',pipeline:'#6b7280'};
+  const flagSort=d=>(d._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:f.sev==='amber'?1:0),0);
+
+  const catSections=CAT_ORDER.map(cat=>{
+    const catDeals=deals.filter(d=>d.f_fc_cat_norm===cat);
+    if(!catDeals.length)return'';
+    const catAmt=catDeals.reduce((s,d)=>s+d.f_amount_num,0);
+    const catRed=catDeals.flatMap(d=>d._flags||[]).filter(f=>f.sev==='red').length;
+    const catAmber=catDeals.flatMap(d=>d._flags||[]).filter(f=>f.sev==='amber').length;
+    const sorted=[...catDeals].sort((a,b)=>flagSort(b)-flagSort(a));
+
+    const rows=sorted.map(d=>{
+      const flags=d._flags||[];
+      const flagsHtml=flags.length
+        ?'<div class="insp-flags-cell">'+flags.map(f=>'<span class="insp-flag-tag '+f.sev+'">'+f.text+'</span>').join('')+'</div>'
+        :'<span style="font-size:10px;color:var(--green)">&#10003; clean</span>';
+      const cd=d.f_close_date?new Date(d.f_close_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
+      const nsShort=(d.f_next_step||'—').substring(0,60)+(d.f_next_step&&d.f_next_step.length>60?'…':'');
+      const hasRed=flags.some(f=>f.sev==='red');
+      // Bold deal name if AI flagged it
+      const nameKey=(d.f_opp_name||'').toLowerCase();
+      const aiTagged=aiMap&&[...aiMap.keys()].some(k=>nameKey.includes(k)||k.includes(nameKey.substring(0,20)));
+      const nameHtml=aiTagged
+        ?'<strong title="'+(d.f_opp_name||'')+'">'+( d.f_opp_name||'—')+'</strong>'
+          +'<span style="font-size:9px;color:#7c3aed;margin-left:4px" title="Flagged by AI">\u2736</span>'
+        :(d.f_opp_name||'—');
+      return '<tr'+(hasRed?' class="has-red" style="background:rgba(220,38,38,.04)"':' class="deal-row"')+'>'
+        +'<td class="insp-deal-name" title="'+(d.f_opp_name||'')+'">'+nameHtml+'</td>'
+        +'<td class="insp-deal-amount">'+fmt(d.f_amount_num)+'</td>'
+        +'<td style="color:var(--tx2);white-space:nowrap">'+cd+'</td>'
+        +'<td style="color:var(--tx2);max-width:200px" title="'+(d.f_next_step||'')+'">'+nsShort+'</td>'
+        +'<td>'+flagsHtml+'</td>'
+        +'</tr>';
+    }).join('');
+
+    const flagNote=
+      (catRed>0?`<span style="color:var(--red);font-weight:700;font-size:10px">&#9888; ${catRed} critical</span>`:'')
+      +(catAmber>0?`<span style="color:var(--amber);font-weight:600;font-size:10px;margin-left:6px">&#9650; ${catAmber}</span>`:'');
+
+    return '<div class="insp-cat-section">'
+      +'<div class="insp-cat-hdr">'
+        +'<div class="insp-cat-hdr-accent" style="background:'+CAT_ACCENT[cat]+'"></div>'
+        +'<span class="insp-cat-hdr-label" style="color:'+CAT_ACCENT[cat]+'">'+CAT_LABEL[cat]+'</span>'
+        +'<span class="insp-cat-hdr-stats">'+catDeals.length+' deal'+(catDeals.length!==1?'s':'')+' &middot; '+fmt(catAmt)+'</span>'
+        +flagNote
+      +'</div>'
+      +'<div style="overflow-x:auto">'
+        +'<table class="insp-deals-table">'
+          +'<thead><tr>'
+            +'<th>Deal</th><th>Amount</th><th>Close</th><th>Next step</th><th>Flags</th>'
+          +'</tr></thead>'
+          +'<tbody>'+rows+'</tbody>'
+        +'</table>'
+      +'</div>'
+    +'</div>';
   }).join('');
 
   const id='rep_'+owner.replace(/\W/g,'_');
-  return `<div class="insp-rep-block" id="${id}">
+  return `<div class="insp-rep-block ${sevClass}" id="${id}">
     <div class="insp-rep-hdr" onclick="toggleRepBlock('${id}')">
       <span class="insp-rep-name">${owner}</span>
       <div class="insp-rep-pills">${pillsHtml}</div>
@@ -3430,21 +3510,50 @@ function renderRepBlock(owner, deals, aiHtml){
     </div>
     <div class="insp-rep-body">
       ${aiHtml}
-      <div style="overflow-x:auto">
-        <table class="insp-deals-table">
-          <thead><tr>
-            <th>Deal</th><th>Category</th><th>Amount</th><th>Close</th><th>Next step</th><th>Flags</th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
+      ${catSections}
     </div>
   </div>`;
 }
-
 function toggleRepBlock(id){
   const block=$(id);if(!block)return;
   block.classList.toggle('open');
+}
+
+function inspExpandAll(){
+  document.querySelectorAll('.insp-rep-block').forEach(b=>b.classList.add('open'));
+}
+function inspCollapseAll(){
+  document.querySelectorAll('.insp-rep-block').forEach(b=>b.classList.remove('open'));
+}
+
+let _flaggedOnly=false;
+function toggleFlaggedOnly(){
+  _flaggedOnly=!_flaggedOnly;
+  const btn=$('insp-flagged-only');
+  if(btn){
+    btn.textContent=_flaggedOnly?'Show all':'Flagged only';
+    btn.style.background=_flaggedOnly?'var(--amber)':'';
+    btn.style.color=_flaggedOnly?'#fff':'';
+    btn.style.borderColor=_flaggedOnly?'var(--amber)':'';
+  }
+  document.querySelectorAll('.insp-deals-table tbody tr').forEach(row=>{
+    if(_flaggedOnly){
+      // Hide rows with no flags (only have ✓ clean cell)
+      const hasFlags=row.querySelector('.insp-flag-tag');
+      row.style.display=hasFlags?'':'none';
+    } else {
+      row.style.display='';
+    }
+  });
+}
+
+function toggleInspFocus(){
+  const row=$('insp-focus-row');
+  const btn=$('insp-focus-toggle');
+  if(!row)return;
+  const isOpen=row.classList.toggle('open');
+  if(btn)btn.textContent=isOpen?'✕ Focus':'+ Focus';
+  if(isOpen){const inp=$('insp-focus-input');if(inp)inp.focus();}
 }
 
 // ── AI summary call ──
@@ -3834,10 +3943,37 @@ async function runInspector(){
     apiKey
       ? `<div class="insp-ai-loading" id="ai_${owner.replace(/\W/g,'_')}"><div class="insp-ai-dot"></div><div class="insp-ai-dot"></div><div class="insp-ai-dot"></div><span>Generating AI summary…</span></div>`
       : ''
+    ,null
   )).join('');
 
-  // Auto-expand first rep
-  if(repsSorted.length>0){
+  // Show expand/collapse buttons, flagged-only toggle
+  ['insp-expand-all','insp-collapse-all','insp-flagged-only'].forEach(id=>{
+    const el=$(id);if(el)el.style.display='inline-flex';
+  });
+
+  // Team stats bar
+  const amberFlagsTotal=active.flatMap(d=>d._flags).filter(f=>f.sev==='amber').length;
+  const aesWithCritical=repsSorted.filter(([,deals])=>deals.flatMap(d=>d._flags||[]).some(f=>f.sev==='red')).length;
+  const totalPipe=active.reduce((s,d)=>s+d.f_amount_num,0);
+  const statsBar=$('insp-stats-bar');
+  if(statsBar){
+    statsBar.innerHTML=
+      '<div class="insp-stat-cell"><div class="insp-stat-val">'+repsSorted.length+'</div><div class="insp-stat-lbl">AEs</div></div>'
+      +'<div class="insp-stat-cell"><div class="insp-stat-val">'+active.length+'</div><div class="insp-stat-lbl">Active deals</div></div>'
+      +'<div class="insp-stat-cell"><div class="insp-stat-val">'+fmt(totalPipe)+'</div><div class="insp-stat-lbl">Total pipeline</div></div>'
+      +'<div class="insp-stat-cell"><div class="insp-stat-val" style="color:var(--red)">'+redFlags+'</div><div class="insp-stat-lbl">Critical flags</div></div>'
+      +'<div class="insp-stat-cell"><div class="insp-stat-val" style="color:var(--amber)">'+amberFlagsTotal+'</div><div class="insp-stat-lbl">Warnings</div></div>'
+      +'<div class="insp-stat-cell"><div class="insp-stat-val" style="color:var(--red)">'+aesWithCritical+'</div><div class="insp-stat-lbl">AEs w/ critical</div></div>';
+    statsBar.classList.add('visible');
+  }
+
+  // Auto-expand: all if ≤3 AEs, otherwise first only
+  if(repsSorted.length<=3){
+    repsSorted.forEach(([owner])=>{
+      const b=$('rep_'+owner.replace(/\W/g,'_'));
+      if(b)b.classList.add('open');
+    });
+  } else {
     const firstId='rep_'+repsSorted[0][0].replace(/\W/g,'_');
     const firstBlock=$(firstId);
     if(firstBlock)firstBlock.classList.add('open');
@@ -3893,7 +4029,24 @@ async function runInspector(){
           +'<div id="slk_'+safeId+'" style="display:none">'+slackText+'</div>'
           +formatForSlack(text).replace(/\n/g,'<br>').replace(/\*([^*\n]+)\*/g,'<strong>$1</strong>')+'</div>';
         const aiMap=parseAIFlags(text);
-        if(aiMap.size)injectAIFlagsIntoTable(owner,aiMap);
+        // Re-render the rep block with aiMap so deal names get bolded inline
+        if(aiMap.size){
+          injectAIFlagsIntoTable(owner,aiMap);
+          // Also update deal name bolding in category tables
+          const block=$('rep_'+owner.replace(/\W/g,'_'));
+          if(block){
+            const nameEls=block.querySelectorAll('.insp-deal-name');
+            nameEls.forEach(td=>{
+              const dealName=td.getAttribute('title')||'';
+              const nameKey=dealName.toLowerCase();
+              const matched=[...aiMap.keys()].some(k=>nameKey.includes(k)||k.includes(nameKey.substring(0,20)));
+              if(matched&&!td.querySelector('strong')){
+                td.innerHTML='<strong title="'+dealName+'">'+dealName+'</strong>'
+                  +'<span style="font-size:9px;color:#7c3aed;margin-left:4px" title="Flagged by AI">✶</span>';
+              }
+            });
+          }
+        }
       }
       if(repBlock){const badge=repBlock.querySelector('.rep-ai-badge');if(badge){badge.innerHTML='✨ done';badge.style.color='var(--green)';}}
     }catch(err){
@@ -3977,14 +4130,31 @@ function exportInspectionPDF(){
   const amberCount=allFlags.filter(f=>f.sev==='amber').length;
   const totalAmt=active.reduce((s,d)=>s+d.f_amount_num,0);
 
-  // Per-rep sections
-  const repSections=repsSorted.map(([owner,deals])=>{
+  // Per-rep sections — each AE on its own page
+  const CAT_ORDER=['commit','probable','upside','pipeline'];
+  const CAT_LABEL={commit:'Commit',probable:'Probable',upside:'Upside',pipeline:'Pipeline'};
+  const CAT_COLOR={commit:blue,probable:green,upside:amber,pipeline:'#6b7280'};
+
+  const repSections=repsSorted.map(([owner,deals],repIdx)=>{
     const flags=deals.flatMap(d=>d._flags||[]);
     const rc=flags.filter(f=>f.sev==='red').length;
     const ac=flags.filter(f=>f.sev==='amber').length;
     const amt=deals.reduce((s,d)=>s+d.f_amount_num,0);
     const statusColor=rc>0?red:ac>0?amber:green;
     const statusText=rc>0?rc+' critical':ac>0?ac+' warnings':'Clean';
+
+    // FC category summary — one cell per category with deals
+    const catSummary=CAT_ORDER.map(cat=>{
+      const catDeals=deals.filter(d=>d.f_fc_cat_norm===cat);
+      if(!catDeals.length)return'';
+      const catAmt=catDeals.reduce((s,d)=>s+d.f_amount_num,0);
+      const catRed=catDeals.flatMap(d=>d._flags||[]).filter(f=>f.sev==='red').length;
+      return'<div style="padding:8px 10px;border-left:3px solid '+CAT_COLOR[cat]+';background:#fafafa;border-radius:0 4px 4px 0">'
+        +'<div style="font-size:7.5pt;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:'+CAT_COLOR[cat]+';margin-bottom:3px">'+CAT_LABEL[cat]+'</div>'
+        +'<div style="font-size:11pt;font-weight:700;color:#111">'+fmt(catAmt)+'</div>'
+        +'<div style="font-size:8pt;color:#6b7280">'+catDeals.length+' deal'+(catDeals.length!==1?'s':'')+(catRed>0?' · <span style="color:'+red+'">'+catRed+' ⚠</span>':'')+'</div>'
+      +'</div>';
+    }).filter(Boolean).join('');
 
     const sorted=[...deals].sort((a,b)=>{
       const sa=(a._flags||[]).reduce((s,f)=>s+(f.sev==='red'?2:1),0);
@@ -3998,26 +4168,35 @@ function exportInspectionPDF(){
       const cd=d.f_close_date?new Date(d.f_close_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
       const ns=(d.f_next_step||'—').substring(0,70)+(d.f_next_step&&d.f_next_step.length>70?'…':'');
       const rowBg=allDealFlags.some(f=>f.sev==='red')?'#fff8f8':'';
+      const catDot=CAT_COLOR[d.f_fc_cat_norm]||'#9ca3af';
       return '<tr style="background:'+rowBg+'">'
-        +'<td style="padding:5px 8px;font-weight:600;font-size:9pt;max-width:160px;word-break:break-word">'+(d.f_opp_name||'—')+'</td>'
-        +'<td style="padding:5px 8px;font-size:9pt;white-space:nowrap">'+fmt(d.f_amount_num)+'</td>'
+        +'<td style="padding:5px 8px;font-weight:600;font-size:9pt;max-width:150px;word-break:break-word">'+(d.f_opp_name||'—')+'</td>'
+        +'<td style="padding:5px 8px;font-size:9pt;white-space:nowrap">'
+          +'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+catDot+';margin-right:4px;vertical-align:middle"></span>'
+          +fmt(d.f_amount_num)+'</td>'
         +'<td style="padding:5px 8px;font-size:9pt;white-space:nowrap">'+cd+'</td>'
         +'<td style="padding:5px 8px;font-size:9pt">'+ns+'</td>'
         +'<td style="padding:5px 8px">'+flagStr+'</td>'
         +'</tr>';
     }).join('');
 
-    // AI summary text
     const aiEl=document.querySelector('#rep_'+owner.replace(/\W/g,'_')+' .insp-ai-summary');
     const aiText=aiEl?aiEl.innerText.replace(/^✨ AI coaching summary\n?/,'').replace(/Copy for Slack$/,'').trim():'';
 
-    return '<div style="margin-bottom:24px;page-break-inside:avoid">'
-      +'<div style="display:flex;align-items:center;gap:10px;background:#f9fafb;border-left:4px solid '+statusColor+';padding:10px 14px;margin-bottom:8px">'
-        +'<div style="font-size:12pt;font-weight:700;color:#111;flex:1">'+owner+'</div>'
-        +'<div style="font-size:9pt;font-weight:700;color:'+statusColor+'">'+statusText+'</div>'
-        +'<div style="font-size:9pt;color:#6b7280">'+deals.length+' deals · '+fmt(amt)+'</div>'
+    // First AE follows the cover on the same print; each subsequent AE gets a new page
+    const pageBreak=repIdx===0?'':'page-break-before:always;';
+    return '<div style="'+pageBreak+'padding-top:2px">'
+      // AE header bar
+      +'<div style="display:flex;align-items:center;gap:10px;background:'+navy+';padding:12px 16px;margin-bottom:10px;border-radius:4px">'
+        +'<div style="font-size:13pt;font-weight:700;color:#fff;flex:1">'+owner+'</div>'
+        +'<div style="font-size:9pt;font-weight:700;color:'+(rc>0?'#fca5a5':ac>0?'#fde68a':'#86efac')+'">'+statusText+'</div>'
+        +'<div style="font-size:9pt;color:#9ca3b8">'+deals.length+' deals · '+fmt(amt)+'</div>'
       +'</div>'
-      +(aiText?'<div style="font-size:9pt;color:#374151;background:#f0f9ff;border:1px solid #bfdbfe;border-radius:4px;padding:10px 12px;margin-bottom:8px;line-height:1.6">'+aiText+'</div>':'')
+      // FC category summary
+      +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">'+catSummary+'</div>'
+      // AI coaching summary
+      +(aiText?'<div style="font-size:9pt;color:#374151;background:#f0f9ff;border:1px solid #bfdbfe;border-radius:4px;padding:10px 12px;margin-bottom:10px;line-height:1.6">'+aiText+'</div>':'')
+      // Deal table
       +'<table style="width:100%;border-collapse:collapse;font-size:9pt">'
         +'<thead><tr style="background:#f3f4f6">'
           +'<th style="padding:5px 8px;text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:1px solid #e5e7eb">Deal</th>'
